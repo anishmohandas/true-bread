@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  width: 100%;
+  padding-top: 100px; // Add padding to account for fixed header
+}
+
+.articles-grid {
+  @apply grid gap-6 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.category-filter {
+  @apply mb-8;
+  
+  button {
+    @apply px-4 py-2 mr-2 mb-2 rounded-full transition-colors duration-200;
+    
+    &.active {
+      @apply bg-stone-800 text-white;
+    }
+    
+    &:not(.active) {
+      @apply bg-stone-100 text-stone-800 hover:bg-stone-200;
+    }
+  }
+}
+
+.article-card {
+  @apply transition-transform duration-300 ease-in-out hover:scale-105;
+}
+
+

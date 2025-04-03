@@ -1,0 +1,111 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.article-card {
+  transition: transform 0.3s ease-in-out;
+  margin-bottom: 1.5rem; /* Add spacing between rows */
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.article-content {
+  padding: 1.5rem 0;
+}
+
+.article-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem; /* Tailwind's text-2xl */
+  font-weight: 600; /* Tailwind's font-semibold */
+  color: #000; /* Tailwind's text-black */
+  margin-bottom: 0.75rem; /* Tailwind's mb-3 */
+  line-height: 1.25; /* Tailwind's leading-tight */
+}
+
+#articleContainer {
+  transform: translateX(0);
+  will-change: transform;
+}
+
+.article-slide {
+  flex: 0 0 auto;
+  width: 100%;
+  
+  @media (min-width: 768px) {
+    width: 50%;
+  }
+  
+  @media (min-width: 1024px) {
+    width: 33.333%;
+  }
+  
+  @media (min-width: 1280px) {
+    width: 25%;
+  }
+}
+
+/* Aspect ratio utility */
+.aspect-ratio-container {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.article-card {
+  .article-content {
+    padding: 1.5rem;
+    
+    &.malayalam-text {
+      font-family: 'Noto Sans Malayalam', sans-serif;
+      line-height: 1.8;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: "kern" 1;
+      font-kerning: normal;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      p {
+        font-size: 1.125rem;
+      }
+      
+      .category {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+// Add Malayalam text support to article titles and excerpts
+.article-title.malayalam-text {
+  font-family: 'Noto Sans Malayalam', sans-serif;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.article-excerpt.malayalam-text {
+  font-family: 'Noto Sans Malayalam', sans-serif;
+  line-height: 1.8;
+}
+
+.article-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  
+}

@@ -1,0 +1,18 @@
+.logo {
+  position: absolute;
+  top: 2em;
+  left: 2em;
+
+  a {
+    text-decoration: none;
+    text-transform: none;
+    color: var(--logo-color, #000); // Use CSS variable for dynamic color change
+
+    font-size: 35px; // Reduced font size to 35px as requested
+    font-weight: bold;
+    font-family: 'Delight-Black',serif;
+    transition: color 0.3s ease; // Smooth transition for color changes
+  }
+}
+
+

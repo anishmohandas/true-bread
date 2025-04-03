@@ -1,0 +1,37 @@
+<section class="py-16 bg-stone-900 text-white">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl font-bold mb-12 text-center">What Our Readers Say</h2>
+    
+    <div class="relative max-w-3xl mx-auto">
+      <div class="testimonial-slider overflow-hidden">
+        <div class="flex transition-transform duration-500"
+             [style.transform]="'translateX(-' + (currentTestimonial * 100) + '%)'">
+          
+          <div *ngFor="let testimonial of testimonials" class="w-full flex-shrink-0 px-4">
+            <div class="text-center">
+              <blockquote class="text-2xl italic mb-8">
+                "{{testimonial.quote}}"
+              </blockquote>
+              <div class="font-bold text-xl mb-2">{{testimonial.author}}</div>
+              <div class="text-stone-400">{{testimonial.role}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button (click)="prevTestimonial()" 
+              class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-stone-800 p-2 rounded-full">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </button>
+
+      <button (click)="nextTestimonial()"
+              class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-stone-800 p-2 rounded-full">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Reset styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        /* Header styles */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #f8f7f3;
+        }
+
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        /* Content styles */
+        .content {
+            padding: 30px 20px;
+            background-color: #ffffff;
+        }
+
+        /* Button styles */
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #1c1917;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f7f3;
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .social-links {
+            margin: 20px 0;
+        }
+
+        .social-link {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        /* Utility classes */
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="<%= baseUrl %>/assets/images/logo.png" alt="True Bread Magazine" class="logo">
+        </div>
+        
+        <div class="content">
+            <%- content %>
+        </div>
+
+        <div class="footer">
+            <div class="social-links">
+                <a href="https://facebook.com/truebread" class="social-link">Facebook</a>
+                <a href="https://twitter.com/truebread" class="social-link">Twitter</a>
+                <a href="https://instagram.com/truebread" class="social-link">Instagram</a>
+            </div>
+            <p>© <%= new Date().getFullYear() %> True Bread Magazine. All rights reserved.</p>
+            <p>
+                You received this email because you subscribed to True Bread Magazine.
+                <a href="<%= unsubscribeUrl %>">Unsubscribe</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

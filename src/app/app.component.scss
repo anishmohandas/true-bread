@@ -1,0 +1,52 @@
+.smooth-scroll {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.smooth-scroll-content {
+  will-change: transform;
+  transform-origin: top;
+  position: relative;
+  z-index: 2; // Higher z-index to be above footer
+  min-height: 100vh; // Ensure content is at least full viewport height
+  margin: 0; // Ensure no margins
+  padding: 0; // Ensure no padding
+}
+
+.router-outlet-wrapper {
+  position: relative;
+  z-index: 2;
+  display: block;
+  background-color: #fff; // Add background to ensure content is opaque
+  min-height: 100vh; // Ensure content covers at least the full viewport
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); // Add shadow for better separation
+  margin-bottom: 0; // Ensure no bottom margin
+  padding-bottom: 0; // Ensure no bottom padding
+}
+
+// Style for the footer in parallax mode
+.parallax-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto; // Auto height to fit content
+  z-index: 1; // Lower z-index to be behind content
+  pointer-events: none; // Allow scrolling through the footer initially
+}
+
+// When we've scrolled far enough, enable pointer events on the footer
+.footer-revealed .parallax-footer {
+  pointer-events: auto;
+}
+
+// Utility class to ensure no gaps
+.no-gap {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+}

@@ -1,0 +1,33 @@
+<h1 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 32px; margin-bottom: 20px;">
+    Welcome to True Bread Magazine!
+</h1>
+
+<p style="font-size: 18px; margin-bottom: 30px;">
+    Thank you for subscribing to True Bread Magazine. We're excited to have you join our community of bread enthusiasts!
+</p>
+
+<div style="background-color: #f8f7f3; padding: 20px; border-radius: 8px; margin: 30px 0;">
+    <h2 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; margin-bottom: 15px;">
+        What to Expect:
+    </h2>
+    <ul style="padding-left: 20px;">
+        <li style="margin-bottom: 10px;">Monthly digital issues</li>
+        <li style="margin-bottom: 10px;">Exclusive recipes and techniques</li>
+        <li style="margin-bottom: 10px;">Expert interviews and features</li>
+        <li style="margin-bottom: 10px;">Community highlights and events</li>
+    </ul>
+</div>
+
+<% if (latestIssue) { %>
+<div style="margin-top: 30px;">
+    <h2 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; margin-bottom: 15px;">
+        Start Reading Now
+    </h2>
+    <p>Check out our latest issue:</p>
+    <div class="text-center">
+        <a href="<%= latestIssue.pdfUrl %>" class="button">
+            Read Latest Issue
+        </a>
+    </div>
+</div>
+<% } %>

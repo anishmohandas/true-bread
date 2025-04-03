@@ -1,0 +1,193 @@
+:host {
+  display: block;
+  width: 100%;
+  height: auto; // Auto height to fit content
+  position: relative;
+  margin: 0; // Ensure no margins
+  padding: 0; // Ensure no padding
+}
+
+:host.parallax-footer {
+  // When used as a parallax footer
+  height: auto;
+  background-color: #1a1a1a;
+  opacity: 1 !important;
+  visibility: visible !important;
+  margin: 0; // Ensure no margins
+  padding: 0; // Ensure no padding
+
+  // Ensure all content in the footer is visible
+  .footer, .footer-content, .footer-logo, .footer-title {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+
+.footer {
+  position: relative;
+  width: 100%;
+  height: auto; // Auto height to fit content
+  background-color: #1a1a1a;
+  will-change: transform;
+  transform-origin: bottom;
+  color: white; // Set text color to white for all footer content
+  padding-bottom: 1rem; // Add some padding at the bottom
+  margin-top: 0; // Ensure no top margin
+
+  // Make all links white and ensure visibility
+  a, div, p, h1, h2, h3, h4, h5, h6, span {
+    color: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 1.1rem; // Increased font size for better readability
+  }
+}
+
+.footer-content {
+  position: relative;
+  width: 100%;
+  padding-top: 2rem; // Increased padding at the top
+  padding-bottom: 1rem; // Added padding at the bottom
+  height: auto; // Auto height to fit content
+  display: flex;
+  flex-direction: column;
+  opacity: 1 !important; // Force visibility
+  color: white !important; // Ensure text is white
+}
+
+.footer-logo-container {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+
+  // Adjust container height on different screen sizes
+  @media (max-width: 768px) {
+    min-height: 120px; // Smaller height on mobile
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 1200px) {
+    min-height: 180px; // Larger height on desktop
+    margin-top: 2.5rem;
+  }
+}
+
+// Remove negative margin since we're using fixed positioning now
+.footer-wrapper {
+  position: relative;
+  z-index: 1;
+  height: auto; // Auto height to fit content
+  margin: 0; // Ensure no margins
+  padding: 0; // Ensure no padding
+}
+
+.ficon {
+  transition: all 0.2s ease-in;
+  width: 28px;
+  height: 28px;
+
+  &:hover {
+    filter: brightness(1.8);
+  }
+}
+
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 10px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+}
+
+// Add a subtle shadow at the top of the footer
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
+  pointer-events: none;
+}
+
+a {
+  transition: color 0.2s ease-in;
+
+  &:hover {
+    color: #3B82F6;
+  }
+}
+
+.bg-darkBlue {
+  background-color: #1E3A8A;
+}
+
+@media (max-width: 768px) {
+  .container {
+    text-align: center;
+    padding-bottom: 2rem;
+  }
+
+  .flex-col {
+    align-items: center;
+  }
+}
+.footer-logo {
+  width: 100%;
+  padding: 0.5rem 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; // Prevent overflow
+  min-height: 150px; // Ensure minimum height
+
+  h1.footer-title {
+    font-size: 18vw; // Base responsive font size based on viewport width
+    line-height: 0.9;
+    margin: 0; // Remove margins
+    padding: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Delight-Black', sans-serif !important; // Use Delight-Black font
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); // Add subtle glow
+    width: 100%; // Take full width
+    text-align: center; // Center text
+    white-space: nowrap; // Prevent wrapping
+    color: white !important; // Ensure text is white
+    font-weight: normal; // Reset font weight
+
+    // Adjust font size on different screen sizes
+    @media (max-width: 768px) {
+      font-size: 25vw; // Larger on mobile for better visibility
+    }
+
+    @media (min-width: 769px) and (max-width: 1199px) {
+      font-size: 16vw; // Medium size for tablet/small desktop
+    }
+
+    @media (min-width: 1200px) {
+      font-size: 14vw; // Adjusted size for large screens as requested
+    }
+  }
+}

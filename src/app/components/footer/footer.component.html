@@ -1,0 +1,60 @@
+<div class="footer-wrapper">
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="container mx-auto pt-8 px-5 pb-6">
+        <!-- Flex Container For All Items -->
+        <div class="flex flex-col justify-between space-y-10 md:flex-row md:space-y-0 md:space-x-10">
+
+          <!-- Email & Phone -->
+          <div class="mt-6 space-y-6">
+            <div class="flex items-center space-x-4">
+              <div class="w-6">
+                <img src="../../../assets/images/icon-phone.svg" alt="Phone icon" class="scale-100" />
+              </div>
+              <div>{{ contactInfo.phone }}</div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <div class="w-6">
+                <img src="../../../assets/images/icon-email.svg" alt="Email icon" class="scale-100" />
+              </div>
+              <div>
+                <a [href]="'mailto:' + contactInfo.email">{{ contactInfo.email }}</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Menus -->
+          <div class="flex flex-col space-y-12 text-xl md:text-base md:space-x-24 md:space-y-0 md:flex-row">
+            <div class="flex flex-col space-y-5">
+              <a *ngFor="let item of menuItems1" [href]="item.link">{{ item.text }}</a>
+            </div>
+            <div class="flex flex-col space-y-5">
+              <a *ngFor="let item of menuItems2" [href]="item.link">{{ item.text }}</a>
+            </div>
+          </div>
+
+          <!-- Social -->
+          <div class="flex justify-center pb-4 space-x-6 social-icons">
+            <div *ngFor="let social of socialLinks">
+              <a [href]="social.link" class="bg-darkBlue rounded-full">
+                <img
+                  [src]="social.icon"
+                  [alt]="social.alt"
+                  class="ficon"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="footer-logo-container">
+        <div class="footer-logo">
+          <h1 class="footer-title">True Bread</h1>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+

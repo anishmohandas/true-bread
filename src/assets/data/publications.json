@@ -1,0 +1,52 @@
+{
+  "publications": [
+    {
+      "id": "march-2025",
+      "month": "March",
+      "year": 2025,
+      "title": "True Bread - March 2025",
+      "coverImage": "assets/images/march25_cover.jpg",
+      "pdfUrl": "assets/files/True Bread _ Mar_2025.pdf",
+      "description": "In this issue, we explore the depths of Christian faith in modern times...",
+      "publishDate": "2025-03-01",
+      "issueNumber": 3,
+      "highlights": [
+        "Voice from the Heart, Beyond Words",
+        "For She Loved Much",
+        "The Vulture and the Little Girl"
+      ]
+    },
+    {
+      "id": "february-2025",
+      "month": "February",
+      "year": 2025,
+      "title": "True Bread - February 2025",
+      "coverImage": "assets/images/feb25_cover.jpg",
+      "pdfUrl": "assets/files/True Bread _ Feb_2025.pdf",
+      "description": "February's edition focuses on love, fellowship, and community...",
+      "publishDate": "2025-02-01",
+      "issueNumber": 2,
+      "highlights": [
+        "The Power of Christian Fellowship",
+        "Love in Action",
+        "Building Strong Communities"
+      ]
+    },
+    {
+      "id": "january-2025",
+      "month": "January",
+      "year": 2025,
+      "title": "True Bread - January 2025",
+      "coverImage": "assets/images/jan25_cover.jpg",
+      "pdfUrl": "assets/files/True Bread _ Jan_2025.pdf",
+      "description": "Start the year with inspiring stories of faith and renewal...",
+      "publishDate": "2025-01-01",
+      "issueNumber": 1,
+      "highlights": [
+        "New Beginnings in Christ",
+        "Faith Stories for 2025",
+        "Prayer and Meditation Guide"
+      ]
+    }
+  ]
+}

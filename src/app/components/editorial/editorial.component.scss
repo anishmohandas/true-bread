@@ -1,0 +1,145 @@
+:host {
+  display: block;
+  width: 100%;
+  padding-top: 100px;
+}
+
+.editorial-page {
+  background-color: white;
+}
+
+.editor-profile {
+  img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+}
+
+.prose {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    color: #1c1917;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    color: #44403c;
+    font-size: 1.125rem;
+  }
+
+  .editorial-paragraph {
+    margin-bottom: 2rem;
+  }
+
+  .editorial-quote {
+    border-left: 4px solid #78716c;
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: #57534e;
+    font-size: 1.125rem;
+    line-height: 1.8;
+  }
+
+  .editorial-subheading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #292524;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 1rem;
+    line-height: 1.8;
+    color: #44403c;
+  }
+
+  .malayalam-text {
+    font-family: 'Noto Sans Malayalam', sans-serif;
+    line-height: 2;
+    font-size: 1.25rem;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    &.editorial-quote {
+      font-size: 1.35rem;
+      padding: 1.5rem;
+      background-color: rgba(0, 0, 0, 0.02);
+      border-radius: 0.5rem;
+      margin: 2rem 0;
+    }
+  }
+
+  p.malayalam-text {
+    margin-bottom: 2rem;
+    text-align: justify;
+    hyphens: auto;
+    word-spacing: 0.1em;
+  }
+
+  li.malayalam-text {
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+  }
+}
+
+.animate-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s ease forwards;
+
+  &:nth-child(1) {
+    animation-delay: 0.3s;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 0.6s;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Ensure proper text rendering for Malayalam
+.malayalam-text {
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Add support for Malayalam content
+.malayalam-content {
+  font-family: 'Noto Sans Malayalam', sans-serif;
+  line-height: 1.8;
+  
+  p {
+    font-size: 1.25rem;
+  }
+  
+  .editorial-quote {
+    font-size: 1.25rem;
+  }
+}
+
+
+

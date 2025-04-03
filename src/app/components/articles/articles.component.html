@@ -1,0 +1,56 @@
+<div class="container mx-auto px-4 py-8">
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh]">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-stone-900"></div>
+  </div>
+
+  <div *ngIf="error" class="text-center py-8">
+    <h2 class="text-2xl font-bold text-red-600">Error loading articles</h2>
+    <p class="mt-2">Please try again later</p>
+  </div>
+
+  <div *ngIf="!loading && !error">
+    <div class="flex gap-4 mb-8">
+      <button 
+        (click)="filterByCategory(null)"
+        [class.bg-stone-800]="!selectedCategory"
+        [class.text-white]="!selectedCategory"
+        class="px-4 py-2 rounded-full border border-stone-800 hover:bg-stone-800 hover:text-white transition-colors">
+        All
+      </button>
+      <button 
+        *ngFor="let category of categories"
+        (click)="filterByCategory(category)"
+        [class.bg-stone-800]="selectedCategory === category"
+        [class.text-white]="selectedCategory === category"
+        class="px-4 py-2 rounded-full border border-stone-800 hover:bg-stone-800 hover:text-white transition-colors">
+        {{category}}
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <article *ngFor="let article of filteredArticles" class="border rounded-lg overflow-hidden shadow-lg">
+        <img
+          [src]="article.imageUrl"
+          [alt]="article.altText"
+          class="w-full h-48 object-cover rounded-t-lg"
+        />
+        <div class="p-6">
+          <span class="text-sm text-stone-600">{{article.category}}</span>
+          <h3 class="text-xl font-bold mt-2 mb-3">{{article.title}}</h3>
+          <p class="text-stone-600 mb-4">{{article.excerpt}}</p>
+          <div class="flex items-center justify-between">
+            <span class="text-sm">By {{article.author}}</span>
+            <a [routerLink]="['/articles', article.id]" class="text-stone-800 font-semibold hover:underline">
+              Read More →
+            </a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+
+
+
+

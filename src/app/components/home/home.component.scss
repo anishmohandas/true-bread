@@ -1,0 +1,133 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+.preloader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.content.parallax {
+  height: 100vh;
+  width: 100%;
+  /*background-image: url("../../../assets/images/hero-image_open_bible.jpg");*/
+  background-color: #d6d0b7;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.quote-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verse-wrapper {
+  text-align: center;
+  color: white;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.verse-line, .verse-reference {
+  visibility: visible; // Change from opacity: 0
+  will-change: transform, opacity; // Optimize for animations
+}
+
+.verse-line {
+  font-family: 'Cosi Times', serif;
+  font-size: 2.5rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  
+  &:last-of-type {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 1.5rem 0;
+  }
+}
+
+.verse-reference {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .verse-line {
+    font-size: 1.8rem;
+    
+    &:last-of-type {
+      font-size: 2.5rem;
+    }
+  }
+  
+  .verse-reference {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .verse-line {
+    font-size: 1.5rem;
+    
+    &:last-of-type {
+      font-size: 2rem;
+    }
+  }
+  
+  .verse-reference {
+    font-size: 1rem;
+  }
+}
+
+.content {
+  .logo {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-family: "Cosi Times", serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    z-index: 10;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+

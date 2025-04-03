@@ -1,0 +1,100 @@
+<div class="editorial-section flex flex-col">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[200px]">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-stone-900"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="text-center py-8">
+    <p class="text-red-600">Failed to load editorial content</p>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!loading && !error && editorial">
+    <!-- Title Row -->
+    <div class="w-full bg-white py-12 pb-20">
+      <div class="container max-w-[1200px] mx-auto">
+        <div class="flex items-center gap-12 w-[100vw] ml-[calc(-50vw+50%)] mr-[calc(-50vw+50%)]">
+          <div class="h-[1px] bg-black flex-1"></div>
+          <h2 class="text-6xl font-migha uppercase tracking-wider whitespace-nowrap">
+            From the Editor's Desk
+          </h2>
+          <div class="h-[1px] bg-black flex-1"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="w-full">
+      <div class="grid md:grid-cols-2">
+        <!-- Editor Column -->
+        <div class="editor-column">
+          <div class="px-4 py-16">
+            <div class="p-8">
+              <div class="flex flex-col items-center text-center">
+                <img 
+                  [src]="editorial.editor.imageUrl || 'assets/images/default-avatar.jpg'" 
+                  [alt]="editorial.editor.name || 'Editor'"
+                  class="h-48 shadow-lg mb-6"
+                >
+                <h3 class="font-semibold text-xl mb-2">{{ editorial.editor.name || 'Editor' }}</h3>
+                <p class="text-stone-600 mb-4">{{ editorial.editor.role || 'Editorial Team' }}</p>
+                <div class="w-16 h-1 bg-stone-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editorial Column -->
+        <div class="editorial-column px-8 flex items-center justify-items-start">
+          <div class="px-4 py-16">
+            <div class="mb-8">
+              <div [ngClass]="{'malayalam-text': editorial.language === 'ml'}">
+                <h2 class="text-4xl font-semibold mb-6">{{ editorial.title }}</h2>
+                <p class="mb-8 opacity-90">{{ editorial.excerpt }}</p>
+              </div>
+              
+              <button 
+                *ngIf="editorial.id"
+                (click)="navigateToEditorial(editorial.id)"
+                class="bg-stone-900 text-white px-8 py-4 rounded-lg hover:bg-stone-800 transition-all hover:-translate-y-1 inline-flex items-center"
+              >
+                Read Full Editorial
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="editorial-image" *ngIf="editorial.imageUrl">
+              <img 
+                [src]="editorial.imageUrl" 
+                alt="Editorial illustration"
+                class="w-full rounded-lg shadow-lg"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

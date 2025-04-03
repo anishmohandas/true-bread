@@ -1,0 +1,79 @@
+<div class="container mx-auto px-4 py-8">
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh]">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-stone-900"></div>
+  </div>
+
+  <div *ngIf="error" class="text-center py-8">
+    <h2 class="text-2xl font-bold text-red-600">Error loading article</h2>
+    <p class="mt-2">Please try again later</p>
+  </div>
+
+  <article *ngIf="!loading && !error && article" 
+           class="max-w-4xl mx-auto"
+           [attr.lang]="article.language === 'ml' ? 'ml' : 'en'"
+           [ngClass]="{'malayalam-text': article.language === 'ml'}">
+    <header class="article-header">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6 text-stone-900"
+          [attr.dir]="article.language === 'ml' ? 'ltr' : 'auto'">
+        {{article.title}}
+      </h1>
+      <div class="article-meta space-x-4">
+        <div class="flex items-center">
+          <span class="font-medium">By {{article.author}}</span>
+          <span *ngIf="article.jobTitle" class="ml-2 text-stone-500">
+            {{article.jobTitle}}
+          </span>
+          <span *ngIf="article.worksAt" class="ml-2 text-stone-500">
+            at {{article.worksAt}}
+          </span>
+        </div>
+        <div class="flex items-center space-x-2 text-stone-500">
+          <span>{{article.publishDate | date:'mediumDate'}}</span>
+          <span>•</span>
+          <span>{{article.readTime}} min read</span>
+          <span>•</span>
+          <span>{{article.category}}</span>
+        </div>
+      </div>
+    </header>
+
+    <img
+      [src]="article.imageUrl"
+      [alt]="article.altText"
+      class="w-full h-auto rounded-lg shadow-lg"
+    />
+
+    <div class="prose max-w-none mt-8" 
+         [ngClass]="{'malayalam-text': article.language === 'ml'}"
+         [attr.lang]="article.language === 'ml' ? 'ml' : 'en'"
+         [attr.dir]="article.language === 'ml' ? 'ltr' : 'auto'">
+      <ng-container *ngFor="let paragraph of getFormattedContent()">
+        <p [innerHTML]="paragraph | safeHtml"></p>
+      </ng-container>
+    </div>
+
+    <div *ngIf="article?.images?.length" class="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
+      <div *ngFor="let image of article.images" class="relative">
+        <img [src]="image.url" 
+             [alt]="image.alt"
+             class="w-full h-64 object-cover rounded-lg shadow-md"
+             (error)="handleImageError($event)">
+        <p *ngIf="image.caption" 
+           class="mt-3 text-sm text-stone-600 italic">
+          {{image.caption}}
+        </p>
+      </div>
+    </div>
+
+    <div class="article-tags">
+      <span *ngFor="let tag of article.tags" 
+            class="tag">
+        #{{tag[article.language]}}
+      </span>
+    </div>
+  </article>
+</div>
+
+
+
+

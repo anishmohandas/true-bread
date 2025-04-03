@@ -1,0 +1,30 @@
+/* Component-specific styles can be added here
+ * Though in this case, since you're using Tailwind CSS classes,
+ * you might not need additional styles unless you want to add
+ * custom animations or complex styles that can't be achieved with Tailwind
+ */
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.error-container {
+  min-height: 24px; // Reserve space for error message
+  overflow: hidden;
+}
+
+.validation-message {
+  transform-origin: top;
+  transition: all 0.2s ease-out;
+  
+  &.hidden {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  
+  &.visible {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,25 @@
+<div class="menu" #menuElement>
+  <div class="col col-1">
+    <div class="menu-logo">
+      <a [routerLink]="['/']">True Bread</a>
+    </div>
+    <div class="links">
+      <div class="link " *ngFor="let link of links">
+        <a [routerLink]="[link.url]" (click)="navigateToRoute(link.url)">{{link.text}}</a>
+      </div>
+    </div>
+   
+  </div>
+  <div class="col col-2">
+    <div class="socials">
+
+      <div class="sub-col">
+        <p class="pb-5 font-bold">Follow Us</p>
+        <p *ngFor="let social of socialLinks">{{social}}</p>
+      </div>
+    </div>
+    <!-- <div class="header">
+      <h1 #headerText>True Bread</h1>
+    </div> -->
+  </div>
+</div>

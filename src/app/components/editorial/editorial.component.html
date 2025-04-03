@@ -1,0 +1,42 @@
+<div class="editorial-page py-16">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <ng-container *ngIf="!loading && !error && editorial">
+      <header class="mb-12 animate-in">
+        <p class="text-stone-600 mb-4">{{ editorial.month }} {{ editorial.year }}</p>
+        <h1 class="text-4xl md:text-5xl font-bold mb-8">{{ editorial.title }}</h1>
+        
+        <div class="editor-profile flex items-center border-t border-b border-stone-200 py-6">
+          <img 
+            [src]="editorial.editor.imageUrl" 
+            [alt]="editorial.editor.name"
+            class="w-24 h-24 object-cover mr-6"
+          >
+          <div>
+            <h2 class="text-xl font-semibold">{{ editorial.editor.name }}</h2>
+            <p class="text-stone-600 mb-2">{{ editorial.editor.role }}</p>
+            <p class="text-stone-700">{{ editorial.editor.bio }}</p>
+          </div>
+        </div>
+      </header>
+
+      <article class="prose prose-stone prose-lg max-w-none animate-in"
+               [attr.lang]="editorial.language === 'ml' ? 'ml' : 'en'"
+               [attr.dir]="editorial.language === 'ml' ? 'ltr' : 'auto'">
+        <ng-container *ngFor="let paragraph of getFormattedContent()">
+          <div [innerHTML]="paragraph" class="editorial-paragraph"></div>
+        </ng-container>
+      </article>
+    </ng-container>
+
+    <div *ngIf="loading" class="text-center py-12">
+      <p>Loading editorial...</p>
+    </div>
+
+    <div *ngIf="error" class="text-center py-12">
+      <p class="text-red-600">Failed to load editorial</p>
+    </div>
+  </div>
+</div>
+
+
+

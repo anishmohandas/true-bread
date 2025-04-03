@@ -1,0 +1,20 @@
+<!-- Main content -->
+<main>
+  <ng-container *ngIf="isHomePage">
+    <app-latest-issue></app-latest-issue>
+    <app-featured-articles [articles]="featuredArticles"></app-featured-articles>
+    <app-latest-editorial></app-latest-editorial>
+    <app-subscription></app-subscription>
+    <app-testimonials></app-testimonials>   
+  </ng-container>
+
+  <ng-container *ngIf="!isHomePage">
+    <router-outlet></router-outlet>
+  </ng-container>
+</main>
+
+
+
+
+
+

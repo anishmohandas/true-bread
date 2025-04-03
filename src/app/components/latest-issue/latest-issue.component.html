@@ -1,0 +1,64 @@
+<div class="latest-section">
+  <section id="productive" class="container mx-auto px-6 mt-10">
+    <div class="flex flex-col items-center">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh]">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-stone-900"></div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error" class="text-center py-8">
+        <h2 class="text-2xl font-bold text-red-600">Error loading latest issue</h2>
+        <p class="mt-2">Please try again later</p>
+      </div>
+
+      <!-- Content -->
+      <ng-container *ngIf="!loading && !error && currentIssue">
+        
+
+        <!-- Magazine Cover -->
+        <div class="max-w-sm mb-10">
+          <div class="relative group">
+            <img
+              [src]="currentIssue.coverImage"
+              [alt]="currentIssue.month + ' Issue Cover'"
+              class="w-full h-auto transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+        </div>
+        <!-- Header -->
+        <div class="text-center mb-1">
+          <h2 class="text-2xl font-medium font-delight">
+            Issue #{{ currentIssue.issueNumber }} 
+          </h2>
+        </div>
+        <!-- Actions -->
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="onViewPDF()"
+            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md"
+          >
+            Read
+          </button>
+          <span class="text-black text-xl font-light">|</span>
+          <button
+            (click)="onDownloadPDF()"
+            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md"
+          >
+            Get
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </section>
+</div>
+
+
+
+
+
+
+
+
+
+

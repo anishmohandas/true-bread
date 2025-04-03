@@ -1,0 +1,20 @@
+.malayalam-text {
+  font-family: 'Noto Sans Malayalam', sans-serif;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.malayalam-heading {
+  @extend .malayalam-text;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.malayalam-body {
+  @extend .malayalam-text;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}

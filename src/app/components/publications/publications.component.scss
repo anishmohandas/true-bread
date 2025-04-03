@@ -1,0 +1,50 @@
+:host {
+  display: block;
+  width: 100%;
+  padding-top: 100px;
+}
+
+.publications-page {
+  min-height: 100vh;
+}
+
+.publication-item {
+  .max-w-sm {
+    max-width: 20rem;
+    width: 100%;
+  }
+
+  img {
+    filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.1));
+    margin: 0 auto;
+    max-height: 400px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  button {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .publication-item {
+    .max-w-sm {
+      max-width: 16rem;
+    }
+
+    img {
+      max-height: 300px;
+    }
+  }
+}
+
+

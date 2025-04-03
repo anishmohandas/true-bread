@@ -1,0 +1,99 @@
+:host {
+  display: block;
+  width: 100%;
+  // Add padding-top to account for fixed header
+  padding-top: 100px; // This should match your header height
+}
+
+.prose {
+  @apply text-stone-800 leading-relaxed;
+  
+  p {
+    @apply mb-6 text-lg;
+  }
+
+  blockquote {
+    @apply pl-4 border-l-4 border-stone-300 italic my-6 text-stone-600;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-stone-900 mt-8 mb-4;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  ul, ol {
+    @apply my-6 ml-6;
+
+    li {
+      @apply mb-2;
+    }
+  }
+
+  ul {
+    @apply list-disc;
+  }
+
+  ol {
+    @apply list-decimal;
+  }
+}
+
+.article-header {
+  @apply border-b border-stone-200 pb-8 mb-12;
+}
+
+.article-meta {
+  @apply flex items-center text-stone-600 text-sm;
+}
+
+.article-image {
+  @apply rounded-xl shadow-lg mb-12;
+}
+
+.article-tags {
+  @apply mt-12 pt-8 border-t border-stone-200;
+}
+
+.tag {
+  @apply inline-block px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-sm mr-2 mb-2 transition-colors hover:bg-stone-200;
+}
+
+
+
+.malayalam-text {
+  font-family: 'Noto Sans Malayalam', sans-serif;
+  line-height: 1.8;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  p {
+    @apply mb-6 text-lg;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Noto Sans Malayalam', sans-serif;
+    line-height: 1.6;
+    font-weight: 700;
+  }
+}
+
+// Add support for Malayalam numerals if needed
+.malayalam-numerals {
+  -webkit-font-feature-settings: "mlym" 1;
+  font-feature-settings: "mlym" 1;
+}
+
+
+

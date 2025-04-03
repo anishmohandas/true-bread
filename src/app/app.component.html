@@ -1,0 +1,17 @@
+<app-header *ngIf="showComponents"></app-header>
+
+<!-- Main content container -->
+<div class="smooth-scroll">
+  <!-- Footer positioned behind content -->
+  <app-footer *ngIf="showComponents" class="parallax-footer"></app-footer>
+
+  <!-- Scrollable content above footer -->
+  <div #scrollContent class="smooth-scroll-content no-gap">
+    <div class="router-outlet-wrapper no-gap">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+
+
+

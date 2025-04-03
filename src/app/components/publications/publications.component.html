@@ -1,0 +1,73 @@
+<div class="publications-page container mx-auto px-4 py-12">
+ 
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh]">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-stone-900"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="text-center py-8">
+    <h2 class="text-2xl font-bold text-red-600">Error loading publications</h2>
+    <p class="mt-2">Please try again later</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && !error">
+    <!-- Year Filter -->
+    <div class="mb-12 flex justify-center space-x-4">
+      <button
+        (click)="filterByYear(null)"
+        [class.bg-stone-800]="!selectedYear"
+        [class.text-white]="!selectedYear"
+        class="px-4 py-2 rounded-full transition-colors duration-200"
+      >
+        All
+      </button>
+      <button
+        *ngFor="let year of years"
+        (click)="filterByYear(year)"
+        [class.bg-stone-800]="selectedYear === year"
+        [class.text-white]="selectedYear === year"
+        class="px-4 py-2 rounded-full transition-colors duration-200"
+      >
+        {{ year }}
+      </button>
+    </div>
+
+    <!-- Publications Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      <div *ngFor="let publication of filteredPublications" class="publication-item flex flex-col items-center">
+        <div class="max-w-sm mb-6">
+          <div class="relative group">
+            <img
+              [src]="publication.coverImage"
+              [alt]="publication.title"
+              class="w-full h-auto transition-transform duration-500 group-hover:scale-105"
+            >
+          </div>
+        </div>
+        
+        <h3 class="text-xl font-medium mb-4 text-center">{{ publication.title }}</h3>
+        
+        <!-- Actions -->
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="onViewPDF(publication.pdfUrl)"
+            class="px-6 py-2 text-black hover:text-stone-700 transition-colors uppercase font-poppins text-md"
+          >
+            Read
+          </button>
+          <span class="text-black text-xl font-light">|</span>
+          <button
+            (click)="onDownloadPDF(publication)"
+            class="px-6 py-2 text-black hover:text-stone-700 transition-colors uppercase font-poppins text-md"
+          >
+            Get
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

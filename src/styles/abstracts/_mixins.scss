@@ -1,0 +1,63 @@
+// Breakpoint mixins
+@mixin sm {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+@mixin xxl {
+  @media (min-width: $breakpoint-2xl) {
+    @content;
+  }
+}
+
+// Flexbox mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Typography mixins
+@mixin heading-1 {
+  font-family: $font-family-primary;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+@mixin heading-2 {
+  font-family: $font-family-primary;
+  font-size: 2rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+// Animation mixins
+@mixin transition($property: all, $duration: 0.3s, $timing: ease) {
+  transition: $property $duration $timing;
+}

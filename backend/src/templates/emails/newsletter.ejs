@@ -1,0 +1,34 @@
+<h1 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 32px; margin-bottom: 20px;">
+    <%= issue.title %>
+</h1>
+
+<p style="font-size: 18px; margin-bottom: 30px;">
+    The latest issue of True Bread Magazine is now available!
+</p>
+
+<% if (issue.coverImage) { %>
+<div style="margin: 30px 0;">
+    <img src="<%= issue.coverImage %>" alt="<%= issue.title %>" style="max-width: 100%; height: auto; border-radius: 8px;">
+</div>
+<% } %>
+
+<p style="margin-bottom: 20px;">
+    <%= issue.description %>
+</p>
+
+<div class="text-center">
+    <a href="<%= issue.pdfUrl %>" class="button">
+        Read Now
+    </a>
+</div>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+    <h2 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; margin-bottom: 15px;">
+        In This Issue:
+    </h2>
+    <ul style="padding-left: 20px;">
+        <% issue.highlights.forEach(function(highlight) { %>
+        <li style="margin-bottom: 10px;"><%= highlight %></li>
+        <% }); %>
+    </ul>
+</div>

@@ -1,0 +1,16 @@
+<div 
+      class="menu-toggle" 
+      [class.closed]="!isOpen" 
+      [class.opened]="isOpen" 
+      (click)="toggleMenu()"
+    >
+      <div class="menu-toggle-icon">
+        <div class="hamburger">
+          <div class="menu-bar" data-position="top"></div>
+          <div class="menu-bar" data-position="bottom"></div>
+        </div>
+      </div>
+      <div class="menu-copy">
+        <p>Menu</p>
+      </div>
+    </div>
