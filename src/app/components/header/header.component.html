@@ -1,14 +1,14 @@
 <ng-container *ngIf="showNav">
-  <div 
+  <div
     class="header-container"
-    [ngClass]="{'nav-hidden': !isNavVisible}"
+    [ngClass]="{'nav-hidden': !isNavVisible || inLatestIssueSection}"
   >
-   
+
   <app-logo></app-logo>
   <app-menu-toggle (menuToggled)="onMenuToggle($event)"></app-menu-toggle>
   <app-menu [isOpen]="isMenuOpen"></app-menu>
 
-  
+
 
   <!-- Mega Menu -->
  </div>

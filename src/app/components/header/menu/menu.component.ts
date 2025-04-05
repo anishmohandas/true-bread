@@ -12,7 +12,7 @@ import { CustomEase } from 'gsap/CustomEase';
 export class MenuComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isOpen = false;
   @ViewChild('headerText', { static: true }) headerText!: ElementRef<HTMLHeadingElement>;
-  
+
   private animations: gsap.core.Timeline[] = [];
 
   links = [
@@ -55,13 +55,13 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
   navigateToRoute(url: string): void {
     // First trigger the closing animation
     this.animateMenu(false);
-    
+
     // Wait for animation to complete before navigating
     setTimeout(() => {
       this.router.navigate([url]);
       // Emit the menu state change to parent
-      const menuToggleEvent = new CustomEvent('menuStateChange', { 
-        detail: { isOpen: false } 
+      const menuToggleEvent = new CustomEvent('menuStateChange', {
+        detail: { isOpen: false }
       });
       window.dispatchEvent(menuToggleEvent);
     }, 1000); // Adjust timing to match your animation duration
@@ -98,6 +98,12 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
       if (socialLinks.length) {
         gsap.set(socialLinks, { y: 30, opacity: 0 });
       }
+
+      // Set initial state for subscribe link
+      const subscribeLinks = Array.from(this.el.nativeElement.querySelectorAll('.subscribe-link-container p'));
+      if (subscribeLinks.length) {
+        gsap.set(subscribeLinks, { y: 30, opacity: 0 });
+      }
       gsap.set('.video-wrapper', {
         clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"
       });
@@ -122,11 +128,14 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
     this.headerText.nativeElement.innerHTML = splitText;
   }
 
+
+
   private animateMenu(isOpen: boolean) {
     const menu = this.el.nativeElement.querySelector('.menu');
     const links = this.el.nativeElement.querySelectorAll('.link');
     const socialLinks = this.el.nativeElement.querySelectorAll('.socials p');
     const headerSpans = this.el.nativeElement.querySelectorAll('.header h1 span');
+    const subscribeLinks = this.el.nativeElement.querySelectorAll('.subscribe-link-container p');
 
     if (isOpen) {
       // Store the animation timeline
@@ -156,6 +165,16 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
         opacity: 1,
         stagger: 0.05,
         delay: 0.85,
+        duration: 1,
+        ease: "power3.out"
+      });
+
+      // Animate subscribe links
+      gsap.to(subscribeLinks, {
+        y: 0,
+        opacity: 1,
+        stagger: 0.05,
+        delay: 0.9,
         duration: 1,
         ease: "power3.out"
       });

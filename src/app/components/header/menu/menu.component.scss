@@ -40,6 +40,16 @@
 
 .col-2 {
   flex: 2;
+  align-items: center !important; // Override the flex-end alignment from .col
+  padding-left: 0 !important; // Override the padding from .col to center content
+
+  .menu-links-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; // Add some space between the sections
+    align-items: center; // Center the socials and subscribe sections
+    width: 100%; // Take full width of the column
+  }
 }
 
 .col {
@@ -86,12 +96,15 @@
 }
 
 .socials {
-  width: 50%;
+  width: 50%; // Allow it to size based on content
   display: flex;
   gap: 2em;
   font-family: 'Inter', sans-serif;
+  text-align: start; // Center the text
+
   .sub-col {
     flex: 1;
+    text-align: start; // Center the text
 
     p {
       position: relative;
@@ -99,9 +112,42 @@
       transform: translateY(30px);
       opacity: 0;
       text-transform: uppercase;
-
       font-size: 12px;
       font-weight: 400;
+    }
+  }
+}
+
+// Subscribe link styles
+.subscribe-link-container {
+  width: 50%; // Allow it to size based on content
+  display: flex;
+  gap: 2em;
+  font-family: 'Inter', sans-serif;
+  margin-top: 0;
+  text-align: center; // Center the text
+
+  .sub-col {
+    flex: 1;
+    text-align: start; // Center the text
+
+    p {
+      position: relative;
+      color: #fff;
+      transform: translateY(30px);
+      opacity: 0;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 400;
+
+      &.link {
+        cursor: pointer;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #ccc;
+        }
+      }
     }
   }
 }

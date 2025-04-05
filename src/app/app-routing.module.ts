@@ -7,6 +7,7 @@ import { AboutComponent } from './components/about/about.component';
 import { PublicationsComponent } from './components/publications/publications.component';
 import { EditorialComponent } from './components/editorial/editorial.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { SubscribeComponent } from './components/subscribe/subscribe.component';
 
 const routes: Routes = [
   {
@@ -19,7 +20,8 @@ const routes: Routes = [
   { path: 'articles/:id', component: ArticleDetailComponent },
   { path: 'about', component: AboutComponent },
   { path: 'editorial/:id', component: EditorialComponent },
-  { path: 'contact', component: ContactComponent }
+  { path: 'contact', component: ContactComponent },
+  { path: 'subscribe', component: SubscribeComponent }
 ];
 
 @NgModule({

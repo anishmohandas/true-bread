@@ -25,6 +25,10 @@ export class AnimationService {
   }
 
   private getStoredPreloaderState(): boolean {
+    // For testing, always return false to show the preloader
+    // return false;
+
+    // Normal behavior: check localStorage
     return localStorage.getItem('hasSeenPreloader') === 'true';
   }
 
@@ -46,5 +50,12 @@ export class AnimationService {
         this.hasSeenPreloader.next(false);
       }
     }
+  }
+
+  // For testing: force reset the preloader state
+  forceResetPreloader(): void {
+    console.log('Forcing preloader reset');
+    localStorage.removeItem('hasSeenPreloader');
+    this.hasSeenPreloader.next(false);
   }
 }

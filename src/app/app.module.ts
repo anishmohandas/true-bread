@@ -29,6 +29,7 @@ import { ContactComponent } from './components/contact/contact.component';
 // Add new Editorial components
 import { LatestEditorialComponent } from './components/latest-editorial/latest-editorial.component';
 import { EditorialComponent } from './components/editorial/editorial.component';
+import { SubscribeComponent } from './components/subscribe/subscribe.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,9 @@ import { EditorialComponent } from './components/editorial/editorial.component';
     ContactComponent,
     // Add new Editorial components
     LatestEditorialComponent,
-    EditorialComponent
+    EditorialComponent,
+    // Add Subscribe component
+    SubscribeComponent
   ],
   imports: [
     BrowserModule,

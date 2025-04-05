@@ -13,11 +13,28 @@
   left: 0;
   width: 100%;
   z-index: 9990;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
   background-color: rgba(255, 255, 255, 0.98);
-  
+
   &.nav-hidden {
     transform: translateY(-100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  // Animation for dropping down when scrolling past the latest issue section
+  &.animate-drop-down {
+    animation: dropDown 0.5s ease-in-out forwards;
+  }
+}
+
+// Keyframes for drop-down animation
+@keyframes dropDown {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 
@@ -133,7 +150,7 @@
 
       li.menu-item {
         margin: 1rem 0;
-        
+
         a {
           display: inline-block;
           font-size: 1.5rem;
@@ -178,7 +195,7 @@
     .social-links {
       display: flex;
       gap: 1.5rem;
-      
+
       .social-link {
         display: flex;
         align-items: center;

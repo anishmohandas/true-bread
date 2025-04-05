@@ -1,6 +1,8 @@
 :host {
   display: block;
   width: 100%;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .latest-section {
@@ -8,12 +10,74 @@
   background-color: #fff;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  padding-top: 60px;
+  align-items: flex-start; // Changed from center to flex-start to align content at the top
   font-family: 'Inter', sans-serif;
+  padding-top: 0; // Remove any top padding
+  margin-top: 0; // Remove any top margin
   section {
-    padding: 2rem 0;
     width: 100%;
+    padding-top: 0; // Remove top padding
+    margin-top: 0; // Remove top margin
+  }
+
+  // Container for overlapping elements
+  .overlap-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+    margin-top: 0; // Ensure no top margin
+    padding-top: 0; // Ensure no top padding
+  }
+
+  // Styling for the TRUE BREAD logo
+  .latest-issue-logo-container {
+    width: 100%;
+    padding: 0; // Remove vertical padding
+    padding-top: 0; // Explicitly set top padding to 0
+    margin: 0;
+    display: flex;
+    align-items: flex-start; // Align to top
+    justify-content: center;
+    overflow: hidden;
+    max-width: 90vw; // Limit width to prevent overflow on small screens
+    position: relative;
+    z-index: 1; // Ensure logo is above the image
+
+    .latest-issue-title {
+      font-size: 15vw; // Base responsive font size based on viewport width
+      line-height: 0.9;
+      margin: 0;
+      padding: 0;
+      //text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: 'Delight-Black', sans-serif !important;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+      color: #000; // Black color for the latest issue section
+      font-weight: normal;
+      position: relative;
+      z-index: 2; // Ensure title is above the image
+      margin-top: 0; // Ensure no top margin
+      padding-top: 0; // Ensure no top padding
+
+      // Adjust font size on different screen sizes
+      @media (max-width: 768px) {
+        font-size: 25vw; // Larger on mobile for better visibility
+      }
+
+      @media (min-width: 769px) and (max-width: 1199px) {
+        font-size: 16vw; // Medium size for tablet/small desktop
+      }
+
+      @media (min-width: 1200px) {
+        font-size: 14vw; // Adjusted size for large screens
+      }
+    }
   }
 
   .max-w-sm {
@@ -21,12 +85,30 @@
     width: 100%;
   }
 
+  // Cover container styling for overlap effect
+  .cover-container {
+    position: relative;
+    margin-top: -15%; // This creates the 15% overlap with the title above
+    z-index: 0; // Ensure it's below the logo
+
+    // Adjust overlap for different screen sizes
+    @media (max-width: 768px) {
+      margin-top: -20%; // Slightly more overlap on mobile for better visual effect
+    }
+
+    @media (min-width: 1200px) {
+      margin-top: -12%; // Slightly less overlap on large screens
+    }
+  }
+
   img {
-    filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.1));
+    filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15)); // Enhanced shadow for better depth
     margin: 0 auto;
     max-height: 400px;
     width: auto;
     object-fit: contain;
+    position: relative; // Ensure proper stacking context
+    z-index: 1; // Higher than container but lower than title
   }
 
   button {

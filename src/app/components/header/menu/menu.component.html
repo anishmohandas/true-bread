@@ -8,18 +8,24 @@
         <a [routerLink]="[link.url]" (click)="navigateToRoute(link.url)">{{link.text}}</a>
       </div>
     </div>
-   
+
   </div>
   <div class="col col-2">
-    <div class="socials">
+    <div class="menu-links-container">
+      <div class="socials">
+        <div class="sub-col">
+          <p class="pb-5 font-bold">Follow Us</p>
+          <p *ngFor="let social of socialLinks">{{social}}</p>
+        </div>
+      </div>
 
-      <div class="sub-col">
-        <p class="pb-5 font-bold">Follow Us</p>
-        <p *ngFor="let social of socialLinks">{{social}}</p>
+      <!-- Subscribe Link -->
+      <div class="subscribe-link-container">
+        <div class="sub-col">
+          <p class="pb-5 font-bold">Subscribe</p>
+          <p class="link" (click)="navigateToRoute('/subscribe')">Join Our Newsletter</p>
+        </div>
       </div>
     </div>
-    <!-- <div class="header">
-      <h1 #headerText>True Bread</h1>
-    </div> -->
   </div>
 </div>

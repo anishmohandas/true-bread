@@ -1,0 +1,31 @@
+.subscribe-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #f9f9f9;
+
+  .subscription-container {
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Override max-width constraints in the subscription component */
+.subscribe-page {
+  app-subscription {
+    section {
+      width: 100%;
+
+      .container {
+        width: 100%;
+        max-width: none;
+      }
+
+      .max-w-7xl {
+        max-width: none;
+      }
+    }
+  }
+}
