@@ -19,6 +19,9 @@ export class AppComponent implements OnInit {
     current: 0,
     ease: 0.05,
     height: 0,
+    touchStartY: 0,
+    touchStartX: 0,
+    isTouching: false,
     setHeight: () => {
       document.body.style.height = `${this.scroller.height}px`;
     },
@@ -181,6 +184,54 @@ export class AppComponent implements OnInit {
   onWheel(event: WheelEvent) {
     window.scrollBy(0, event.deltaY);
     event.preventDefault();
+  }
+
+  @HostListener('touchstart', ['$event'])
+  onTouchStart(event: TouchEvent) {
+    if (event.touches.length === 1) {
+      this.scroller.touchStartY = event.touches[0].clientY;
+      this.scroller.touchStartX = event.touches[0].clientX;
+      this.scroller.isTouching = true;
+    }
+  }
+
+  @HostListener('touchmove', ['$event'])
+  onTouchMove(event: TouchEvent) {
+    if (!this.scroller.isTouching) return;
+
+    if (event.touches.length === 1) {
+      const touchY = event.touches[0].clientY;
+      const touchX = event.touches[0].clientX;
+
+      // Calculate delta Y (vertical movement)
+      const deltaY = this.scroller.touchStartY - touchY;
+
+      // Calculate delta X (horizontal movement)
+      const deltaX = this.scroller.touchStartX - touchX;
+
+      // If vertical scrolling is more significant than horizontal
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        // Scroll the page
+        window.scrollBy(0, deltaY);
+
+        // Update touch start position for continuous scrolling
+        this.scroller.touchStartY = touchY;
+        this.scroller.touchStartX = touchX;
+
+        // Prevent default to avoid browser's native scrolling
+        event.preventDefault();
+      }
+    }
+  }
+
+  @HostListener('touchend')
+  onTouchEnd() {
+    this.scroller.isTouching = false;
+  }
+
+  @HostListener('touchcancel')
+  onTouchCancel() {
+    this.scroller.isTouching = false;
   }
 }
 

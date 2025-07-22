@@ -62,7 +62,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  touch-action: none; /* Disable browser's default touch handling */
+  touch-action: pan-y; /* Allow vertical touch scrolling */
   -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
   height: 100%;
 }
@@ -74,14 +74,14 @@ html, body {
   right: 0;
   bottom: 0;
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y; /* Allow vertical touch scrolling */
 }
 
 .smooth-scroll-content {
   will-change: transform;
   transform-origin: top;
   position: relative;
-  touch-action: none;
+  touch-action: pan-y; /* Allow vertical touch scrolling */
   margin: 0;
   padding: 0;
 

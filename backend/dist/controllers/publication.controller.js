@@ -23,17 +23,44 @@ router.get('/', async (req, res) => {
         });
     }
 });
-// Create new publication
-router.post('/', async (req, res) => {
+// Get latest publication
+router.get('/latest', async (req, res) => {
     try {
-        const publication = await publicationRepo.createPublication(req.body);
-        res.status(201).json(publication);
+        const publication = await publicationRepo.getLatestPublication();
+        if (!publication) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No publications found'
+            });
+        }
+        res.json(publication);
     }
     catch (error) {
-        console.error('Error creating publication:', error);
+        console.error('Error fetching latest publication:', error);
         res.status(500).json({
             status: 'error',
-            message: 'Failed to create publication',
+            message: 'Failed to fetch latest publication',
+            details: error instanceof Error ? error.message : 'Unknown error occurred'
+        });
+    }
+});
+// Get publication by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const publication = await publicationRepo.getPublicationById(req.params.id);
+        if (!publication) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'Publication not found'
+            });
+        }
+        res.json(publication);
+    }
+    catch (error) {
+        console.error('Error fetching publication:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Failed to fetch publication',
             details: error instanceof Error ? error.message : 'Unknown error occurred'
         });
     }

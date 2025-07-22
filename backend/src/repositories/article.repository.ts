@@ -6,7 +6,7 @@ export class ArticleRepository {
 
     async getAllArticles(language?: 'en' | 'ml'): Promise<Article[]> {
         const query = `
-            SELECT 
+            SELECT
                 a.*,
                 COALESCE(
                     json_agg(
@@ -44,7 +44,7 @@ export class ArticleRepository {
 
     async getFeaturedArticles(language?: 'en' | 'ml'): Promise<Article[]> {
         const query = `
-            SELECT 
+            SELECT
                 a.*
             FROM articles a
             WHERE a.is_featured = true
@@ -59,7 +59,7 @@ export class ArticleRepository {
 
     async getArticleById(id: string): Promise<Article> {
         const query = `
-            SELECT 
+            SELECT
                 a.*,
                 a.title_ml,
                 a.author_ml,
@@ -73,12 +73,12 @@ export class ArticleRepository {
             FROM articles a
             WHERE a.id = $1
         `;
-        
+
         const result = await this.pool.query(query, [id]);
         if (result.rows.length === 0) {
             throw new Error('Article not found');
         }
-        
+
         console.log('Database result:', result.rows[0]); // Debug log
         return this.transformArticle(result.rows[0]);
     }
@@ -100,14 +100,14 @@ export class ArticleRepository {
             isFeatured: row.is_featured,
             language: row.language,
             // Clean Malayalam fields before sending
-            titleMl: this.cleanMalayalamText(row.title_ml),
-            authorMl: this.cleanMalayalamText(row.author_ml),
-            jobTitleMl: this.cleanMalayalamText(row.job_title_ml),
-            worksAtMl: this.cleanMalayalamText(row.works_at_ml),
-            categoryMl: this.cleanMalayalamText(row.category_ml),
-            altTextMl: this.cleanMalayalamText(row.alt_text_ml),
-            contentMl: this.cleanMalayalamText(row.content_ml),
-            excerptMl: this.cleanMalayalamText(row.excerpt_ml),
+            titleMl: this.cleanMalayalamText(row.title_ml) || undefined,
+            authorMl: this.cleanMalayalamText(row.author_ml) || undefined,
+            jobTitleMl: this.cleanMalayalamText(row.job_title_ml) || undefined,
+            worksAtMl: this.cleanMalayalamText(row.works_at_ml) || undefined,
+            categoryMl: this.cleanMalayalamText(row.category_ml) || undefined,
+            altTextMl: this.cleanMalayalamText(row.alt_text_ml) || undefined,
+            contentMl: this.cleanMalayalamText(row.content_ml) || undefined,
+            excerptMl: this.cleanMalayalamText(row.excerpt_ml) || undefined,
             images: row.images,
             tags: row.tags
         }));
@@ -130,22 +130,22 @@ export class ArticleRepository {
             isFeatured: row.is_featured,
             language: row.language,
             // Properly decode Malayalam fields
-            titleMl: this.decodeMalayalamText(row.title_ml),
-            authorMl: this.decodeMalayalamText(row.author_ml),
-            jobTitleMl: this.decodeMalayalamText(row.job_title_ml),
-            worksAtMl: this.decodeMalayalamText(row.works_at_ml),
-            categoryMl: this.decodeMalayalamText(row.category_ml),
-            altTextMl: this.decodeMalayalamText(row.alt_text_ml),
-            contentMl: this.decodeMalayalamText(row.content_ml),
-            excerptMl: this.decodeMalayalamText(row.excerpt_ml),
+            titleMl: this.decodeMalayalamText(row.title_ml) || undefined,
+            authorMl: this.decodeMalayalamText(row.author_ml) || undefined,
+            jobTitleMl: this.decodeMalayalamText(row.job_title_ml) || undefined,
+            worksAtMl: this.decodeMalayalamText(row.works_at_ml) || undefined,
+            categoryMl: this.decodeMalayalamText(row.category_ml) || undefined,
+            altTextMl: this.decodeMalayalamText(row.alt_text_ml) || undefined,
+            contentMl: this.decodeMalayalamText(row.content_ml) || undefined,
+            excerptMl: this.decodeMalayalamText(row.excerpt_ml) || undefined,
             images: row.images || [],
             tags: row.tags || []
         };
     }
 
-    private cleanMalayalamText(text: string | null): string | null {
-        if (!text) return null;
-        
+    private cleanMalayalamText(text: string | null): string | undefined {
+        if (!text) return undefined;
+
         try {
             return text
                 // Handle double escaped characters first
@@ -166,9 +166,9 @@ export class ArticleRepository {
         }
     }
 
-    private decodeMalayalamText(text: string | null): string | null {
-        if (!text) return null;
-        
+    private decodeMalayalamText(text: string | null): string | undefined {
+        if (!text) return undefined;
+
         try {
             // Convert legacy encoding to proper Unicode
             const malayalamMap: { [key: string]: string } = {

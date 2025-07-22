@@ -84,6 +84,7 @@ router.get('/latest', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const editorial = await editorialRepo.getEditorialById(req.params.id);
+        console.log('Editorial fetched from database:', editorial);
         if (!editorial) {
             return res.status(404).json({
                 status: 'error',

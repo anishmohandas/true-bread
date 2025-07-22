@@ -1,0 +1,6 @@
+@echo off
+echo Creating placeholder PDF images...
+node scripts\convert-latest-issue.js
+
+echo Starting Angular app...
+ng serve

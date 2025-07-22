@@ -1,0 +1,21 @@
+<div class="pdf-preview-container">
+  <div class="container mx-auto px-4 py-12">
+    <h1 class="text-5xl font-bold mb-6 text-center">Issue Preview</h1>
+    <p class="text-xl text-center mb-12 max-w-3xl mx-auto">Scroll up and down to control the animation speed and direction. Hover over cards to see details.</p>
+
+    <!-- Infinite scrolling cards -->
+    <app-infinite-scroll-cards
+      [pdfId]="pdfId"
+      [cardCount]="cardCount">
+    </app-infinite-scroll-cards>
+
+    <!-- Call to action -->
+    <div class="cta-container mt-12 text-center">
+      <p class="text-xl mb-4">Like what you see?</p>
+      <div class="flex justify-center space-x-4">
+        <a routerLink="/subscribe" class="btn-primary">Subscribe Now</a>
+        <a [routerLink]="['/articles']" class="btn-secondary">Read Articles</a>
+      </div>
+    </div>
+  </div>
+</div>

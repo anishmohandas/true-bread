@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Issue } from '../../shared/interfaces/issue.interface';
 import { IssueService } from '../../services/issue.service';
 import { ScrollTrackerService } from '../../services/scroll-tracker.service';
@@ -19,7 +20,8 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private issueService: IssueService,
     private scrollTrackerService: ScrollTrackerService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -57,6 +59,19 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
       link.click();
     }
   }
+
+  /**
+   * Navigate to the preview page for the current issue
+   */
+  navigateToPreview() {
+    if (this.currentIssue) {
+      this.router.navigate(['/preview', this.currentIssue.id]);
+    } else {
+      this.router.navigate(['/preview']);
+    }
+  }
+
+
 
   ngAfterViewInit() {
     // Set up intersection observer to detect when the component is in view

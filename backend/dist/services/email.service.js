@@ -105,5 +105,27 @@ class EmailService {
             throw error;
         }
     }
+    async sendContactEmail(data) {
+        try {
+            const html = await this.renderTemplate('contact', {
+                name: data.name,
+                email: data.email,
+                subject: data.subject,
+                message: data.message,
+                date: new Date().toLocaleString()
+            });
+            await this.transporter.sendMail({
+                from: `"${data.name}" <${data.email}>`,
+                to: '"True Bread Magazine" <truebreadmedia@gmail.com>',
+                subject: `Contact Form: ${data.subject}`,
+                html,
+                replyTo: data.email
+            });
+        }
+        catch (error) {
+            console.error('Error sending contact email:', error);
+            throw error;
+        }
+    }
 }
 exports.EmailService = EmailService;

@@ -23,9 +23,12 @@
     "@angular/router": "^16.1.0",
     "@types/gsap": "^3.0.0",
     "ejs": "^3.1.10",
+    "fs-extra": "^11.3.0",
     "gsap": "^3.12.7",
     "nodemailer": "^6.10.0",
+    "pdf-lib": "^1.17.1",
     "rxjs": "~7.8.0",
+    "sharp": "^0.34.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },

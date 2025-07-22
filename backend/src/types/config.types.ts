@@ -7,6 +7,7 @@ export interface DatabaseConfig {
     ssl?: {
         rejectUnauthorized: boolean;
     };
+    client_encoding?: string;
 }
 
 export interface EmailConfig {

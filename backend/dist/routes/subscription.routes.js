@@ -56,6 +56,11 @@ router.post('/subscribers', rateLimiter_1.subscriptionLimiter, async (req, res) 
         }
     }
 });
+// Add middleware to ensure proper character encoding
+router.use((req, res, next) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    next();
+});
 // Unsubscribe
 router.delete('/subscribers/unsubscribe/:email', rateLimiter_1.unsubscribeLimiter, async (req, res) => {
     const { email } = req.params;

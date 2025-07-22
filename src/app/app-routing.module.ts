@@ -8,6 +8,7 @@ import { PublicationsComponent } from './components/publications/publications.co
 import { EditorialComponent } from './components/editorial/editorial.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
+import { PdfPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
 const routes: Routes = [
   {
@@ -21,7 +22,9 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'editorial/:id', component: EditorialComponent },
   { path: 'contact', component: ContactComponent },
-  { path: 'subscribe', component: SubscribeComponent }
+  { path: 'subscribe', component: SubscribeComponent },
+  { path: 'preview', component: PdfPreviewComponent },
+  { path: 'preview/:id', component: PdfPreviewComponent }
 ];
 
 @NgModule({

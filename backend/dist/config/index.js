@@ -15,7 +15,8 @@ exports.config = {
         password: process.env.DB_PASSWORD,
         ssl: process.env.NODE_ENV === 'production'
             ? { rejectUnauthorized: false }
-            : undefined
+            : undefined,
+        client_encoding: 'UTF8'
     },
     email: {
         host: process.env.EMAIL_HOST || 'smtp.gmail.com',

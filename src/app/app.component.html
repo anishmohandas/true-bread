@@ -3,13 +3,13 @@
 
 <app-header *ngIf="showComponents"></app-header>
 
-<!-- Main content container -->
-<div class="smooth-scroll">
+<!-- Main content container with touch event handling -->
+<div class="smooth-scroll" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()" (touchcancel)="onTouchCancel()">
   <!-- Footer positioned behind content -->
   <app-footer *ngIf="showComponents" class="parallax-footer"></app-footer>
 
   <!-- Scrollable content above footer -->
-  <div #scrollContent class="smooth-scroll-content no-gap">
+  <div #scrollContent class="smooth-scroll-content no-gap" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()" (touchcancel)="onTouchCancel()">
     <div class="router-outlet-wrapper no-gap">
       <router-outlet></router-outlet>
     </div>

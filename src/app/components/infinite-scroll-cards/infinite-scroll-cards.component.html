@@ -1,0 +1,29 @@
+<div class="infinite-scroll-wrapper">
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading preview pages...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button (click)="loadImages()">Try Again</button>
+  </div>
+
+  <!-- Cards container - matches CodePen example -->
+  <div *ngIf="!loading && !error" class="cards-outer-container">
+    <div #cardsContainer class="cards-container">
+      <!-- Cards -->
+      <div *ngFor="let card of cards" class="panel" [attr.data-id]="card.id">
+        <div class="panel-inner">
+          <img [src]="card.imagePath" [alt]="'Page ' + card.id" class="panel-image"
+               (error)="handleImageError(card)" />
+          <div class="panel-content">
+            <!-- Removed panel number to show only the PDF pages -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

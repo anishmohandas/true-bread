@@ -30,6 +30,8 @@ import { ContactComponent } from './components/contact/contact.component';
 import { LatestEditorialComponent } from './components/latest-editorial/latest-editorial.component';
 import { EditorialComponent } from './components/editorial/editorial.component';
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
+import { InfiniteScrollCardsComponent } from './components/infinite-scroll-cards/infinite-scroll-cards.component';
+import { PdfPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,11 @@ import { SubscribeComponent } from './components/subscribe/subscribe.component';
     LatestEditorialComponent,
     EditorialComponent,
     // Add Subscribe component
-    SubscribeComponent
+    SubscribeComponent,
+    // Add Infinite Scroll Cards component
+    InfiniteScrollCardsComponent,
+    // Add PDF Preview component
+    PdfPreviewComponent
   ],
   imports: [
     BrowserModule,
