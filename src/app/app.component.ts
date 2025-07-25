@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AnimationService } from './services/animation.service';
+import { ScrollService } from './services/scroll.service';
 import { filter } from 'rxjs/operators';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -55,7 +56,8 @@ export class AppComponent implements OnInit {
   constructor(
     private elementRef: ElementRef,
     private router: Router,
-    private animationService: AnimationService
+    private animationService: AnimationService,
+    private scrollService: ScrollService
   ) {}
 
   ngOnInit() {
@@ -82,6 +84,11 @@ export class AppComponent implements OnInit {
       if (this.isHomePage) {
         this.setupScrollListener();
       }
+
+      // Connect scroll service to app component's resize method
+      this.scrollService.resizeCallback = () => {
+        this.scroller.resize();
+      };
     }, 200);
   }
 

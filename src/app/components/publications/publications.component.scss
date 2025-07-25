@@ -2,10 +2,12 @@
   display: block;
   width: 100%;
   padding-top: 100px;
+  padding-bottom: 200px; // Ensure space for footer
 }
 
 .publications-page {
-  min-height: 100vh;
+  min-height: auto; // Remove fixed height constraints
+  padding-bottom: 150px; // Extra space for footer visibility
 }
 
 .publication-item {
