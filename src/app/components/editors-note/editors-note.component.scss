@@ -1,0 +1,375 @@
+.editors-note {
+  width: 100%;
+  background: #f8f8f8;
+  padding: 4rem 0;
+  position: relative;
+  font-family: 'Georgia', 'Times New Roman', serif;
+
+  // Magazine page styling
+  .magazine-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 0 30px rgba(0,0,0,0.1);
+    padding: 4rem;
+    position: relative;
+
+    // Subtle paper texture
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 25% 25%, rgba(0,0,0,0.01) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+    }
+  }
+
+  // Magazine Header
+  .magazine-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #333;
+    position: relative;
+  }
+
+  .header-line {
+    height: 1px;
+    background: #333;
+    width: 100%;
+    margin: 1rem 0;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    font-weight: normal;
+    color: #333;
+    font-family: 'Delight', serif;
+    margin: 1rem 0;
+    line-height: 1.2;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '❦';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      color: #666;
+    }
+
+    &::before {
+      left: -3rem;
+    }
+
+    &::after {
+      right: -3rem;
+    }
+  }
+
+  // Magazine Layout
+  .magazine-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    margin-bottom: 3rem;
+  }
+
+  // Left Column: Editor Info
+  .editor-column {
+    padding-right: 2rem;
+    border-right: 1px solid #ddd;
+  }
+
+  .editor-profile {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .editor-image-frame {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      right: -8px;
+      bottom: -8px;
+      border: 2px solid #333;
+      border-radius: 50%;
+    }
+  }
+
+  .editor-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    will-change: transform, opacity;
+  }
+
+  .editor-details {
+    text-align: center;
+  }
+
+  .editor-name {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: bold;
+    margin: 0 0 0.5rem 0;
+    font-family: 'Delight', serif;
+    will-change: transform, opacity;
+  }
+
+  .editor-title {
+    font-size: 1rem;
+    color: #666;
+    font-style: italic;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    will-change: transform, opacity;
+  }
+
+  .signature-line {
+    width: 80px;
+    height: 1px;
+    background: #333;
+    margin: 1rem auto;
+    will-change: transform, opacity;
+  }
+
+  // Quote Box
+  .quote-box {
+    background: #f9f9f9;
+    border-left: 4px solid #333;
+    padding: 2rem;
+    margin-top: 2rem;
+    position: relative;
+    font-style: italic;
+  }
+
+  .quote-mark {
+    font-size: 4rem;
+    color: #ccc;
+    position: absolute;
+    top: -1rem;
+    left: 1rem;
+    font-family: 'Georgia', serif;
+  }
+
+  .quote-text {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+    padding-left: 2rem;
+  }
+
+  // Right Column: Content
+  .content-column {
+    padding-left: 2rem;
+  }
+
+  // Drop Cap Section
+  .drop-cap-section {
+    margin-bottom: 2rem;
+  }
+
+  .drop-cap-paragraph {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #333;
+    margin: 0;
+    text-align: justify;
+  }
+
+  .drop-cap {
+    float: left;
+    font-size: 4rem;
+    line-height: 3rem;
+    padding-right: 8px;
+    padding-top: 4px;
+    font-family: 'Delight', serif;
+    color: #333;
+    font-weight: bold;
+  }
+
+  // Body Content
+  .body-content {
+    margin-top: 2rem;
+  }
+
+  .body-paragraph {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    text-indent: 2rem;
+  }
+
+  // Section Dividers
+  .section-divider {
+    display: flex;
+    align-items: center;
+    margin: 3rem 0 2rem 0;
+    will-change: transform, opacity;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: #333;
+  }
+
+  .section-title {
+    padding: 0 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Delight', serif;
+  }
+
+  // Closing Statement
+  .closing-statement {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid #ddd;
+  }
+
+  .closing-text {
+    font-size: 1.1rem;
+    color: #555;
+    font-style: italic;
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+  }
+
+  .closing-flourish {
+    font-size: 2rem;
+    color: #333;
+    margin-top: 1rem;
+  }
+
+  // Magazine Footer
+  .magazine-footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #333;
+  }
+
+  .footer-ornament {
+    font-size: 1.5rem;
+    color: #333;
+    letter-spacing: 1rem;
+  }
+
+  // Animation classes
+  .fade-in-element,
+  .slide-in-left,
+  .slide-in-right,
+  .editor-info {
+    will-change: transform, opacity;
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+
+    .magazine-page {
+      padding: 2rem;
+      margin: 0 1rem;
+    }
+
+    .page-title {
+      font-size: 2rem;
+
+      &::before,
+      &::after {
+        display: none;
+      }
+    }
+
+    .magazine-layout {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .editor-column {
+      padding-right: 0;
+      border-right: none;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 2rem;
+    }
+
+    .content-column {
+      padding-left: 0;
+    }
+
+    .editor-image {
+      width: 120px;
+      height: 120px;
+    }
+
+    .drop-cap {
+      font-size: 3rem;
+      line-height: 2.5rem;
+    }
+
+    .body-paragraph {
+      font-size: 1rem;
+      text-indent: 1rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      padding: 0 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .magazine-page {
+      padding: 1.5rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+    }
+
+    .editor-image {
+      width: 100px;
+      height: 100px;
+    }
+
+    .drop-cap {
+      font-size: 2.5rem;
+      line-height: 2rem;
+    }
+
+    .body-paragraph {
+      font-size: 0.9rem;
+    }
+
+    .quote-text {
+      font-size: 0.9rem;
+    }
+  }
+}

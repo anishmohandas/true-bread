@@ -33,6 +33,7 @@ import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { InfiniteScrollCardsComponent } from './components/infinite-scroll-cards/infinite-scroll-cards.component';
 import { PdfPreviewComponent } from './components/pdf-preview/pdf-preview.component';
 import { IssueHighlightsComponent } from './components/issue-highlights/issue-highlights.component';
+import { EditorsNoteComponent } from './components/editors-note/editors-note.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,9 @@ import { IssueHighlightsComponent } from './components/issue-highlights/issue-hi
     InfiniteScrollCardsComponent,
     // Add PDF Preview component
     PdfPreviewComponent,
-    IssueHighlightsComponent
+    IssueHighlightsComponent,
+    // Add Editor's Note component
+    EditorsNoteComponent
   ],
   imports: [
     BrowserModule,
