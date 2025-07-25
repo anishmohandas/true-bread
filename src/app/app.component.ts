@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AnimationService } from './services/animation.service';
+import { ScrollService } from './services/scroll.service'; // <-- import the service
 import { filter } from 'rxjs/operators';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -31,6 +32,15 @@ export class AppComponent implements OnInit {
 
       // Get content height
       let contentHeight = content.getBoundingClientRect().height;
+      //let contentHeight = content.getBoundingClientRect().height;
+      
+      this.scroller.height = contentHeight;
+      this.scroller.setHeight();
+
+      console.log('Content height:', content.getBoundingClientRect().height);
+      if (footer) {
+        console.log('Footer height:', footer.getBoundingClientRect().height);
+      }
 
       // Add extra scroll space to fully reveal the footer
       // This ensures we can scroll far enough to see the entire footer
@@ -53,8 +63,15 @@ export class AppComponent implements OnInit {
   constructor(
     private elementRef: ElementRef,
     private router: Router,
-    private animationService: AnimationService
-  ) {}
+    private animationService: AnimationService,
+    private scrollService: ScrollService // <-- inject the service
+  ) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  }
 
   ngOnInit() {
     // Track preloader state
@@ -73,6 +90,8 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       this.initScroller();
     }, 200);
+
+    this.scrollService.resizeCallback = this.scroller.resize;
   }
 
   private initScroller() {

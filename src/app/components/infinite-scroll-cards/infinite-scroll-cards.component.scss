@@ -1,5 +1,273 @@
+section {
+  position: relative;
+  width: 100%;
+  height: 600px; /* Fixed height instead of viewport height */
+  overflow: hidden;
+}
+
+.intro,
+.outro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f0f0f;
+  color: #fff;
+  height: 400px; /* Smaller height for intro/outro */
+}
+
+.spotlight-intro-text-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10; /* Above background image */
+  pointer-events: none;
+  justify-content: center;
+}
+
+.spotlight-intro-text {
+  flex: 1;
+  position: relative;
+  will-change: transform, opacity;
+  color: #fff; /* White text on background image */
+  font-size: 3rem;
+  font-weight: 500;
+  font-family: 'Delight-Black', sans-serif;
+  opacity: 1;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Shadow for visibility on image */
+}
+
+.spotlight-intro-text:nth-child(1) {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 0.25rem; /* Reduced padding from 2rem to 0.25rem */
+}
+
+.spotlight-intro-text:nth-child(2) {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 0.25rem; /* Reduced padding from 2rem to 0.25rem */
+}
+
+.spotlight-intro-text p {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 500;
+  font-family: 'Delight-Black', sans-serif;
+  line-height: 1;
+  color: #fff; /* White text */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.spotlight-bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Full width to fill screen */
+  height: 100%; /* Full height to fill screen */
+  z-index: 1; /* Background layer */
+  overflow: hidden;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  contain: layout style paint;
+}
+
+.spotlight-bg-img img {
+  width: 100%;
+  //height: 100%;
+  object-fit: cover; /* Ensures image covers the full container while maintaining aspect ratio */
+  transform: scale(1);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.spotlight-titles-container {
+  position: absolute;
+  top: 0;
+  left: 15%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  clip-path: polygon(
+    200px 0px,
+    0px 50%,
+    200px 100%,
+    100% calc(100% + 200px),
+    100% -200px
+  );
+  --before-opacity: 0;
+  --after-opacity: 0;
+  z-index: 10; /* Above background image (z-index: 1) */
+}
+
+/* New separate line elements */
+.spotlight-lines {
+  position: absolute;
+  top: 0;
+  left: 10%; /* Align with Discover text position */
+  width: 50%;
+  height: 100%;
+  z-index: 15;
+  pointer-events: none;
+}
+
+.spotlight-line {
+  position: absolute;
+  width: 3px; /* Vertical lines, so width is thickness */
+  background: #000;
+  transition: opacity 0.3s ease;
+  will-change: opacity;
+  transform-origin: top center;
+}
+
+.spotlight-line-top {
+  top: 0;
+  left: 50px; /* Position after "Discover" text end */
+  height: 50%; /* Extends from top to center (where Discover text is) */
+  transform: rotate(30deg); /* Changed to positive angle to face right */
+  transform-origin: bottom center;
+  opacity: var(--before-opacity, 0);
+}
+
+.spotlight-line-bottom {
+  top: 50%;
+  left: 50px; /* Same position as top line */
+  height: 50%; /* Extends from center to bottom */
+  transform: rotate(-30deg); /* Changed to negative angle to face right */
+  transform-origin: top center;
+  opacity: var(--after-opacity, 0);
+}
+
+/* Keep old pseudo-elements but hide them */
+.spotlight-titles-container::before,
+.spotlight-titles-container::after {
+  display: none;
+}
+
+.spotlight-titles-container::before {
+  top: 50%;
+  left: 50px;
+  transform: rotate(-45deg);
+  opacity: var(--before-opacity, 0);
+}
+
+.spotlight-titles-container::after {
+  top: 50%;
+  left: 50px;
+  transform: rotate(45deg) translateY(20px);
+  opacity: var(--after-opacity, 0);
+}
+
+.spotlight-titles {
+  position: relative;
+  left: 15%;
+  width: 75%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  transform: translateY(100%);
+  z-index: 11; /* Above titles container */
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  color: #000;
+}
+
+.spotlight-titles h1 {
+  color: #000;
+  opacity: 0.25;
+  transition: opacity 0.3s ease;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1;
+  margin: 0;
+  //text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Add shadow for visibility on image */
+}
+
+.spotlight-images {
+  position: absolute;
+  top: 0; /* Align with titles container */
+  right: 0;
+  width: 50%;
+  min-width: 300px;
+  height: 100%; /* Same height as titles container */
+  z-index: 12; /* Above background image and titles */
+  pointer-events: none;
+  overflow: visible; /* Allow content to extend beyond bounds */
+}
+
+.spotlight-img {
+  position: absolute;
+  width: 160px; /* Reduced width for better proportions */
+  height: auto; /* Auto height to maintain aspect ratio */
+  will-change: transform;
+}
+
+.spotlight-img img {
+  width: 100%;
+  height: auto; /* Auto height to maintain aspect ratio */
+  object-fit: contain; /* Contain instead of cover to preserve aspect ratio */
+ // border-radius: 12px;
+  //box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  max-height: 200px; /* Maximum height constraint */
+}
+
+.spotlight-header {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  color: #fff;
+  transition: opacity 0.3s ease;
+  z-index: 13; /* Above all other elements */
+  opacity: 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Add shadow for visibility on image */
+  margin: .25rem;
+}
+
+@media (max-width: 1000px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .intro,
+  .outro {
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .spotlight-titles-container {
+    clip-path: none;
+  }
+
+  .spotlight-titles-container::before,
+  .spotlight-titles-container::after {
+    display: none;
+  }
+
+  .spotlight-titles {
+    left: 0;
+  }
+
+  .spotlight-header {
+    display: none;
+  }
+}
+
 .infinite-scroll-wrapper {
   width: 100%;
+  max-width: 80vw; // Set your preferred max width
+  margin: 0 auto;
   overflow: hidden;
   background-color: transparent; /* Changed to transparent to match parent component */
   position: relative;
@@ -84,21 +352,25 @@
   overflow: hidden;
   border-radius: 20px;
   transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transform: scale(0.85);
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   transform-origin: center center;
   padding: 0; /* Removed padding to make image flush with border */
   background-color: white; /* Ensure white background */
+  
 
-  &:hover, &.active-panel {
+  &:hover,
+  &.active-panel {
     z-index: 20 !important;
+    transform: scale(1);
 
     .panel-inner {
       transform: scale(1.04);
     }
 
     .panel-content {
-      background: transparent; /* Remove overlay on hover/focus */
+      background: transparent;
     }
 
     .panel-title {
@@ -168,4 +440,25 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.spotlight {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Normal viewport height for pinning */
+  min-height: 600px; /* Normal minimum height */
+  overflow: hidden;
+  background-color: transparent;
+}
+
+/* Main spotlight section with background image */
+.spotlight-main-section {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 2; /* Above spotlight container */
+  opacity: 1; /* Always visible */
+  pointer-events: auto;
+  overflow: hidden; /* Contain child elements */
 }

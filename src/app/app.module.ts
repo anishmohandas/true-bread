@@ -32,6 +32,7 @@ import { EditorialComponent } from './components/editorial/editorial.component';
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { InfiniteScrollCardsComponent } from './components/infinite-scroll-cards/infinite-scroll-cards.component';
 import { PdfPreviewComponent } from './components/pdf-preview/pdf-preview.component';
+import { IssueHighlightsComponent } from './components/issue-highlights/issue-highlights.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { PdfPreviewComponent } from './components/pdf-preview/pdf-preview.compon
     // Add Infinite Scroll Cards component
     InfiniteScrollCardsComponent,
     // Add PDF Preview component
-    PdfPreviewComponent
+    PdfPreviewComponent,
+    IssueHighlightsComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +72,7 @@ import { PdfPreviewComponent } from './components/pdf-preview/pdf-preview.compon
     HttpClientModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

@@ -1,29 +1,33 @@
-<div class="infinite-scroll-wrapper">
-  <!-- Loading state -->
-  <div *ngIf="loading" class="loading-container">
-    <div class="spinner"></div>
-    <p>Loading preview pages...</p>
-  </div>
+<section #spotlight class="spotlight">
+  <!-- Single Main Section with background image -->
+  <div class="spotlight-main-section">
+    <!-- Background image for the main section -->
+    <div #bgImg class="spotlight-bg-img">
+      <img src="assets/images/static-background.jpg" alt="True Bread Background" />
+    </div>
 
-  <!-- Error state -->
-  <div *ngIf="error" class="error-container">
-    <p>{{ error }}</p>
-    <button (click)="loadImages()">Try Again</button>
-  </div>
 
-  <!-- Cards container - matches CodePen example -->
-  <div *ngIf="!loading && !error" class="cards-outer-container">
-    <div #cardsContainer class="cards-container">
-      <!-- Cards -->
-      <div *ngFor="let card of cards" class="panel" [attr.data-id]="card.id">
-        <div class="panel-inner">
-          <img [src]="card.imagePath" [alt]="'Page ' + card.id" class="panel-image"
-               (error)="handleImageError(card)" />
-          <div class="panel-content">
-            <!-- Removed panel number to show only the PDF pages -->
-          </div>
-        </div>
+
+    <!-- Clip-path lines as separate elements -->
+    <div class="spotlight-lines">
+      <div class="spotlight-line spotlight-line-top"></div>
+      <div class="spotlight-line spotlight-line-bottom"></div>
+    </div>
+
+    <div #titlesContainerElement class="spotlight-titles-container">
+      <div #titlesContainer class="spotlight-titles">
+        <h1 *ngFor="let item of spotlightItems">{{ item.name }}</h1>
       </div>
     </div>
+
+    <div #imagesContainer class="spotlight-images">
+      <div class="spotlight-img" *ngFor="let item of spotlightItems">
+        <img [src]="item.img" alt="" (load)="onImageLoad()" />
+      </div>
+    </div>
+
+    <div #spotlightHeader class="spotlight-header">
+      <p>Discover</p>
+    </div>
   </div>
-</div>
+</section>

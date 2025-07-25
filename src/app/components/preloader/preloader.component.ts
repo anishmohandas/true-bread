@@ -84,7 +84,7 @@ export class PreloaderComponent implements OnInit {
         }
       })
       .to(".line-wrapper.final-line", {
-        scale: 1.3,
+        scale: 1.1,
         x: "10vw",
         duration: 1.5,
         ease: "power2.inOut",

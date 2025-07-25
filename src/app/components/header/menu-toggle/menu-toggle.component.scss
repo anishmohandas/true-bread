@@ -19,7 +19,7 @@
 .menu-copy {
   position: absolute;
   top: 50%;
-  left: 30px;
+  left: 15px;
   transform: translateY(-50%);
   color: #0f0f0f;
   transition: left 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -29,14 +29,14 @@
 .menu-copy p {
   text-transform: none;
   font-weight: 800;
-  font-size: 15px;
+  font-size: 20px;
   margin: 0;
   padding: 0;
   font-family: 'Delight', sans-serif;
 }
 
 .menu-toggle:hover .menu-copy {
-  left: 20px;
+  left: 15px;
 }
 
 .menu-toggle.opened .menu-copy {

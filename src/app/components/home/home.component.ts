@@ -14,7 +14,7 @@ import { Article } from '../../shared/interfaces/article.interface';
 export class HomeComponent implements OnInit, AfterViewInit {
   private hasAnimated = false;
   featuredArticles: Article[] = [];
-  showContent = false;
+  showContent = true; // Set to true by default to show content immediately
   showPreloader = false;
   isHomePage = true;
 
@@ -32,10 +32,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    console.log('🏠 Home component ngOnInit called');
+    console.log('🏠 isHomePage:', this.isHomePage);
+    console.log('🏠 showContent:', this.showContent);
+
     // Only fetch articles if we're on the home page
     if (this.isHomePage) {
+      console.log('🏠 Fetching featured articles...');
       this.articleService.getFeaturedArticles().subscribe(
-        articles => this.featuredArticles = articles
+        articles => {
+          console.log('🏠 Featured articles received:', articles);
+          this.featuredArticles = articles;
+        }
       );
 
       // Check if preloader should be shown

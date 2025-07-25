@@ -21,16 +21,14 @@
           <div class="latest-issue-logo-container mx-auto">
             <h1 class="latest-issue-title">TRUE BREAD</h1>
           </div>
-
-          <!-- PDF Preview Section -->
-          <div class="preview-container mb-5">
-            <!-- PDF Preview Component -->
-            <app-infinite-scroll-cards
-              [pdfId]="currentIssue.id"
-              [pdfUrl]="currentIssue.pdfUrl"
-              [cardCount]="5">
-            </app-infinite-scroll-cards>
+          <!-- Magazine Cover -->
+          <div class="max-w-sm mb-8">
+            <div class="relative group">
+              <img [src]="currentIssue.coverImage" [alt]="currentIssue.month + ' Issue Cover'"
+                class="w-full h-auto transition-transform duration-500 group-hover:scale-105" />
+            </div>
           </div>
+
         </div>
         <!-- Header -->
         <div class="text-center mb-1">
@@ -40,31 +38,33 @@
         </div>
         <!-- Actions -->
         <div class="flex items-center space-x-4 mb-4">
-          <button
-            (click)="onViewPDF()"
-            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md"
-          >
+          <button (click)="onViewPDF()"
+            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md">
             Read
           </button>
           <span class="text-black text-xl font-light">|</span>
-          <button
-            (click)="onDownloadPDF()"
-            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md"
-          >
-            Get
+          <button (click)="onDownloadPDF()"
+            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md">
+            Download
           </button>
         </div>
       </ng-container>
     </div>
   </section>
 </div>
+<!-- <div>
+  <ng-container *ngIf="!loading && !error && currentIssue">
+    <div class="preview-container mb-5">
+      <app-infinite-scroll-cards [pdfId]="currentIssue.id" [cardCount]="5">
+      </app-infinite-scroll-cards>
+    </div>
+  </ng-container>
+</div> -->
 
-
-
-
-
-
-
-
-
-
+<!-- Issue Highlights Section -->
+<div>
+  <ng-container *ngIf="!loading && !error && currentIssue">
+    <app-issue-highlights [pdfId]="currentIssue.id" [cardCount]="6">
+    </app-issue-highlights>
+  </ng-container>
+</div>

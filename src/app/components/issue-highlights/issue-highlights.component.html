@@ -1,0 +1,38 @@
+<section class="issue-highlights">
+  <!-- Initial Content Layout (Single Column) -->
+  <div class="initial-layout">
+    <div class="initial-content">
+      <h2 class="main-header">Issue Highlights</h2>
+      <p class="description-text">
+        Discover the most compelling stories and insights from our latest publication.
+        Each highlight captures the essence of contemporary discourse and thought-provoking perspectives.
+      </p>
+    </div>
+  </div>
+
+  <!-- Category Layout (Two Column) -->
+  <div class="category-layout">
+    <!-- Left Column: Category Text -->
+    <div class="text-column">
+      <div class="text-content">
+        <div class="category-display">
+          <h2 class="category-title">{{ categories[currentCategoryIndex].title }}</h2>
+          <p class="category-description">{{ categories[currentCategoryIndex].description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Category Images -->
+    <div class="images-column">
+      <div class="single-image-container" #singleImageContainer>
+        <div class="highlight-card" *ngIf="highlightItems.length > 0">
+          <div class="highlight-image">
+            <div class="image-window">
+              <img [src]="highlightItems[0].img" [alt]="highlightItems[0].name" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

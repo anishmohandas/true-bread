@@ -25,6 +25,7 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    console.log('📰 Latest Issue component ngOnInit called');
     this.loadLatestIssue();
   }
 

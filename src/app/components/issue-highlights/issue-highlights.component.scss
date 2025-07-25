@@ -1,0 +1,252 @@
+.issue-highlights {
+  width: 100%;
+  height: 600px; /* Fixed height to prevent stacking */
+  position: relative;
+  background: #000;
+  //padding: 4rem 2rem;
+}
+
+/* Initial Layout (Single Column) */
+.initial-layout {
+  position: absolute; /* Overlay positioning */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Full height of parent */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Category Layout (Two Column) */
+.category-layout {
+  position: absolute; /* Overlay positioning */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* Full height of parent */
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  opacity: 0; /* Hidden initially */
+}
+
+/* Initial single-column layout */
+/* Category Layout Styling */
+.category-layout .text-column {
+  flex: 0 0 50%; /* Increase to 50% width for better balance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem; /* More padding for better centering */
+}
+
+.category-layout .images-column {
+  flex: 0 0 50%; /* Equal 50% width for images */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem; /* Add some padding for better centering */
+}
+
+/* Left Column: Text Content */
+.text-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  will-change: transform; /* Optimize for GSAP animations */
+}
+
+.text-content {
+  text-align: center;
+  max-width: 500px;
+  position: relative; /* Support absolute positioning of category display */
+}
+
+/* Text content in category layout */
+.category-layout .text-content {
+  width: 100%;
+  /* Removed max-width to allow text to spread out */
+  margin: 0 auto; /* Center the content block */
+  padding: 0 1rem; /* Add horizontal padding */
+}
+
+.main-header {
+  font-size: 4rem;
+  font-weight: bold;
+  color: white;
+  font-family: 'Delight', serif;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+  will-change: transform, opacity; /* Optimize for animations */
+}
+
+.description-text {
+  font-size: 1.2rem;
+  color: #ccc;
+  line-height: 1.6;
+  margin: 0 0 3rem 0;
+  font-weight: 300;
+  will-change: transform, opacity; /* Optimize for animations */
+}
+
+/* Initial Content (Single Column Layout) */
+.initial-content {
+  text-align: center;
+  max-width: 800px;
+  will-change: transform, opacity;
+}
+
+/* Category Loop Display (Two Column Layout) */
+.category-display {
+  width: 100%;
+  will-change: transform, opacity;
+}
+
+.category-title {
+  font-size: 4rem;
+  font-weight: bold;
+  color: white;
+  font-family: 'Delight', serif;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+  will-change: transform, opacity;
+}
+
+.category-description {
+  font-size: 1.2rem;
+  color: #ccc;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
+  will-change: transform, opacity;
+}
+
+/* Right Column: Images */
+.images-column {
+  height: 100%; /* Match container height */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Remove padding for flush look */
+  box-sizing: border-box;
+  will-change: transform, opacity; /* Optimize for animations */
+}
+
+.single-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Scrollbar styles removed - no longer needed for single image */
+
+.highlight-card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 350px;
+  height: 100%; /* Full height for flush look */
+}
+
+.highlight-image {
+  width: 100%;
+  height: 100%; /* Match parent container height */
+  position: relative;
+  //background: #000;
+  overflow: hidden;
+  will-change: transform; /* Optimize for GSAP frame animation */
+}
+
+/* Image window container */
+.image-window {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: transparent;
+}
+
+/* Base image layer - full size, flush to container */
+.highlight-image img {
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  object-fit: contain; /* Fit entire image without cropping */
+  display: block;
+  position: absolute;
+  top: 0; /* Flush to top */
+  left: 0; /* Flush to left */
+  will-change: transform;
+  transform-origin: center center; /* Ensure scaling from center */
+}
+
+/* Removed clip-path frame and shadow for sleek, flush look */
+
+.highlight-content {
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.highlight-title {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Navigation arrows removed - single image display */
+
+@media (max-width: 768px) {
+  .highlights-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .highlights-container:not(.two-column-layout) .text-column,
+  .highlights-container.two-column-layout .text-column {
+    flex: none;
+    width: 100%;
+    padding: 2rem 1rem;
+  }
+
+  .highlights-container:not(.two-column-layout) .images-column {
+    display: none;
+  }
+
+  .highlights-container.two-column-layout .images-column {
+    display: flex;
+    width: 100%;
+    height: 60vh;
+  }
+
+  .main-header {
+    font-size: 2.5rem;
+  }
+
+  .description-text {
+    font-size: 1rem;
+  }
+
+  .images-column {
+    width: 100%;
+    height: 60vh;
+  }
+
+  .single-image-container {
+    padding: 1rem;
+  }
+
+  .highlight-card {
+    width: 280px;
+  }
+
+  .highlight-image {
+    height: 400px;
+  }
+}

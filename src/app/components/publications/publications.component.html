@@ -43,6 +43,7 @@
             <img
               [src]="publication.coverImage"
               [alt]="publication.title"
+              (load)="onImageLoad()"
               class="w-full h-auto transition-transform duration-500 group-hover:scale-105"
             >
           </div>
@@ -63,7 +64,7 @@
             (click)="onDownloadPDF(publication)"
             class="px-6 py-2 text-black hover:text-stone-700 transition-colors uppercase font-poppins text-md"
           >
-            Get
+            Download
           </button>
         </div>
       </div>

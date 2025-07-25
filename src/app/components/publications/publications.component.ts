@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Publication } from '../../shared/interfaces/publication.interface';
 import { PublicationsService } from '../../services/publications.service';
+import { ScrollService } from 'src/app/services/scroll.service';
 
 @Component({
   selector: 'app-publications',
@@ -14,7 +15,7 @@ export class PublicationsComponent implements OnInit {
   selectedYear: number | null = null;
   years: number[] = [];
 
-  constructor(private publicationsService: PublicationsService) {}
+  constructor(private publicationsService: PublicationsService, private scrollService: ScrollService) {}
 
   ngOnInit() {
     this.publicationsService.getAllPublications().subscribe({
@@ -51,5 +52,9 @@ export class PublicationsComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  onImageLoad() {
+    this.scrollService.triggerResize();
   }
 }

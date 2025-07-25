@@ -26,13 +26,16 @@
 .footer {
   position: relative;
   width: 100%;
-  height: auto; // Auto height to fit content
-  background-color: #1a1a1a;
-  will-change: transform;
-  transform-origin: bottom;
-  color: white; // Set text color to white for all footer content
-  padding-bottom: 1rem; // Add some padding at the bottom
-  margin-top: 0; // Ensure no top margin
+  height: auto; // or your preferred height
+  background: linear-gradient(to bottom, #1a1a1a 60%, #2d3748 100%);
+  background-attachment: fixed; // This creates the parallax effect
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding-bottom: 1rem;
+  margin-top: 0;
+  overflow: hidden;
+  z-index: 1;
 
   // Make all links white and ensure visibility
   a, div, p, h1, h2, h3, h4, h5, h6, span {

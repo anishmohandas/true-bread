@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleService } from '../../services/article.service';
-import { ShareService } from '../../services/share.service';
 import { Article } from '../../shared/interfaces/article.interface';
 
 @Component({
@@ -16,8 +15,7 @@ export class ArticlesComponent implements OnInit {
   error = false;
 
   constructor(
-    private articleService: ArticleService,
-    private shareService: ShareService
+    private articleService: ArticleService
   ) {}
 
   ngOnInit(): void {
@@ -48,70 +46,4 @@ export class ArticlesComponent implements OnInit {
     const img = event.target as HTMLImageElement;
     img.src = '/assets/images/placeholder.jpg';
   }
-
-  /**
-   * Share an article via WhatsApp
-   * @param article The article to share
-   * @param event The click event (to prevent navigation)
-   */
-  shareViaWhatsApp(article: Article, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Construct the article URL
-    const baseUrl = window.location.origin;
-    const articleUrl = `${baseUrl}/articles/${article.id}`;
-
-    // Use the share service to share via WhatsApp
-    this.shareService.shareViaWhatsApp(article, articleUrl);
-  }
-
-  /**
-   * Share an article via Facebook
-   * @param article The article to share
-   * @param event The click event (to prevent navigation)
-   */
-  shareViaFacebook(article: Article, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Construct the article URL
-    const baseUrl = window.location.origin;
-    const articleUrl = `${baseUrl}/articles/${article.id}`;
-
-    // Use the share service to share via Facebook
-    this.shareService.shareViaFacebook(articleUrl);
-  }
-
-  /**
-   * Share an article via X (Twitter)
-   * @param article The article to share
-   * @param event The click event (to prevent navigation)
-   */
-  shareViaX(article: Article, event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Construct the article URL
-    const baseUrl = window.location.origin;
-    const articleUrl = `${baseUrl}/articles/${article.id}`;
-
-    // Use the share service to share via X
-    this.shareService.shareViaX(article, articleUrl);
-  }
-
-  /**
-   * Share an article via Instagram
-   * @param event The click event (to prevent navigation)
-   */
-  shareViaInstagram(event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Use the share service to share via Instagram
-    this.shareService.shareViaInstagram();
-  }
 }
-
-
-

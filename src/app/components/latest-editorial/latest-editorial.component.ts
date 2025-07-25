@@ -19,6 +19,7 @@ export class LatestEditorialComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    console.log('✍️ Latest Editorial component ngOnInit called');
     this.editorialService.getLatestEditorial().subscribe({
       next: (response) => {
         if (!response?.data) {
