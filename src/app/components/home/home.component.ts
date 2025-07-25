@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   showContent = true; // Set to true by default to show content immediately
   showPreloader = false;
   isHomePage = true;
+  isAtLastSection = false; // Track if we're at the last section
 
   constructor(
     private animationService: AnimationService,
@@ -57,6 +58,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.showContent = true;
         }, 1000);
       });
+
+      // Setup scroll listener for navigation ball
+      this.setupScrollListener();
     }
   }
 
@@ -117,7 +121,59 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  
+  // Old method removed - using new clean implementation below
+
+  // Clean navigation ball methods
+  private setupScrollListener() {
+    window.addEventListener('scroll', () => {
+      this.checkLastSection();
+    });
+  }
+
+  private checkLastSection() {
+    const testimonialsElement = document.querySelector('app-testimonials');
+    if (testimonialsElement) {
+      const rect = testimonialsElement.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      this.isAtLastSection = isVisible;
+    }
+  }
+
+  scrollToNextSection() {
+    if (this.isAtLastSection) {
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Define sections in order
+    const sections = [
+      'app-latest-issue',
+      'app-issue-highlights',
+      'app-editors-note',
+      'app-featured-articles',
+      'app-subscription',
+      'app-testimonials'
+    ];
+
+    // Find next section to scroll to
+    const currentScroll = window.scrollY + window.innerHeight / 2;
+
+    for (const sectionSelector of sections) {
+      const element = document.querySelector(sectionSelector);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const elementTop = rect.top + window.scrollY;
+
+        if (elementTop > currentScroll) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+      }
+    }
+  }
+
+
 }
 
 

@@ -49,6 +49,8 @@ export class AppComponent implements OnInit {
     }
   };
   showComponents = false;
+  isHomePage = false;
+  isAtLastSection = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -62,16 +64,24 @@ export class AppComponent implements OnInit {
       seen => this.showComponents = seen
     );
 
-    // Reset preloader on navigation
+    // Reset preloader on navigation and detect home page
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
+    ).subscribe((event) => {
       this.animationService.resetPreloader();
+      const navEvent = event as NavigationEnd;
+      this.isHomePage = navEvent.url === '/' || navEvent.url === '/home';
     });
+
+    // Initial check for home page
+    this.isHomePage = this.router.url === '/' || this.router.url === '/home';
 
     // Wait for content to load
     setTimeout(() => {
       this.initScroller();
+      if (this.isHomePage) {
+        this.setupScrollListener();
+      }
     }, 200);
   }
 
@@ -130,6 +140,8 @@ export class AppComponent implements OnInit {
         } else {
           document.body.classList.remove('footer-revealed');
         }
+
+        // Removed scroll indicator logic
       }
     }
   };
@@ -232,5 +244,83 @@ export class AppComponent implements OnInit {
   @HostListener('touchcancel')
   onTouchCancel() {
     this.scroller.isTouching = false;
+  }
+
+  // Clean navigation ball methods
+  private setupScrollListener() {
+    window.addEventListener('scroll', () => {
+      this.checkLastSection();
+    });
+  }
+
+  private checkLastSection() {
+    const testimonialsElement = document.querySelector('app-testimonials');
+    if (testimonialsElement) {
+      const rect = testimonialsElement.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      this.isAtLastSection = isVisible;
+    }
+  }
+
+  scrollToNextSection() {
+    if (this.isAtLastSection) {
+      // Use the app's scroll system to go to top - don't interfere with parallax
+      this.scrollToPosition(0);
+      return;
+    }
+
+    // Define sections in order
+    const sections = [
+      'app-latest-issue',
+      'app-issue-highlights',
+      'app-editors-note',
+      'app-featured-articles',
+      'app-subscription',
+      'app-testimonials'
+    ];
+
+    // Find next section to scroll to
+    const currentScroll = window.scrollY + window.innerHeight / 2;
+
+    for (const sectionSelector of sections) {
+      const element = document.querySelector(sectionSelector);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        const elementTop = rect.top + window.scrollY;
+
+        if (elementTop > currentScroll) {
+          // Use the app's scroll system instead of native scrollIntoView
+          this.scrollToPosition(elementTop);
+          return;
+        }
+      }
+    }
+  }
+
+  private scrollToPosition(targetY: number) {
+    // Use the app's smooth scrolling system to avoid interfering with parallax
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    const duration = 1000; // 1 second
+    let startTime: number | null = null;
+
+    const animateScroll = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+
+      // Easing function for smooth animation
+      const easeInOutCubic = (t: number) => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+      const easedProgress = easeInOutCubic(progress);
+
+      const currentY = startY + (distance * easedProgress);
+      window.scrollTo(0, currentY);
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+
+    requestAnimationFrame(animateScroll);
   }
 }

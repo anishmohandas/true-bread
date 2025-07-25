@@ -152,6 +152,17 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
     window.addEventListener('scroll', this.scrollListener);
     console.log('Added scroll listener for latest issue section');
   }
+
+  scrollToNextSection() {
+    // Scroll to the issue highlights section
+    const issueHighlightsElement = document.querySelector('app-issue-highlights');
+    if (issueHighlightsElement) {
+      issueHighlightsElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
 }
 
 
