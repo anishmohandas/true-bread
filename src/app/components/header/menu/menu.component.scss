@@ -76,30 +76,63 @@
       letter-spacing: -1.5px;
       line-height: 125%;
       font-family: 'Montserrat-Bold', sans-serif;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       display: inline-block;
       position: relative;
+      overflow: hidden;
       will-change: transform;
+      perspective: 1000px;
+
+      // Original text
+      .text-original {
+        display: block;
+        transform-origin: center;
+        backface-visibility: hidden;
+      }
+
+      // Hover text (duplicate)
+      &::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: #ccc;
+        display: flex;
+        align-items: center;
+        transform: rotateX(-90deg);
+        transform-origin: center;
+        backface-visibility: hidden;
+      }
 
       &:hover {
-        color: #ccc !important;
-        animation: linkHover 0.4s ease-out forwards;
+        transform: translateX(30px) scale(1.05);
+        transition: transform 0.4s ease;
+
+        .text-original {
+          transform: rotateX(90deg);
+          transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        &::after {
+          transform: rotateX(0deg);
+          transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
       }
 
       &:not(:hover) {
-        animation: linkHoverOut 0.4s ease-out forwards;
-      }
-    }
-
-    @keyframes linkHover {
-      to {
-        transform: translateX(30px) scale(1.05);
-      }
-    }
-
-    @keyframes linkHoverOut {
-      to {
         transform: translateX(0px) scale(1);
+        transition: transform 0.4s ease;
+
+        .text-original {
+          transform: rotateX(0deg);
+          transition: none; // No transition on hover out
+        }
+
+        &::after {
+          transform: rotateX(-90deg);
+          transition: none; // No transition on hover out
+        }
       }
     }
   }
@@ -143,12 +176,62 @@
       a {
         color: #fff;
         text-decoration: none;
-        transition: all 0.4s ease;
         display: inline-block;
+        position: relative;
+        overflow: hidden;
+        perspective: 1000px;
+
+        // Original text
+        .text-original {
+          display: block;
+          transform-origin: center;
+          backface-visibility: hidden;
+        }
+
+        // Hover text (duplicate)
+        &::after {
+          content: attr(data-text);
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          color: #ccc;
+          display: flex;
+          align-items: center;
+          transform: rotateX(-90deg);
+          transform-origin: center;
+          backface-visibility: hidden;
+        }
 
         &:hover {
-          color: #ccc;
           transform: translateX(20px) scale(1.1);
+          transition: transform 0.4s ease;
+
+          .text-original {
+            transform: rotateX(90deg);
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          }
+
+          &::after {
+            transform: rotateX(0deg);
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          }
+        }
+
+        &:not(:hover) {
+          transform: translateX(0px) scale(1);
+          transition: transform 0.4s ease;
+
+          .text-original {
+            transform: rotateX(0deg);
+            transition: none;
+          }
+
+          &::after {
+            transform: rotateX(-90deg);
+            transition: none;
+          }
         }
       }
     }
@@ -179,10 +262,62 @@
 
       &.link {
         cursor: pointer;
-        transition: color 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        perspective: 1000px;
+        display: inline-block;
+
+        // Original text
+        .text-original {
+          display: block;
+          transform-origin: center;
+          backface-visibility: hidden;
+        }
+
+        // Hover text (duplicate)
+        &::after {
+          content: attr(data-text);
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          color: #ccc;
+          display: flex;
+          align-items: center;
+          transform: rotateX(-90deg);
+          transform-origin: center;
+          backface-visibility: hidden;
+        }
 
         &:hover {
-          color: #ccc;
+          transform: translateX(20px) scale(1.1) !important;
+          transition: transform 0.4s ease;
+
+          .text-original {
+            transform: rotateX(90deg);
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          }
+
+          &::after {
+            transform: rotateX(0deg);
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          }
+        }
+
+        &:not(:hover) {
+          transform: translateX(0px) scale(1) !important;
+          transition: transform 0.4s ease;
+
+          .text-original {
+            transform: rotateX(0deg);
+            transition: none;
+          }
+
+          &::after {
+            transform: rotateX(-90deg);
+            transition: none;
+          }
         }
       }
     }

@@ -5,7 +5,9 @@
     </div>
     <div class="links">
       <div class="link " *ngFor="let link of links">
-        <a [routerLink]="[link.url]" (click)="navigateToRoute(link.url)">{{link.text}}</a>
+        <a [routerLink]="[link.url]" (click)="navigateToRoute(link.url)" [attr.data-text]="link.text">
+          <span class="text-original">{{link.text}}</span>
+        </a>
       </div>
     </div>
 
@@ -17,8 +19,8 @@
           <p class="pb-5 font-bold">Follow Us</p>
           <p *ngFor="let social of socialLinks">
             <a [href]="social.url" target="_blank" rel="noopener noreferrer"
-              [title]="'Visit our ' + social.name + ' page'">
-              {{social.name}}
+              [title]="'Visit our ' + social.name + ' page'" [attr.data-text]="social.name">
+              <span class="text-original">{{social.name}}</span>
             </a>
           </p>
         </div>
@@ -28,7 +30,9 @@
       <div class="subscribe-link-container">
         <div class="sub-col">
           <p class="pb-5 font-bold">Subscribe</p>
-          <p class="link" (click)="navigateToRoute('/subscribe')">Join Our Newsletter</p>
+          <p class="link" (click)="navigateToRoute('/subscribe')" data-text="Join Our Newsletter">
+            <span class="text-original">Join Our Newsletter</span>
+          </p>
         </div>
       </div>
     </div>
