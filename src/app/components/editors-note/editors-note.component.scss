@@ -1,14 +1,17 @@
+// Import Old Standard TT font
+@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
+
 .editors-note {
   width: 100%;
-  background: white;
-  padding: 3rem 0;
+  background: #E7E1DA;
+  padding: 2rem 0;
   position: relative;
   font-family: 'Georgia', 'Times New Roman', serif;
 
   .container {
-    max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1rem;
   }
 
   // Loading and Error States
@@ -26,32 +29,24 @@
 
   // Main Content
   .main-content {
-    max-width: 1000px;
+    width: 100%;
     margin: 0 auto;
   }
 
-  // Header Row: Editor + Title
-  .header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #e0e0e0;
-  }
-
+  // Editor Profile (now in left column)
   .editor-profile {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 1.5rem;
+    text-align: center;
   }
 
   .editor-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    //border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #f0f0f0;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
 
@@ -61,35 +56,51 @@
   }
 
   .editor-name {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     font-weight: 600;
     color: #333;
-    margin: 0 0 0.25rem 0;
-    font-family: 'Delight', serif;
+    margin: 0 0 0.5rem 0;
+    font-family: 'Old Standard TT', serif;
   }
 
   .editor-role {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #666;
     margin: 0;
     font-style: italic;
   }
 
   .section-title {
-    font-size: 2.5rem;
-    font-weight: 300;
-    color: #333;
-    margin: 0;
-    font-family: 'Delight', serif;
+    margin: 0 0 2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .title-editor {
+    font-size: 4rem;
+    font-weight: 400;
+    color: #2c3e50;
+    font-family: 'Old Standard TT', 'Georgia', 'Times New Roman', serif;
     letter-spacing: 1px;
+  }
+
+  .title-note {
+    font-size: 6.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    font-family: 'Old Standard TT', 'Georgia', 'Times New Roman', serif;
+    font-style: italic;
+    letter-spacing: -2px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
   // Magazine Style Two-Column Content
   .magazine-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    margin-top: 2rem;
+    grid-template-columns: 30% 70%;
+    gap: 3rem;
+    margin-top: 1.5rem;
   }
 
   .content-column {
@@ -97,63 +108,47 @@
   }
 
   .left-column {
-    padding-right: 2rem;
-    border-right: 1px solid #e0e0e0;
+    padding-right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 100%;
   }
 
   .right-column {
-    padding-left: 2rem;
+    padding-left: 1.5rem;
   }
 
   // Typography
   .paragraph {
     font-size: 1.1rem;
-    line-height: 1.8;
+    line-height: 1.5;
     color: #444;
     margin-bottom: 1.5rem;
     text-align: justify;
     hyphens: auto;
   }
 
-  // Drop Cap
-  .drop-cap {
-    float: left;
-    font-size: 4rem;
-    line-height: 3.2rem;
-    padding-right: 8px;
-    padding-top: 4px;
-    font-family: 'Delight', serif;
-    color: #333;
-    font-weight: bold;
-  }
+  // Drop cap styles removed - using clean paragraph format
 
   // Column Subtitles
   .column-subtitle {
     font-size: 1.3rem;
     font-weight: 600;
     color: #333;
-    margin: 2rem 0 1rem 0;
+    margin: 1.5rem 0 1rem 0;
     font-family: 'Delight', serif;
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -0.5rem;
-      left: 0;
-      width: 50px;
-      height: 2px;
-      background: #333;
-    }
   }
 
   // Quote Box
   .quote-box {
     background: #f8f9fa;
-    border-left: 4px solid #333;
-    padding: 1.5rem;
+    padding: 2rem;
     margin: 2rem 0;
     position: relative;
+    border-radius: 8px;
 
     blockquote {
       font-size: 1.1rem;
@@ -161,25 +156,31 @@
       color: #555;
       margin: 0;
       line-height: 1.6;
+      text-align: left;
+      position: relative;
+      padding: 1.5rem 0;
+      max-width: 100%;
 
       &::before {
         content: '"';
-        font-size: 3rem;
+        font-size: 2.5rem;
         color: #ccc;
         position: absolute;
-        top: -0.5rem;
-        left: 1rem;
-        font-family: 'Georgia', serif;
+        top: 0;
+        left: -0.5rem;
+        font-family: 'Old Standard TT', serif;
+        line-height: 1;
       }
 
       &::after {
         content: '"';
-        font-size: 3rem;
+        font-size: 2.5rem;
         color: #ccc;
         position: absolute;
-        bottom: -2rem;
-        right: 1rem;
-        font-family: 'Georgia', serif;
+        bottom: 0;
+        right: -0.5rem;
+        font-family: 'Old Standard TT', serif;
+        line-height: 1;
       }
     }
   }
@@ -190,6 +191,13 @@
   }
 
   // Responsive Design
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .magazine-content {
+      grid-template-columns: 35% 65%;
+      gap: 2.5rem;
+    }
+  }
+
   @media (max-width: 768px) {
     padding: 2rem 0;
 
@@ -197,15 +205,10 @@
       padding: 0 1rem;
     }
 
-    .header-row {
-      flex-direction: column;
-      gap: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
     .editor-profile {
       justify-content: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
     }
 
     .editor-image {
@@ -221,8 +224,12 @@
       font-size: 0.9rem;
     }
 
-    .section-title {
-      font-size: 2rem;
+    .title-editor {
+      font-size: 3rem;
+    }
+
+    .title-note {
+      font-size: 4.5rem;
     }
 
     .magazine-content {
@@ -232,20 +239,15 @@
 
     .left-column {
       padding-right: 0;
-      border-right: none;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 2rem;
+      padding-bottom: 1rem;
     }
 
     .right-column {
       padding-left: 0;
-      padding-top: 2rem;
+      padding-top: 1rem;
     }
 
-    .drop-cap {
-      font-size: 3rem;
-      line-height: 2.5rem;
-    }
+    // Drop cap styles removed
 
     .paragraph {
       font-size: 1rem;
@@ -268,14 +270,15 @@
       font-size: 1.1rem;
     }
 
-    .section-title {
-      font-size: 1.8rem;
+    .title-editor {
+      font-size: 2rem;
     }
 
-    .drop-cap {
-      font-size: 2.5rem;
-      line-height: 2rem;
+    .title-note {
+      font-size: 3rem;
     }
+
+    // Drop cap styles removed
 
     .paragraph {
       font-size: 0.95rem;

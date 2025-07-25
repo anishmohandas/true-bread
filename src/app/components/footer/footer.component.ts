@@ -11,8 +11,9 @@ interface MenuItem {
 
 interface SocialLink {
   icon: string;
-  link: string;
+  url: string;
   alt: string;
+  name: string;
 }
 
 @Component({
@@ -56,9 +57,24 @@ export class FooterComponent implements OnInit {
   ];
 
   socialLinks: SocialLink[] = [
-    { icon: 'assets/images/facebook.svg', link: '#', alt: 'Facebook' },
-    { icon: 'assets/images/x-social-media-white-icon.svg', link: '#', alt: 'X' },
-    { icon: 'assets/images/instagram.svg', link: '#', alt: 'Instagram' }
+    {
+      icon: 'assets/images/facebook.svg',
+      url: 'https://www.facebook.com/people/True-Bread-Media/61574408447773',
+      alt: 'Facebook',
+      name: 'Facebook'
+    },
+    {
+      icon: 'assets/images/youtube.svg',
+      url: 'https://www.youtube.com/@truebreadmedia',
+      alt: 'YouTube',
+      name: 'YouTube'
+    },
+    {
+      icon: 'assets/images/instagram.svg',
+      url: 'https://www.instagram.com/truebreadmedia/',
+      alt: 'Instagram',
+      name: 'Instagram'
+    }
   ];
 }
 

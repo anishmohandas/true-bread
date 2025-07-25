@@ -3,6 +3,12 @@ import { Router } from '@angular/router';
 import { gsap } from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
 
+interface SocialLink {
+  name: string;
+  url: string;
+  alt: string;
+}
+
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -33,12 +39,22 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
     ''
   ];
 
-  socialLinks = [
-    'Instagram',
-    'Facebook',
-    'X',
-    '',
-    ''
+  socialLinks: SocialLink[] = [
+    {
+      name: 'Instagram',
+      url: 'https://www.instagram.com/truebreadmedia/',
+      alt: 'Instagram'
+    },
+    {
+      name: 'Facebook',
+      url: 'https://www.facebook.com/people/True-Bread-Media/61574408447773',
+      alt: 'Facebook'
+    },
+    {
+      name: 'YouTube',
+      url: 'https://www.youtube.com/@truebreadmedia',
+      alt: 'YouTube'
+    }
   ];
 
   constructor(
@@ -128,6 +144,99 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
     this.headerText.nativeElement.innerHTML = splitText;
   }
 
+  private setupLinkHoverAnimations(): void {
+    // Wait longer for DOM to be ready and menu to be initialized
+    setTimeout(() => {
+      console.log('Setting up hover animations...');
+
+      // Main navigation links
+      const navLinks = this.el.nativeElement.querySelectorAll('.links .link a');
+      console.log('Found nav links:', navLinks.length);
+
+      navLinks.forEach((link: HTMLElement, index: number) => {
+        console.log(`Setting up animation for nav link ${index}:`, link);
+
+        link.addEventListener('mouseenter', () => {
+          console.log('Nav link hover enter');
+          gsap.to(link, {
+            transform: "translateX(30px) scale(1.05)",
+            duration: 0.4,
+            ease: "power2.out",
+            overwrite: "auto"
+          });
+        });
+
+        link.addEventListener('mouseleave', () => {
+          console.log('Nav link hover leave');
+          gsap.to(link, {
+            transform: "translateX(0px) scale(1)",
+            duration: 0.4,
+            ease: "power2.out",
+            overwrite: "auto"
+          });
+        });
+      });
+
+      // Social links
+      const socialLinks = this.el.nativeElement.querySelectorAll('.socials a');
+      console.log('Found social links:', socialLinks.length);
+
+      socialLinks.forEach((link: HTMLElement, index: number) => {
+        console.log(`Setting up animation for social link ${index}:`, link);
+
+        link.addEventListener('mouseenter', () => {
+          console.log('Social link hover enter');
+          gsap.to(link, {
+            x: 20,
+            scale: 1.1,
+            duration: 0.4,
+            ease: "power2.out",
+            force3D: true
+          });
+        });
+
+        link.addEventListener('mouseleave', () => {
+          console.log('Social link hover leave');
+          gsap.to(link, {
+            x: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: "power2.out",
+            force3D: true
+          });
+        });
+      });
+
+      // Subscribe link
+      const subscribeLink = this.el.nativeElement.querySelector('.subscribe-link-container .link');
+      console.log('Found subscribe link:', subscribeLink);
+
+      if (subscribeLink) {
+        subscribeLink.addEventListener('mouseenter', () => {
+          console.log('Subscribe link hover enter');
+          gsap.to(subscribeLink, {
+            x: 20,
+            scale: 1.1,
+            duration: 0.4,
+            ease: "power2.out",
+            force3D: true
+          });
+        });
+
+        subscribeLink.addEventListener('mouseleave', () => {
+          console.log('Subscribe link hover leave');
+          gsap.to(subscribeLink, {
+            x: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: "power2.out",
+            force3D: true
+          });
+        });
+      }
+    }, 100); // Short timeout since menu is already open
+  }
+
 
 
   private animateMenu(isOpen: boolean) {
@@ -148,6 +257,9 @@ export class MenuComponent implements OnInit, OnChanges, OnDestroy {
         duration: 1.5,
         onStart: () => {
           menu.style.pointerEvents = "all";
+        },
+        onComplete: () => {
+          // Menu is fully open - CSS hover animations will handle the rest
         }
       });
 

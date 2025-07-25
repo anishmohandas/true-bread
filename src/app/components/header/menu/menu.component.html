@@ -15,7 +15,12 @@
       <div class="socials">
         <div class="sub-col">
           <p class="pb-5 font-bold">Follow Us</p>
-          <p *ngFor="let social of socialLinks">{{social}}</p>
+          <p *ngFor="let social of socialLinks">
+            <a [href]="social.url" target="_blank" rel="noopener noreferrer"
+              [title]="'Visit our ' + social.name + ' page'">
+              {{social.name}}
+            </a>
+          </p>
         </div>
       </div>
 

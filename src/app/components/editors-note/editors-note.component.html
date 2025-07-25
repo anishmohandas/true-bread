@@ -14,28 +14,44 @@
     <!-- Main Content -->
     <div class="main-content" *ngIf="!loading && !error && editorial">
 
-      <!-- Header Row: Editor Image, Name, and Title -->
-      <div class="header-row fade-in-element">
-        <div class="editor-profile">
-          <img [src]="editorial.editor.imageUrl" [alt]="editorial.editor.name" class="editor-image"
-            (error)="onImageError($event)">
-          <div class="editor-info">
-            <h3 class="editor-name">{{ editorial.editor.name }}</h3>
-            <p class="editor-role">{{ editorial.editor.role }}</p>
-          </div>
-        </div>
-        <h1 class="section-title">Editor's Note</h1>
-      </div>
+      <!-- Removed header row - content moved to columns -->
 
       <!-- Magazine Style Two-Column Content -->
       <div class="magazine-content">
 
-        <!-- Left Column -->
+        <!-- Left Column: Editor Details & Quote -->
         <div class="content-column left-column">
+          <!-- Editor Profile -->
+          <div class="editor-profile fade-in-element">
+            <img [src]="editorial.editor.imageUrl" [alt]="editorial.editor.name" class="editor-image"
+              (error)="onImageError($event)">
+            <div class="editor-info">
+              <h3 class="editor-name">{{ editorial.editor.name }}</h3>
+              <p class="editor-role">{{ editorial.editor.role }}</p>
+            </div>
+          </div>
+
+          <!-- Quote Box -->
+          <!-- <div class="quote-box fade-in-element">
+            <blockquote>
+              We offer all glory and honor unto our Heavenly Father, the Author of life, who has entrusted us with this
+              mission.
+            </blockquote>
+          </div> -->
+        </div>
+
+        <!-- Right Column: Title & Content -->
+        <div class="content-column right-column">
+          <!-- Title -->
+          <h1 class="section-title fade-in-element">
+            <span class="title-editor">Editor's</span>
+            <span class="title-note">Note</span>
+          </h1>
+
+          <!-- Content -->
           <p class="paragraph fade-in-element">
-            <span class="drop-cap">G</span>reetings from True Bread Magazine family. We're thrilled to announce the new
-            phase of True Bread Monthly Magazine, an online Christian family magazine that began its journey on January
-            1, 2025.
+            Greetings from True Bread Magazine family. We're thrilled to announce the new phase of True Bread Monthly
+            Magazine, an online Christian family magazine that began its journey on January 1, 2025.
           </p>
 
           <p class="paragraph fade-in-element">
@@ -50,10 +66,7 @@
             parenting, education, health, counseling, motivation, devotion, and other spiritual and secular concerns
             relevant to our times.
           </p>
-        </div>
 
-        <!-- Right Column -->
-        <div class="content-column right-column">
           <p class="paragraph fade-in-element">
             Through ongoing dialogue with our global readership, we strive to fulfill our vision of providing valuable
             content that resonates with families worldwide.
@@ -70,14 +83,6 @@
           <p class="paragraph fade-in-element">
             We welcome and appreciate the valuable feedback from our readers and well-wishers.
           </p>
-
-          <!-- Quote Box -->
-          <div class="quote-box fade-in-element">
-            <blockquote>
-              "We offer all glory and honor unto our Heavenly Father, the Author of life, who has entrusted us with this
-              mission."
-            </blockquote>
-          </div>
         </div>
       </div>
 
