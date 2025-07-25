@@ -1,6 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { EditorialService } from '../../services/editorial.service';
+import { Editorial } from '../../shared/interfaces/editorial.interface';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,16 +12,72 @@ gsap.registerPlugin(ScrollTrigger);
   styleUrls: ['./editors-note.component.scss']
 })
 export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
+  editorial: Editorial | null = null;
+  loading = true;
+  error = false;
 
-  constructor() {}
+  constructor(private editorialService: EditorialService) {}
 
   ngOnInit() {
     console.log('📝 Editor\'s Note component ngOnInit called');
+    this.loadEditorialData();
+  }
+
+  private loadEditorialData() {
+    this.loading = true;
+    this.error = false;
+
+    this.editorialService.getLatestEditorial().subscribe({
+      next: (response) => {
+        if (!response?.data) {
+          this.error = true;
+          this.loading = false;
+          return;
+        }
+
+        const data = response.data;
+
+        // Transform the data to match our Editorial interface
+        this.editorial = {
+          id: data.id,
+          title: data.language === 'ml' ? (data.titleMl || data.title) : data.title,
+          content: data.language === 'ml' ? (data.contentMl || data.content) : data.content,
+          excerpt: data.language === 'ml' ? (data.excerptMl || data.excerpt) : data.excerpt,
+          publishDate: data.publishDate,
+          month: data.language === 'ml' ? (data.month_ml || data.month) : data.month,
+          year: data.year.toString(),
+          language: data.language,
+          editor: {
+            name: data.editor.name,
+            role: data.editor.role,
+            imageUrl: data.editor.imageUrl,
+            bio: data.editor.bio
+          },
+          imageUrl: data.image_url,
+          // Include Malayalam fields
+          titleMl: data.titleMl,
+          contentMl: data.contentMl,
+          excerptMl: data.excerptMl,
+          monthMl: data.month_ml
+        };
+
+        this.loading = false;
+        console.log('📝 Editorial data loaded:', this.editorial);
+      },
+      error: (error) => {
+        console.error('📝 Error fetching editorial data:', error);
+        this.error = true;
+        this.loading = false;
+      }
+    });
   }
 
   ngAfterViewInit() {
     console.log('📝 Editor\'s Note component initialized');
-    this.initializeAnimations();
+    // Delay animation initialization to ensure data is loaded
+    setTimeout(() => {
+      this.initializeAnimations();
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -35,43 +93,52 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initializeAnimations() {
+    console.log('📝 Initializing animations...');
+
+    // Temporarily disable initial hiding to debug
     // Set initial states
-    gsap.set('.editors-note .fade-in-element', {
-      opacity: 0,
-      y: 50
-    });
+    // gsap.set('.editors-note .fade-in-element', {
+    //   opacity: 0,
+    //   y: 50
+    // });
 
-    gsap.set('.editors-note .slide-in-left', {
-      opacity: 0,
-      x: -100
-    });
+    // gsap.set('.editors-note .slide-in-left', {
+    //   opacity: 0,
+    //   x: -100
+    // });
 
-    gsap.set('.editors-note .slide-in-right', {
-      opacity: 0,
-      x: 100
-    });
+    // gsap.set('.editors-note .slide-in-right', {
+    //   opacity: 0,
+    //   x: 100
+    // });
 
-    gsap.set('.editors-note .editor-image', {
-      opacity: 0,
-      scale: 0.8
-    });
+    // gsap.set('.editors-note .editor-image', {
+    //   opacity: 0,
+    //   scale: 0.8
+    // });
 
-    gsap.set('.editors-note .editor-info', {
-      opacity: 0,
-      y: 30
-    });
+    // gsap.set('.editors-note .editor-info', {
+    //   opacity: 0,
+    //   y: 30
+    // });
 
     // Create ScrollTrigger animation
     this.animateContent();
   }
 
   private animateContent() {
+    console.log('📝 Creating ScrollTrigger animation...');
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: '.editors-note',
         start: 'top 80%',
         end: 'bottom 20%',
-        toggleActions: 'play none none reverse'
+        toggleActions: 'play none none reverse',
+        onEnter: () => console.log('📝 ScrollTrigger entered'),
+        onLeave: () => console.log('📝 ScrollTrigger left'),
+        onEnterBack: () => console.log('📝 ScrollTrigger entered back'),
+        onLeaveBack: () => console.log('📝 ScrollTrigger left back')
       }
     });
 
