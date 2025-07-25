@@ -1,0 +1,94 @@
+<section class="editors-note">
+  <div class="magazine-page">
+    
+    <!-- Magazine Header -->
+    <div class="magazine-header">
+      <div class="header-line"></div>
+      <h1 class="page-title fade-in-element">Editor's Note</h1>
+      <div class="header-line"></div>
+    </div>
+
+    <!-- Magazine Layout -->
+    <div class="magazine-layout">
+      
+      <!-- Left Column: Editor Info -->
+      <div class="editor-column" *ngIf="editorial?.editor && !loading">
+        <div class="editor-profile">
+          <div class="editor-image-frame">
+            <img [src]="editorial!.editor.imageUrl" [alt]="editorial!.editor.name" class="editor-image"
+              (error)="onImageError($event)">
+          </div>
+          <div class="editor-details">
+            <h3 class="editor-name editor-info">{{ editorial!.editor.name }}</h3>
+            <p class="editor-title editor-info">{{ editorial!.editor.role }}</p>
+            <div class="signature-line editor-info"></div>
+          </div>
+        </div>
+        
+        <!-- Decorative Quote -->
+        <div class="quote-box fade-in-element">
+          <div class="quote-mark">"</div>
+          <p class="quote-text">We offer all glory and honor unto our Heavenly Father, the Author of life, who has entrusted us with this mission.</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Content -->
+      <div class="content-column">
+        
+        <!-- Drop Cap Paragraph -->
+        <div class="drop-cap-section">
+          <p class="drop-cap-paragraph fade-in-element">
+            <span class="drop-cap">G</span>reetings from True Bread Magazine family. We're thrilled to announce the new phase of True Bread Monthly Magazine, an online Christian family magazine that began its journey on January 1, 2025.
+          </p>
+        </div>
+
+        <!-- Body Content -->
+        <div class="body-content">
+          <p class="body-paragraph fade-in-element">
+            This endeavor is the result of a dedicated team's tireless efforts, bringing together well-qualified and authoritative writers from diverse backgrounds to share insightful articles on various subjects.
+          </p>
+
+          <!-- Section Divider -->
+          <div class="section-divider slide-in-left">
+            <div class="divider-line"></div>
+            <span class="section-title">Our Mission</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <p class="body-paragraph fade-in-element">
+            As a Christian family magazine, True Bread aims on addressing pressing family-related matters, including parenting, education, health, counseling, motivation, devotion, and other spiritual and secular concerns relevant to our times.
+          </p>
+
+          <p class="body-paragraph fade-in-element">
+            Through ongoing dialogue with our global readership, we strive to fulfill our vision of providing valuable content that resonates with families worldwide.
+          </p>
+
+          <!-- Section Divider -->
+          <div class="section-divider slide-in-right">
+            <div class="divider-line"></div>
+            <span class="section-title">A New Chapter</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <p class="body-paragraph fade-in-element">
+            With great joy, we announce the launch of our website, marking a significant milestone in our journey. We look forward to sharing our passion for inspiring and uplifting content with fellow travelers on the path of faith and family values.
+          </p>
+
+          <!-- Closing Statement -->
+          <div class="closing-statement fade-in-element">
+            <p class="closing-text">
+              We welcome and appreciate the valuable feedback from our readers and well-wishers.
+            </p>
+            <div class="closing-flourish">❦</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Magazine Footer -->
+    <div class="magazine-footer">
+      <div class="footer-ornament">◆ ◆ ◆</div>
+    </div>
+
+  </div>
+</section>

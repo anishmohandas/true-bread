@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AnimationService } from './services/animation.service';
-import { ScrollService } from './services/scroll.service'; // <-- import the service
+import { ScrollService } from './services/scroll.service';
 import { filter } from 'rxjs/operators';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -32,7 +32,6 @@ export class AppComponent implements OnInit {
 
       // Get content height
       let contentHeight = content.getBoundingClientRect().height;
-      //let contentHeight = content.getBoundingClientRect().height;
       
       this.scroller.height = contentHeight;
       this.scroller.setHeight();
@@ -43,34 +42,28 @@ export class AppComponent implements OnInit {
       }
 
       // Add extra scroll space to fully reveal the footer
-      // This ensures we can scroll far enough to see the entire footer
       if (footer) {
         const footerHeight = footer.getBoundingClientRect().height;
         // Add the footer height to the total scroll height
-        // This allows scrolling to fully reveal the footer
-        contentHeight += footerHeight;
-
-        // No buffer needed as it was causing a gap
-        // contentHeight += 50; // Removed 50px buffer
+        this.scroller.height = contentHeight + footerHeight;
+        this.scroller.setHeight();
       }
+
+      console.log(this.scroller);
 
       this.scroller.height = contentHeight;
       this.scroller.setHeight();
     }
   };
-  showComponents = false;
+  showComponents = true;
 
   constructor(
     private elementRef: ElementRef,
     private router: Router,
     private animationService: AnimationService,
-    private scrollService: ScrollService // <-- inject the service
+    private scrollService: ScrollService
   ) {
-    router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
+    this.scrollService.setScroller(this.scroller);
   }
 
   ngOnInit() {
@@ -83,176 +76,89 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      this.animationService.resetPreloader();
+      // Reset scroll position on navigation
+      this.scroller.target = 0;
+      this.scroller.current = 0;
+      window.scrollTo(0, 0);
     });
 
-    // Wait for content to load
-    setTimeout(() => {
-      this.initScroller();
-    }, 200);
-
-    this.scrollService.resizeCallback = this.scroller.resize;
+    // Initialize smooth scrolling
+    this.initSmoothScrolling();
   }
 
-  private initScroller() {
-    this.scroller.resize();
-    this.render();
-
-    // Update on resize
-    window.addEventListener('resize', () => {
-      this.scroller.resize();
-    });
-
-    // Observe content changes
-    const observer = new MutationObserver(() => {
-      this.scroller.resize();
-    });
-
-    const content = this.elementRef.nativeElement.querySelector('.smooth-scroll-content');
-    observer.observe(content, {
-      childList: true,
-      subtree: true
-    });
-  }
-
-  private render = () => {
-    // Use requestAnimationFrame at the start to ensure smooth animation
-    requestAnimationFrame(this.render);
-
-    this.scroller.target = window.scrollY;
-    this.scroller.current = gsap.utils.interpolate(
-      this.scroller.current,
-      this.scroller.target,
-      this.scroller.ease
-    );
-
-    const content = this.elementRef.nativeElement.querySelector('.smooth-scroll-content');
-
-    if (content) {
-      // Use GSAP's set method with force3D for better performance
-      gsap.set(content, {
-        y: -this.scroller.current,
-        force3D: true
-      });
-
-      // Apply parallax effect to footer
-      const footer = this.elementRef.nativeElement.querySelector('.parallax-footer');
-      if (footer) {
-        // Calculate how much of the footer is revealed
-        const scrollableHeight = this.scroller.height - window.innerHeight;
-        const scrollProgress = this.scroller.current / scrollableHeight;
-
-        // Add a class to the body when the footer is sufficiently revealed
-        // This allows us to enable pointer events on the footer
-        if (scrollProgress > 0.7) {
-          document.body.classList.add('footer-revealed');
-        } else {
-          document.body.classList.remove('footer-revealed');
+  private initSmoothScrolling() {
+    // Set up smooth scrolling
+    const update = () => {
+      if (!this.scroller.isTouching) {
+        this.scroller.current += (this.scroller.target - this.scroller.current) * this.scroller.ease;
+        
+        const content = this.elementRef.nativeElement.querySelector('.smooth-scroll-content');
+        if (content) {
+          gsap.set(content, {
+            y: -this.scroller.current
+          });
         }
       }
-    }
-  };
+      requestAnimationFrame(update);
+    };
+    update();
 
-  @HostListener('window:resize')
+    // Handle scroll events
+    this.handleScrollEvents();
+  }
+
+  private handleScrollEvents() {
+    let ticking = false;
+
+    const updateScroll = () => {
+      this.scroller.target = window.pageYOffset;
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
+    });
+  }
+
+  @HostListener('window:resize', ['$event'])
   onResize() {
     this.scroller.resize();
   }
 
-  @HostListener('window:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent) {
-    const SCROLL_AMOUNT = 60; // Regular scroll amount
-    const PAGE_SCROLL_AMOUNT = window.innerHeight * 0.9; // 90% of viewport height
-
-    switch (event.key) {
-      case 'ArrowDown':
-        window.scrollBy(0, SCROLL_AMOUNT);
-        event.preventDefault();
-        break;
-      case 'ArrowUp':
-        window.scrollBy(0, -SCROLL_AMOUNT);
-        event.preventDefault();
-        break;
-      case 'PageDown':
-        window.scrollBy(0, PAGE_SCROLL_AMOUNT);
-        event.preventDefault();
-        break;
-      case 'PageUp':
-        window.scrollBy(0, -PAGE_SCROLL_AMOUNT);
-        event.preventDefault();
-        break;
-      case 'Home':
-        window.scrollTo(0, 0);
-        event.preventDefault();
-        break;
-      case 'End':
-        window.scrollTo(0, this.scroller.height);
-        event.preventDefault();
-        break;
-      case ' ': // Spacebar
-        if (event.shiftKey) {
-          window.scrollBy(0, -PAGE_SCROLL_AMOUNT);
-        } else {
-          window.scrollBy(0, PAGE_SCROLL_AMOUNT);
-        }
-        event.preventDefault();
-        break;
-    }
-  }
-
-  @HostListener('window:wheel', ['$event'])
-  onWheel(event: WheelEvent) {
-    window.scrollBy(0, event.deltaY);
-    event.preventDefault();
-  }
-
-  @HostListener('touchstart', ['$event'])
+  // Touch event handlers
   onTouchStart(event: TouchEvent) {
-    if (event.touches.length === 1) {
-      this.scroller.touchStartY = event.touches[0].clientY;
-      this.scroller.touchStartX = event.touches[0].clientX;
-      this.scroller.isTouching = true;
-    }
+    this.scroller.isTouching = true;
+    this.scroller.touchStartY = event.touches[0].clientY;
+    this.scroller.touchStartX = event.touches[0].clientX;
   }
 
-  @HostListener('touchmove', ['$event'])
   onTouchMove(event: TouchEvent) {
     if (!this.scroller.isTouching) return;
 
-    if (event.touches.length === 1) {
-      const touchY = event.touches[0].clientY;
-      const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+    const touchX = event.touches[0].clientX;
+    const deltaY = this.scroller.touchStartY - touchY;
+    const deltaX = this.scroller.touchStartX - touchX;
 
-      // Calculate delta Y (vertical movement)
-      const deltaY = this.scroller.touchStartY - touchY;
-
-      // Calculate delta X (horizontal movement)
-      const deltaX = this.scroller.touchStartX - touchX;
-
-      // If vertical scrolling is more significant than horizontal
-      if (Math.abs(deltaY) > Math.abs(deltaX)) {
-        // Scroll the page
-        window.scrollBy(0, deltaY);
-
-        // Update touch start position for continuous scrolling
-        this.scroller.touchStartY = touchY;
-        this.scroller.touchStartX = touchX;
-
-        // Prevent default to avoid browser's native scrolling
-        event.preventDefault();
-      }
+    // Only handle vertical scrolling if it's more significant than horizontal
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      event.preventDefault();
+      this.scroller.target += deltaY * 2; // Multiply for faster scrolling
+      this.scroller.target = Math.max(0, Math.min(this.scroller.target, this.scroller.height - window.innerHeight));
     }
+
+    this.scroller.touchStartY = touchY;
+    this.scroller.touchStartX = touchX;
   }
 
-  @HostListener('touchend')
   onTouchEnd() {
     this.scroller.isTouching = false;
   }
 
-  @HostListener('touchcancel')
   onTouchCancel() {
     this.scroller.isTouching = false;
   }
 }
-
-
-
