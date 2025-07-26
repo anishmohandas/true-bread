@@ -1,8 +1,10 @@
 :host {
   display: block;
   width: 100%;
-  padding-top: 100px; // Add padding to account for fixed header
+  padding-top: 100px;
+  padding-bottom: 200px; // Ensure space for footer
 }
+
 
 .articles-grid {
   @apply grid gap-6 md:grid-cols-2 lg:grid-cols-3;

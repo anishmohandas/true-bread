@@ -1,7 +1,85 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, HostListener, ElementRef } from '@angular/core';
 import { Publication } from '../../shared/interfaces/publication.interface';
 import { PublicationsService } from '../../services/publications.service';
 import { ScrollService } from 'src/app/services/scroll.service';
+import { GoogleAnalyticsService } from '../../services/google-analytics.service';
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
+
+// HoverBtn class from CodePen
+class HoverBtn {
+  btn: HTMLElement;
+  txt: HTMLElement;
+  hoverTxt: HTMLElement;
+  split1: any;
+  split2: any;
+  numChars1: number;
+  numChars2: number;
+
+  constructor(el: HTMLElement) {
+    this.bindAll();
+
+    this.btn = el;
+    this.txt = this.btn.querySelector(".js-button__text") as HTMLElement;
+    this.hoverTxt = this.btn.querySelector(".js-button__hover") as HTMLElement;
+    this.split1 = new SplitText(this.txt, {type:"chars, words"});
+    this.split2 = new SplitText(this.hoverTxt, {type:"chars, words"});
+    this.numChars1 = this.split1.chars.length;
+    this.numChars2 = this.split2.chars.length;
+
+    this.addListeners();
+
+    for(var i = 0; i < this.numChars2; i++){
+      gsap.set(this.split2.chars[i], {
+        y: 30 * Math.random()
+      });
+    }
+  }
+
+  bindAll() {
+    const methods = ['mouseIn', 'mouseOut'];
+
+    for (let i = 0; i < methods.length; i++) {
+      const fn = methods[i];
+      (this as any)[fn] = (this as any)[fn].bind(this);
+    }
+  }
+
+  mouseIn() {
+    for (var i = 0; i < this.numChars1; i++) {
+      gsap.to(this.split1.chars[i], {
+        duration: 0.5,
+        y: -30 * Math.random(),
+        delay: 0.01
+      });
+    }
+    gsap.to(this.split2.chars, {
+      duration: 0.5,
+      y: 0,
+      stagger: 0.01
+    });
+  }
+
+  mouseOut() {
+    gsap.to(this.split1.chars, {
+      duration: 0.5,
+      y: 0,
+      stagger: 0.01
+    });
+    for (var i = 0; i < this.numChars2; i++) {
+      gsap.to(this.split2.chars[i], {
+        duration: 0.5,
+        y: 30 * Math.random(),
+        delay: 0.01
+      });
+    }
+  }
+
+  addListeners() {
+    this.btn.addEventListener("mouseenter", this.mouseIn.bind(this));
+    this.btn.addEventListener("mouseleave", this.mouseOut.bind(this));
+  }
+}
 
 @Component({
   selector: 'app-publications',
@@ -15,7 +93,12 @@ export class PublicationsComponent implements OnInit, AfterViewInit {
   selectedYear: number | null = null;
   years: number[] = [];
 
-  constructor(private publicationsService: PublicationsService, private scrollService: ScrollService) {}
+  constructor(
+    private publicationsService: PublicationsService,
+    private scrollService: ScrollService,
+    private elementRef: ElementRef,
+    private googleAnalytics: GoogleAnalyticsService
+  ) {}
 
   ngOnInit() {
     // Scroll to top when component loads
@@ -70,6 +153,28 @@ export class PublicationsComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.scrollService.triggerResize();
     }, 200);
+
+    // Initialize button animations after content loads
+    setTimeout(() => {
+      this.initializeButtonAnimations();
+    }, 1000);
+  }
+
+  private initializeButtonAnimations() {
+    // Wait for fonts to load before initializing SplitText
+    document.fonts.ready.then(() => {
+      // Register SplitText plugin
+      gsap.registerPlugin(SplitText);
+
+      // Initialize HoverBtn for each button
+      const buttons = this.elementRef.nativeElement.querySelectorAll('.js-button');
+      buttons.forEach((button: HTMLElement) => {
+        new HoverBtn(button);
+      });
+    }).catch(() => {
+      // Fallback if fonts don't load
+      setTimeout(() => this.initializeButtonAnimations(), 1000);
+    });
   }
 
   get filteredPublications(): Publication[] {
@@ -87,10 +192,18 @@ export class PublicationsComponent implements OnInit, AfterViewInit {
   }
 
   onViewPDF(pdfUrl: string) {
+    // Find the publication to get its details for tracking
+    const publication = this.publications.find(pub => pub.pdfUrl === pdfUrl);
+    if (publication) {
+      this.googleAnalytics.trackPdfView(publication.title, publication.id);
+    }
     window.open(pdfUrl, '_blank');
   }
 
   onDownloadPDF(publication: Publication) {
+    // Track PDF download
+    this.googleAnalytics.trackPdfDownload(publication.title, publication.id);
+
     const link = document.createElement('a');
     link.href = publication.pdfUrl;
     link.download = `${publication.title}.pdf`;

@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AnimationService } from './services/animation.service';
 import { ScrollService } from './services/scroll.service';
+import { GoogleAnalyticsService } from './services/google-analytics.service';
 import { filter } from 'rxjs/operators';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -57,7 +58,8 @@ export class AppComponent implements OnInit {
     private elementRef: ElementRef,
     private router: Router,
     private animationService: AnimationService,
-    private scrollService: ScrollService
+    private scrollService: ScrollService,
+    private googleAnalytics: GoogleAnalyticsService
   ) {}
 
   ngOnInit() {

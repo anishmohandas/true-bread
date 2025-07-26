@@ -1,8 +1,8 @@
 :host {
   display: block;
   width: 100%;
-  // Add padding-top to account for fixed header
-  padding-top: 100px; // This should match your header height
+  padding-top: 100px;
+  padding-bottom: 200px; // Ensure space for footer
 }
 
 .prose {

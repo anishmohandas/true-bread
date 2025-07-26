@@ -1,5 +1,6 @@
 :host {
   display: block;
   width: 100%;
-  padding-top: 100px; // Add padding to account for fixed header
+  padding-top: 100px;
+  padding-bottom: 200px; // Ensure space for footer
 }

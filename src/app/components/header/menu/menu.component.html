@@ -16,7 +16,7 @@
     <div class="menu-links-container">
       <div class="socials">
         <div class="sub-col">
-          <p class="pb-5 font-bold">Follow Us</p>
+          <p class="pb-5 font-bold">Socials</p>
           <p *ngFor="let social of socialLinks">
             <a [href]="social.url" target="_blank" rel="noopener noreferrer"
               [title]="'Visit our ' + social.name + ' page'" [attr.data-text]="social.name">
@@ -28,12 +28,15 @@
 
       <!-- Subscribe Link -->
       <div class="subscribe-link-container">
-        <div class="sub-col">
-          <p class="pb-5 font-bold">Subscribe</p>
-          <p class="link" (click)="navigateToRoute('/subscribe')" data-text="Join Our Newsletter">
-            <span class="text-original">Join Our Newsletter</span>
-          </p>
+        <div class="socials">
+          <div class="sub-col">
+            <p class="pb-5 font-bold">Subscribe</p>
+            <p class="link" (click)="navigateToRoute('/subscribe')" data-text="Join Our Newsletter">
+              <span class="text-original">Join Our Newsletter</span>
+            </p>
+          </div>
         </div>
+
       </div>
     </div>
   </div>

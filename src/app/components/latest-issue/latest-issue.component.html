@@ -31,21 +31,24 @@
 
         </div>
         <!-- Header -->
-        <div class="text-center mb-1">
+        <div class="text-center mb-4">
           <h2 class="text-2xl font-medium font-delight">
             Issue #{{ currentIssue.issueNumber }}
           </h2>
         </div>
         <!-- Actions -->
-        <div class="flex items-center space-x-4 mb-4">
-          <button (click)="onViewPDF()"
-            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md">
-            Read
+        <div class="flex items-center space-x-6 mb-4">
+          <button (click)="onViewPDF()" class="button js-button">
+            <span class="button__inner">
+              <span class="button__text js-button__text">Read More</span>
+              <span class="button__hover js-button__hover">Read More</span>
+            </span>
           </button>
-          <span class="text-black text-xl font-light">|</span>
-          <button (click)="onDownloadPDF()"
-            class="px-2 py-2 text-black hover:stone-700 transition-colors uppercase font-inter text-md">
-            Download
+          <button (click)="onDownloadPDF()" class="button js-button">
+            <span class="button__inner">
+              <span class="button__text js-button__text">Download</span>
+              <span class="button__hover js-button__hover">Download</span>
+            </span>
           </button>
         </div>
       </ng-container>

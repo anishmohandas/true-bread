@@ -68,59 +68,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.isHomePage) {
       this.animationService.preloaderComplete$.subscribe(() => {
         if (!this.hasAnimated) {
-          this.initVerseAnimation();
+          //this.initVerseAnimation();
         }
       });
     }
   }
 
-  private initVerseAnimation() {
-    if (this.hasAnimated) return;
-    this.hasAnimated = true;
-    
-    console.log('Starting verse animation');
-    
-    const verseLines = gsap.utils.toArray<HTMLElement>('.verse-line');
-    const verseReference = document.querySelector('.verse-reference') as HTMLElement;
-
-    console.log('Found verse lines:', verseLines.length);
-    console.log('Found verse reference:', verseReference);
-
-    // Set initial state explicitly with GSAP
-    gsap.set([...verseLines, verseReference], {
-      opacity: 0,
-      y: 50
-    });
-
-    const tl = gsap.timeline({
-      defaults: {
-        ease: "power4.out",
-        duration: 1
-      }
-    });
-
-    verseLines.forEach((line, index) => {
-      console.log(`Animating line ${index}`);
-      tl.to(line, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        onStart: () => console.log(`Animation started for line ${index}`),
-        onComplete: () => console.log(`Animation completed for line ${index}`)
-      }, index * 0.3);
-    });
-
-    if (verseReference) {
-      tl.to(verseReference, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        onStart: () => console.log('Reference animation started'),
-        onComplete: () => console.log('Reference animation completed')
-      }, "-=0.5");
-    }
-  }
-
+  
   // Old method removed - using new clean implementation below
 
   // Clean navigation ball methods

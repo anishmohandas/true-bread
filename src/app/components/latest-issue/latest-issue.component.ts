@@ -3,6 +3,84 @@ import { Router } from '@angular/router';
 import { Issue } from '../../shared/interfaces/issue.interface';
 import { IssueService } from '../../services/issue.service';
 import { ScrollTrackerService } from '../../services/scroll-tracker.service';
+import { GoogleAnalyticsService } from '../../services/google-analytics.service';
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
+
+// HoverBtn class from CodePen
+class HoverBtn {
+  btn: HTMLElement;
+  txt: HTMLElement;
+  hoverTxt: HTMLElement;
+  split1: any;
+  split2: any;
+  numChars1: number;
+  numChars2: number;
+
+  constructor(el: HTMLElement) {
+    this.bindAll();
+
+    this.btn = el;
+    this.txt = this.btn.querySelector(".js-button__text") as HTMLElement;
+    this.hoverTxt = this.btn.querySelector(".js-button__hover") as HTMLElement;
+    this.split1 = new SplitText(this.txt, {type:"chars, words"});
+    this.split2 = new SplitText(this.hoverTxt, {type:"chars, words"});
+    this.numChars1 = this.split1.chars.length;
+    this.numChars2 = this.split2.chars.length;
+
+    this.addListeners();
+
+    for(var i = 0; i < this.numChars2; i++){
+      gsap.set(this.split2.chars[i], {
+        y: 30 * Math.random()
+      });
+    }
+  }
+
+  bindAll() {
+    const methods = ['mouseIn', 'mouseOut'];
+
+    for (let i = 0; i < methods.length; i++) {
+      const fn = methods[i];
+      (this as any)[fn] = (this as any)[fn].bind(this);
+    }
+  }
+
+  mouseIn() {
+    for (var i = 0; i < this.numChars1; i++) {
+      gsap.to(this.split1.chars[i], {
+        duration: 0.5,
+        y: -30 * Math.random(),
+        delay: 0.01
+      });
+    }
+    gsap.to(this.split2.chars, {
+      duration: 0.5,
+      y: 0,
+      stagger: 0.01
+    });
+  }
+
+  mouseOut() {
+    gsap.to(this.split1.chars, {
+      duration: 0.5,
+      y: 0,
+      stagger: 0.01
+    });
+    for (var i = 0; i < this.numChars2; i++) {
+      gsap.to(this.split2.chars[i], {
+        duration: 0.5,
+        y: 30 * Math.random(),
+        delay: 0.01
+      });
+    }
+  }
+
+  addListeners() {
+    this.btn.addEventListener("mouseenter", this.mouseIn.bind(this));
+    this.btn.addEventListener("mouseleave", this.mouseOut.bind(this));
+  }
+}
 
 @Component({
   selector: 'app-latest-issue',
@@ -21,7 +99,8 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
     private issueService: IssueService,
     private scrollTrackerService: ScrollTrackerService,
     private elementRef: ElementRef,
-    private router: Router
+    private router: Router,
+    private googleAnalytics: GoogleAnalyticsService
   ) {}
 
   ngOnInit() {
@@ -48,12 +127,16 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onViewPDF() {
     if (this.currentIssue?.pdfUrl) {
+      // Track PDF view
+      this.googleAnalytics.trackPdfView(this.currentIssue.month, this.currentIssue.id);
       window.open(this.currentIssue.pdfUrl, '_blank');
     }
   }
 
   onDownloadPDF() {
     if (this.currentIssue?.pdfUrl) {
+      // Track PDF download
+      this.googleAnalytics.trackPdfDownload(this.currentIssue.month, this.currentIssue.id);
       const link = document.createElement('a');
       link.href = this.currentIssue.pdfUrl;
       link.download = `${this.currentIssue.month}-issue.pdf`;
@@ -80,6 +163,9 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Set up scroll listener to detect when we've scrolled past the component
     this.setupScrollListener();
+
+    // Initialize GSAP button animations
+    this.initializeButtonAnimations();
   }
 
   ngOnDestroy() {
@@ -162,6 +248,23 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
         block: 'start'
       });
     }
+  }
+
+  private initializeButtonAnimations() {
+    // Wait for fonts to load before initializing SplitText
+    document.fonts.ready.then(() => {
+      // Register SplitText plugin
+      gsap.registerPlugin(SplitText);
+
+      // Initialize HoverBtn for each button
+      const buttons = this.elementRef.nativeElement.querySelectorAll('.js-button');
+      buttons.forEach((button: HTMLElement) => {
+        new HoverBtn(button);
+      });
+    }).catch(() => {
+      // Fallback if fonts don't load
+      setTimeout(() => this.initializeButtonAnimations(), 1000);
+    });
   }
 }
 

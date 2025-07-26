@@ -20,5 +20,8 @@ export const environment = {
     facebook: 'https://facebook.com/truebread',
     twitter: 'https://twitter.com/truebread',
     instagram: 'https://instagram.com/truebread'
+  },
+  googleAnalytics: {
+    measurementId: 'G-XXXXXXXXXX' // Replace with your actual GA4 Measurement ID
   }
 };
