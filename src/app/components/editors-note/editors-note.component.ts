@@ -1,6 +1,7 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
 import { EditorialService } from '../../services/editorial.service';
 import { Editorial } from '../../shared/interfaces/editorial.interface';
 
@@ -15,6 +16,9 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
   editorial: Editorial | null = null;
   loading = true;
   error = false;
+
+  // Query all elements that should have SplitType animation
+  @ViewChildren('splitTarget', { read: ElementRef }) splitTargets!: QueryList<ElementRef>;
 
   constructor(private editorialService: EditorialService) {}
 
@@ -37,7 +41,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const data = response.data;
 
-        // Transform the data to match our Editorial interface
         this.editorial = {
           id: data.id,
           title: data.language === 'ml' ? (data.titleMl || data.title) : data.title,
@@ -54,7 +57,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
             bio: data.editor.bio
           },
           imageUrl: data.image_url,
-          // Include Malayalam fields
           titleMl: data.titleMl,
           contentMl: data.contentMl,
           excerptMl: data.excerptMl,
@@ -81,114 +83,78 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Clean up ScrollTrigger instances
+    // Clean up ScrollTrigger instances related to this component
     ScrollTrigger.getAll().forEach(trigger => {
-      if (trigger.vars.trigger &&
-          typeof trigger.vars.trigger !== 'string' &&
-          trigger.vars.trigger instanceof Element &&
-          trigger.vars.trigger.closest('.editors-note')) {
-        trigger.kill();
+      const el = trigger.vars.trigger as HTMLElement;
+      if (el && el.closest('.editors-note')) {
+        trigger.kill(true);
       }
     });
   }
 
   private initializeAnimations() {
-    console.log('📝 Initializing animations...');
+    console.log('📝 Initializing SplitType animations...');
 
-    // Temporarily disable initial hiding to debug
-    // Set initial states
-    // gsap.set('.editors-note .fade-in-element', {
-    //   opacity: 0,
-    //   y: 50
-    // });
-
-    // gsap.set('.editors-note .slide-in-left', {
-    //   opacity: 0,
-    //   x: -100
-    // });
-
-    // gsap.set('.editors-note .slide-in-right', {
-    //   opacity: 0,
-    //   x: 100
-    // });
-
-    // gsap.set('.editors-note .editor-image', {
-    //   opacity: 0,
-    //   scale: 0.8
-    // });
-
-    // gsap.set('.editors-note .editor-info', {
-    //   opacity: 0,
-    //   y: 30
-    // });
-
-    // Create ScrollTrigger animation
-    this.animateContent();
+    document.fonts.ready.then(() => {
+      this.setupSplitTypeAnimations();
+    }).catch(() => {
+      setTimeout(() => this.setupSplitTypeAnimations(), 1000);
+    });
   }
 
-  private animateContent() {
-    console.log('📝 Creating ScrollTrigger animation...');
+  private setupSplitTypeAnimations() {
+    console.log('📝 Setting up SplitType animations...');
 
-    const tl = gsap.timeline({
+    this.splitTargets.forEach(elRef => {
+      const el = elRef.nativeElement as HTMLElement;
+      if (!el.textContent?.trim()) return; // skip empty elements
+
+      // Create SplitType instance splitting lines
+      const split = new SplitType(el, {
+        types: 'lines',
+        lineClass: 'split-line'
+      });
+
+      // Animate lines from below with stagger and scroll trigger
+      gsap.from(split.lines, {
+        yPercent: 100,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+    });
+
+    // You can keep your existing editor image/info animations here if needed
+    gsap.from('.editors-note .editor-image', {
+      opacity: 0,
+      scale: 0.8,
+      duration: 0.8,
+      ease: 'back.out(1.7)',
       scrollTrigger: {
-        trigger: '.editors-note',
+        trigger: '.editors-note .editor-image',
         start: 'top 80%',
-        end: 'bottom 20%',
-        toggleActions: 'play none none reverse',
-        onEnter: () => console.log('📝 ScrollTrigger entered'),
-        onLeave: () => console.log('📝 ScrollTrigger left'),
-        onEnterBack: () => console.log('📝 ScrollTrigger entered back'),
-        onLeaveBack: () => console.log('📝 ScrollTrigger left back')
+        toggleActions: 'play none none reverse'
       }
     });
 
-    // Animate header
-    tl.to('.editors-note .page-title', {
-      opacity: 1,
-      y: 0,
-      duration: 1,
-      ease: 'power2.out'
-    })
-
-    // Animate editor profile
-    .to('.editors-note .editor-image', {
-      opacity: 1,
-      scale: 1,
-      duration: 0.8,
-      ease: 'back.out(1.7)'
-    }, '-=0.5')
-
-    .to('.editors-note .editor-info', {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
+    gsap.from('.editors-note .editor-info', {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
       ease: 'power2.out',
-      stagger: 0.2
-    }, '-=0.6')
-
-    // Animate content sections
-    .to('.editors-note .fade-in-element', {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      stagger: 0.3
-    }, '-=0.4')
-
-    // Animate section dividers
-    .to('.editors-note .slide-in-left', {
-      opacity: 1,
-      x: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    }, '-=0.6')
-
-    .to('.editors-note .slide-in-right', {
-      opacity: 1,
-      x: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    }, '-=0.4');
+      delay: 0.3,
+      scrollTrigger: {
+        trigger: '.editors-note .editor-info',
+        start: 'top 80%',
+        toggleActions: 'play none none reverse'
+      }
+    });
   }
 
   onImageError(event: Event) {

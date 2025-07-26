@@ -297,4 +297,56 @@
       }
     }
   }
+
+  // Typewriter cursor effect
+  .typewriter-cursor {
+    display: inline-block;
+    color: #333;
+    font-weight: bold;
+    margin-left: 2px;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  // Ensure characters are inline for typewriter effect
+  .paragraph,
+  .section-title,
+  .column-subtitle {
+    .char {
+      display: inline-block;
+    }
+  }
+
+  // SplitType line animation support
+  .line {
+    overflow: hidden;
+    position: relative;
+    display: block;
+
+    // Each line content can slide up from below
+    > * {
+      display: block;
+    }
+  }
+
+  // Ensure proper line containers for text elements
+  .paragraph,
+  .section-title,
+  .column-subtitle {
+    .line {
+      overflow: hidden;
+      position: relative;
+      line-height: 1.4;
+    }
+  }
+}
+.split-line {
+  overflow: hidden;
+  display: block;
+  position: relative;
+  line-height: 1.4;
 }

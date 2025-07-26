@@ -20,10 +20,14 @@ export class ContactComponent {
       'Trivandrum, 695124',
       'India'
     ],
-    email: 'truebreadmedia@gmail.com',
-    phone: '+1-543-123-4567'
+    email: 'contact@thetruebread.com',
+    phone: '+91 949 533 6764'
   };
 
+  ngOnInit() {
+    // Scroll to top when component loads
+    window.scrollTo(0, 0);    
+  }
   constructor(
     private fb: FormBuilder,
     private emailService: EmailService
