@@ -6,10 +6,41 @@
 /out-tsc
 /bazel-out
 
+# Backend compiled output
+backend/dist/
+backend/build/
+
 # Node
 /node_modules
+backend/node_modules/
 npm-debug.log
 yarn-error.log
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+backend/.env
+backend/.env.local
+backend/.env.production
+backend/.env.development
+
+# Logs
+logs/
+*.log
+backend/logs/
+backend/*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+backend/coverage/
 
 # IDEs and editors
 .idea/
@@ -37,6 +68,17 @@ yarn-error.log
 testem.log
 /typings
 
+# Backend specific
+backend/uploads/
+backend/public/uploads/
+
 # System files
 .DS_Store
 Thumbs.db
+
+# PM2
+.pm2/
+
+# Database
+*.sqlite
+*.db
