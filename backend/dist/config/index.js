@@ -9,14 +9,13 @@ dotenv_1.default.config();
 exports.config = {
     database: {
         host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT || '5432'),
+        port: parseInt(process.env.DB_PORT || '3306'),
         database: process.env.DB_NAME || 'truebread_dev',
-        user: process.env.DB_USER || 'postgres',
+        user: process.env.DB_USER || 'root',
         password: process.env.DB_PASSWORD,
         ssl: process.env.NODE_ENV === 'production'
             ? { rejectUnauthorized: false }
-            : undefined,
-        client_encoding: 'UTF8'
+            : undefined
     },
     email: {
         host: process.env.EMAIL_HOST || 'smtp.gmail.com',

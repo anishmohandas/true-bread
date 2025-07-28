@@ -1,252 +1,439 @@
-.issue-highlights {
-  width: 100%;
-  height: 600px; /* Fixed height to prevent stacking */
-  position: relative;
-  background: #000;
-  //padding: 4rem 2rem;
-}
+// Variables matching the CodePen
+$bg: #eeece5;
+$y: #a58725;
+$b: #00eded;
+$w: $bg;
+$o: #fe4e01;
+$p: #eb98b4;
+$g: #08350e;
+$elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+$expo: cubic-bezier(1, 0.885, 0.32, 1);
 
-/* Initial Layout (Single Column) */
-.initial-layout {
-  position: absolute; /* Overlay positioning */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* Full height of parent */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* Category Layout (Two Column) */
-.category-layout {
-  position: absolute; /* Overlay positioning */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%; /* Full height of parent */
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  opacity: 0; /* Hidden initially */
-}
-
-/* Initial single-column layout */
-/* Category Layout Styling */
-.category-layout .text-column {
-  flex: 0 0 50%; /* Increase to 50% width for better balance */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem; /* More padding for better centering */
-}
-
-.category-layout .images-column {
-  flex: 0 0 50%; /* Equal 50% width for images */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem; /* Add some padding for better centering */
-}
-
-/* Left Column: Text Content */
-.text-column {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  will-change: transform; /* Optimize for GSAP animations */
-}
-
-.text-content {
-  text-align: center;
-  max-width: 500px;
-  position: relative; /* Support absolute positioning of category display */
-}
-
-/* Text content in category layout */
-.category-layout .text-content {
-  width: 100%;
-  /* Removed max-width to allow text to spread out */
-  margin: 0 auto; /* Center the content block */
-  padding: 0 1rem; /* Add horizontal padding */
-}
-
-.main-header {
-  font-size: 4rem;
-  font-weight: bold;
-  color: white;
-  font-family: 'Delight', serif;
-  margin: 0 0 2rem 0;
-  line-height: 1.2;
-  will-change: transform, opacity; /* Optimize for animations */
-}
-
-.description-text {
-  font-size: 1.2rem;
-  color: #ccc;
-  line-height: 1.6;
-  margin: 0 0 3rem 0;
-  font-weight: 300;
-  will-change: transform, opacity; /* Optimize for animations */
-}
-
-/* Initial Content (Single Column Layout) */
-.initial-content {
-  text-align: center;
-  max-width: 800px;
-  will-change: transform, opacity;
-}
-
-/* Category Loop Display (Two Column Layout) */
-.category-display {
-  width: 100%;
-  will-change: transform, opacity;
-}
-
-.category-title {
-  font-size: 4rem;
-  font-weight: bold;
-  color: white;
-  font-family: 'Delight', serif;
-  margin: 0 0 2rem 0;
-  line-height: 1.2;
-  will-change: transform, opacity;
-}
-
-.category-description {
-  font-size: 1.2rem;
-  color: #ccc;
-  line-height: 1.6;
-  margin: 0;
-  font-weight: 300;
-  will-change: transform, opacity;
-}
-
-/* Right Column: Images */
-.images-column {
-  height: 100%; /* Match container height */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0; /* Remove padding for flush look */
-  box-sizing: border-box;
-  will-change: transform, opacity; /* Optimize for animations */
-}
-
-.single-image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-/* Scrollbar styles removed - no longer needed for single image */
-
-.highlight-card {
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  flex-shrink: 0;
-  width: 350px;
-  height: 100%; /* Full height for flush look */
-}
-
-.highlight-image {
-  width: 100%;
-  height: 100%; /* Match parent container height */
-  position: relative;
-  //background: #000;
-  overflow: hidden;
-  will-change: transform; /* Optimize for GSAP frame animation */
-}
-
-/* Image window container */
-.image-window {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background: transparent;
-}
-
-/* Base image layer - full size, flush to container */
-.highlight-image img {
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  object-fit: contain; /* Fit entire image without cropping */
+:host {
   display: block;
-  position: absolute;
-  top: 0; /* Flush to top */
-  left: 0; /* Flush to left */
-  will-change: transform;
-  transform-origin: center center; /* Ensure scaling from center */
+  width: 100%;
+  background: $bg;
+  font-family: "Lexend Mega", sans-serif;
 }
 
-/* Removed clip-path frame and shadow for sleek, flush look */
-
-.highlight-content {
-  padding: 1rem 0;
-  text-align: center;
-}
-
-.highlight-title {
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Navigation arrows removed - single image display */
-
-@media (max-width: 768px) {
-  .highlights-container {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .highlights-container:not(.two-column-layout) .text-column,
-  .highlights-container.two-column-layout .text-column {
-    flex: none;
+#wrap {
+  display: block;
+  width: 1000px;
+  max-width: 85vw;
+  margin: 0px auto;
+  padding: 2.5vh 50px 25vh;
+  position: relative;
+  box-sizing: border-box;
+  
+  h1 {
+    text-align: center;
+    font-family: "Delight", serif;
+    color: transparent;
+    font-size: 100px;
+    position: relative;
     width: 100%;
-    padding: 2rem 1rem;
+    line-height: 0.9;
+    padding: 10px 0;
+    overflow: hidden;
+    margin-bottom: 20px;
+    
+    &:before,
+    &:after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background: $y;
+      z-index: 2;
+    }
+    
+    &:after {
+      transform-origin: left;
+      background: $o;
+      z-index: 3;
+      transform: scaleX(calc(1 - (var(--progress, 0) * 2)));
+    }
+    
+    .word {
+      position: relative;
+      display: inline-block;
+      transform: translateY(calc((var(--progress, 0) * 1200px) - 200px));
+      
+      &:before {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, 150%);
+        content: attr(data-word);
+        color: $g;
+        -webkit-text-fill-color: transparent;
+        -webkit-text-stroke: 2px $g;
+        -webkit-background-clip: text;
+        background-image: linear-gradient(to bottom, $g 50%, $bg 50%);
+        background-size: 100% 200%;
+        background-position: 50% 100%;
+        transition: 0.75s $elastic, background-position 0.5s $expo;
+      }
+    }
   }
-
-  .highlights-container:not(.two-column-layout) .images-column {
-    display: none;
-  }
-
-  .highlights-container.two-column-layout .images-column {
-    display: flex;
+  
+  p.subhead {
     width: 100%;
-    height: 60vh;
-  }
-
-  .main-header {
-    font-size: 2.5rem;
-  }
-
-  .description-text {
+    text-align: center;
+    position: relative;
+    color: $y;
     font-size: 1rem;
+    opacity: 1;
+    
+    &.final {
+      color: $g;
+      display: block;
+      margin: 0px auto;
+      width: 100px;
+      
+      &:before,
+      &:after {
+        content: "";
+        position: absolute;
+        width: 25vw;
+        max-width: 500px;
+        height: 1px;
+        border-bottom: 2px $y dashed;
+        top: calc(50% - 1.5px);
+        opacity: 0.25;
+        left: 100px;
+      }
+      
+      &:after {
+        left: auto;
+        right: 100px;
+      }
+    }
   }
-
-  .images-column {
+  
+  .panel {
+    --progress: 0;
+    position: relative;
     width: 100%;
-    height: 60vh;
+    height: 100vh;
+    margin-bottom: 5vh;
+    max-height: 75vh;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    padding: 20px;
+    box-sizing: border-box;
+    opacity: 1;
+    
+    &:nth-of-type(even) {
+      .thumb {
+        &:after {
+          transform: scaleX(-1);
+          left: 50%;
+        }
+        
+        &:before {
+          left: -5%;
+          top: -5%;
+        }
+        
+        &:hover {
+          &:before {
+            transform: translate(5%, 5%);
+          }
+        }
+      }
+    }
+    
+    &:last-of-type {
+      margin-bottom: 0;
+      
+      .thumb {
+        &:after {
+          display: none;
+        }
+      }
+    }
+    
+    @for $i from 1 through 20 {
+      &:nth-of-type(#{$i}) {
+        &:before {
+          content: "#{$i}";
+        }
+      }
+    }
+    
+    &:nth-of-type(even) {
+      &:before {
+        left: auto;
+        right: 0;
+        justify-content: flex-end;
+      }
+    }
+    
+    &:before {
+      font-family: "Delight", serif;
+      font-size: 400px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40%;
+      display: flex;
+      left: 0;
+      justify-content: flex-start;
+      align-items: center;
+      color: $bg;
+      -webkit-text-stroke: 2px $y;
+      line-height: 1;
+      opacity: 0.15;
+    }
+    
+    h2 {
+      grid-area: 3 / 1 / 4 / 4;
+      font-family: "Delight Black", serif;
+      font-size: 64px;
+      position: relative;
+      z-index: 3;
+      color: $g;
+      line-height: 1.1;
+      pointer-events: none;
+      transform: translateY(calc(100px - (var(--progress) * 200px)));
+      transition: transform 0.1s ease-out;
+      max-width: 350px;
+      word-break: normal;
+      overflow-wrap: normal;
+      white-space: normal;
+      hyphens: none;
+      
+      .word {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        color: transparent;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200%25' height='100%25'%3E%3Cdefs%3E%3Cstyle%3E .wave%7B animation:wave 1s ease-in-out infinite alternate; animation-delay:-0.25s; stroke:%23a58725; stroke-width:2; stroke-linecap:square; %7D @keyframes wave%7B to%7B d:path('M 0 40 Q 20 42.5 40 40 Q 60 37.5 80 40'); %7D %7D %3C/style%3E%3C/defs%3E%3Cpattern id='wavePattern' x='0' y='0' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Cpath fill='none' class='wave' d='M 0 40 Q 20 37.5 40 40 Q 60 42.5 80 40' /%3E%3C/pattern%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='url(%23wavePattern)'%3E%3C/rect%3E%3C/svg%3E")
+          0px 65px / 80px 80px repeat-x;
+        padding: 20px 0;
+        margin: -20px 0;
+        animation: waving 3s linear infinite;
+        
+        @media (max-width: 1000px) {
+          padding: 40px 0px;
+          margin: -40px 0;
+        }
+        
+        @for $i from 1 through 6 {
+          &:nth-of-type(#{$i}) {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200%25' height='100%25'%3E%3Cdefs%3E%3Cstyle%3E .wave%7B animation:wave 1s ease-in-out infinite alternate; animation-delay:#{$i * -0.25}s; stroke:%23a58725; stroke-width:2; stroke-linecap:square; %7D @keyframes wave%7B to%7B d:path('M 0 40 Q 20 42.5 40 40 Q 60 37.5 80 40'); %7D %7D %3C/style%3E%3C/defs%3E%3Cpattern id='wavePattern' x='0' y='0' width='80' height='80' patternUnits='userSpaceOnUse'%3E%3Cpath fill='none' class='wave' d='M 0 40 Q 20 37.5 40 40 Q 60 42.5 80 40' /%3E%3C/pattern%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='url(%23wavePattern)'%3E%3C/rect%3E%3C/svg%3E")
+              0px
+              65px /
+              80px
+              80px
+              repeat-x;
+          }
+        }
+        
+        @keyframes waving {
+          to {
+            background-position: 200px 65px;
+          }
+        }
+        
+        &:before {
+          content: attr(data-word);
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: $o;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: $o;
+          background-image: linear-gradient(
+            to bottom,
+            transparent 25%,
+            $o 25%,
+            $o 75%,
+            transparent 75%
+          );
+          background-size: 100% 250%;
+          background-repeat: no-repeat;
+          background-position: 50% calc((var(--progress) * 200px) - 150px);
+          transition: transform 0.3s $elastic;
+          transition-delay: 1.25s;
+          -webkit-text-stroke: 1px $o;
+        }
+        
+        &:nth-of-type(3n) {
+          &:before {
+            background-position: 50% calc((var(--progress) * -200px) + 25px);
+          }
+        }
+      }
+      
+      @media (min-width: 1000px) {
+        grid-area: 3 / 1 / 4 / 5;
+        font-size: 82px;
+      }
+    }
+    
+    &:nth-of-type(even) {
+      .thumb {
+        grid-area: 2 / 1 / 5 / 4;
+        aspect-ratio: 3/4; // Portrait orientation for magazine pages
+        max-width: 300px;
+        margin: 0 auto;
+        
+        @media (max-width: 768px) {
+          grid-area: 2 / 1 / 5 / 6;
+          max-width: 250px;
+        }
+        
+        p {
+          top: -50px;
+        }
+      }
+      
+      h2 {
+        text-align: right;
+        grid-area: 3 / 4 / 4 / 6;
+        max-width: none;
+        
+        @media (max-width: 768px) {
+          grid-area: 2 / 1 / 5 / 6;
+          text-align: center;
+        }
+        
+        @media (min-width: 1000px) {
+          grid-area: 3 / 4 / 4 / 6;
+        }
+      }
+    }
+    
+    .thumb {
+      grid-area: 2 / 3 / 5 / 6;
+      position: relative;
+      border-radius: 15px;
+      aspect-ratio: 3/4; // Portrait orientation for magazine pages
+      max-width: 300px;
+      margin: 0 auto;
+      
+      @media (max-width: 768px) {
+        grid-area: 2 / 1 / 5 / 6;
+        max-width: 250px;
+      }
+      
+      p {
+        position: absolute;
+        width: 100%;
+        top: -30px;
+        margin: 0;
+        color: $y;
+        font-size: 12px;
+        left: 0;
+        text-align: center;
+      }
+      
+      * {
+        border-radius: 15px;
+      }
+      
+      .inner {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        overflow: hidden;
+        z-index: 0;
+      }
+      
+      &:hover {
+        &:before {
+          transform: translate(-5%, -5%);
+          box-shadow: 0 0 0 2px $y, 0 0 0 6px $bg, 0 0 0 8px $o;
+          transition-delay: 0s, 0.2s;
+        }
+      }
+      
+      &:before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 5%;
+        top: 5%;
+        box-shadow: 0 0 0 2px $y, 0 0 0 0 $bg, 0 0 0 0 $o;
+        transition: transform 0.2s $expo, box-shadow 0.2s $expo;
+        transition-delay: 0.2s, 0s;
+        background: radial-gradient(
+              circle at center,
+              $y 1px,
+              rgba(255, 255, 255, 0.005) 1px,
+              rgba(255, 255, 255, 0.005) 20px
+            )
+            0px 0px / 20px 20px,
+          radial-gradient(
+              circle at center,
+              $y 1px,
+              rgba(255, 255, 255, 0.005) 1px,
+              rgba(255, 255, 255, 0.005) 20px
+            )
+            10px 10px / 20px 20px;
+        border-radius: 5px;
+      }
+      
+      &:after {
+        content: "";
+        position: absolute;
+        width: 50%;
+        height: calc(100% + 25vh);
+        left: 0%;
+        top: 100%;
+        border-style: dashed;
+        border-width: 2px 2px 2px 2px;
+        border-color: transparent $y $y transparent;
+        border-radius: 0 0 10px 0;
+        opacity: 0.25;
+      }
+      
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+        z-index: 1;
+        filter: blur(calc(10px * (1 - var(--progress, 0))));
+        transition: filter 0.3s ease;
+        border-radius: 15px;
+      }
+    }
   }
+}
 
-  .single-image-container {
-    padding: 1rem;
-  }
-
-  .highlight-card {
-    width: 280px;
-  }
-
-  .highlight-image {
-    height: 400px;
+// Responsive design
+@media (max-width: 768px) {
+  #wrap {
+    padding: 2.5vh 25px 25vh;
+    
+    h1 {
+      font-size: 60px;
+    }
+    
+    .panel {
+      h2 {
+        font-size: 40px;
+        grid-area: 2 / 1 / 5 / 6;
+      }
+      
+      .thumb {
+        grid-area: 2 / 1 / 5 / 6;
+      }
+    }
   }
 }

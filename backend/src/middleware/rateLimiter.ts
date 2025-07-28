@@ -8,6 +8,6 @@ export const subscriptionLimiter = rateLimit({
 
 export const unsubscribeLimiter = rateLimit({
     windowMs: 24 * 60 * 60 * 1000, // 24 hours window
-    max: 3, // limit each IP to 3 requests per windowMs
+    max: 30, // limit each IP to 3 requests per windowMs
     message: 'Too many unsubscribe attempts from this IP, please try again after 24 hours'
 });

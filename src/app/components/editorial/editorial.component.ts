@@ -19,6 +19,10 @@ export class EditorialComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    
+    // Scroll to top when component loads
+    window.scrollTo(0, 0);    
+  
     this.route.params.subscribe(params => {
       const id = params['id'];
       this.editorialService.getEditorialById(id).subscribe({

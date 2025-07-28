@@ -2,12 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.articleController = void 0;
 const express_1 = require("express");
-const pg_1 = require("pg");
-const config_1 = require("../config");
+const db_1 = require("../db");
 const article_repository_1 = require("../repositories/article.repository");
 const router = (0, express_1.Router)();
-const pool = new pg_1.Pool(config_1.config.database);
-const articleRepo = new article_repository_1.ArticleRepository(pool);
+const articleRepo = new article_repository_1.ArticleRepository(db_1.pool);
 // Get all articles
 router.get('/', async (req, res) => {
     try {

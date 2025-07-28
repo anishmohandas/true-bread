@@ -78,22 +78,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('Header component initialized');
+    //console.log('Header component initialized');
     this.animationService.hasSeenPreloader$.subscribe(seen => {
-      console.log('Preloader seen:', seen);
+      //console.log('Preloader seen:', seen);
       this.showNav = seen;
     });
 
     // Subscribe to latest issue section state
     this.inLatestIssueSectionSubscription = this.scrollTrackerService.inLatestIssueSection$.subscribe(inSection => {
-      console.log('Header received inLatestIssueSection update:', inSection);
+      //console.log('Header received inLatestIssueSection update:', inSection);
       this.inLatestIssueSection = inSection;
       this.updateHeaderVisibility();
     });
 
     // Subscribe to past latest issue section state
     this.pastLatestIssueSectionSubscription = this.scrollTrackerService.pastLatestIssueSection$.subscribe(pastSection => {
-      console.log('Header received pastLatestIssueSection update:', pastSection);
+      //console.log('Header received pastLatestIssueSection update:', pastSection);
       this.pastLatestIssueSection = pastSection;
       this.updateHeaderVisibility();
     });
@@ -121,11 +121,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
    * Update the header visibility based on scroll position and latest issue section state
    */
   private updateHeaderVisibility(): void {
-    console.log('Updating header visibility. In latest issue:', this.inLatestIssueSection, 'Past latest issue:', this.pastLatestIssueSection);
+    //console.log('Updating header visibility. In latest issue:', this.inLatestIssueSection, 'Past latest issue:', this.pastLatestIssueSection);
 
     // If we're in the latest issue section, hide the header
     if (this.inLatestIssueSection) {
-      console.log('In latest issue section - hiding header');
+      //console.log('In latest issue section - hiding header');
       this.isNavVisible = false;
 
       // Force the header to be hidden
@@ -137,7 +137,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     // If we've scrolled past the latest issue section, show the header with animation
     else if (this.pastLatestIssueSection) {
-      console.log('Past latest issue section - showing header with animation');
+     // console.log('Past latest issue section - showing header with animation');
       this.ngZone.run(() => {
         this.isNavVisible = true;
 
@@ -151,7 +151,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     // Otherwise, use the default scroll behavior
     else {
-      console.log('Not in or past latest issue section - using default behavior');
+      //console.log('Not in or past latest issue section - using default behavior');
       // Default behavior is handled by handleScroll method
     }
   }
@@ -159,13 +159,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private handleScroll(): void {
     // If we're in the latest issue section or the menu is open, don't change visibility
     if (this.isMenuOpen || this.inLatestIssueSection) {
-      console.log('Menu open or in latest issue section - not changing visibility in handleScroll');
+      //console.log('Menu open or in latest issue section - not changing visibility in handleScroll');
       return;
     }
 
     // If we've scrolled past the latest issue section, let updateHeaderVisibility handle it
     if (this.pastLatestIssueSection) {
-      console.log('Past latest issue section - letting updateHeaderVisibility handle it');
+      //console.log('Past latest issue section - letting updateHeaderVisibility handle it');
       return;
     }
 
@@ -200,7 +200,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!this.isNavVisible) {
       this.scrollTimeout = setTimeout(() => {
         this.ngZone.run(() => {
-          console.log('Showing nav after timeout');
+          //console.log('Showing nav after timeout');
           this.isNavVisible = true;
 
           // Remove the nav-hidden class
@@ -222,11 +222,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // If you need to trigger any animations or other side effects,
     // you can do so here
 
-    console.log('Menu toggled:', this.isMenuOpen);
+    //console.log('Menu toggled:', this.isMenuOpen);
   }
 
   onHamburgerClick(event: Event) {
-    console.log('Hamburger clicked - Event type:', event.type);
+    //console.log('Hamburger clicked - Event type:', event.type);
     event.preventDefault();
     event.stopPropagation();
 

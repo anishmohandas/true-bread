@@ -1,4 +1,4 @@
-<section class="editors-note">
+<section class="editors-note" #editorsNoteContainer>
   <div class="container">
 
     <!-- Loading State -->
@@ -22,8 +22,8 @@
             <img [src]="editorial.editor.imageUrl" [alt]="editorial.editor.name" class="editor-image"
               (error)="onImageError($event)">
             <div class="editor-info">
-              <h3 class="editor-name" #splitTarget>{{ editorial.editor.name }}</h3>
-              <p class="editor-role" #splitTarget>{{ editorial.editor.role }}</p>
+              <h3 class="editor-name">{{ editorial.editor.name }}</h3>
+              <p class="editor-role">{{ editorial.editor.role }}</p>
             </div>
           </div>
 
@@ -38,43 +38,43 @@
 
         <!-- Right Column: Title & Content -->
         <div class="content-column right-column">
-          <h1 class="section-title fade-in-element" #splitTarget>
+          <h1 class="section-title">
             <span class="title-editor">Editor's</span>
             <span class="title-note">Note</span>
           </h1>
 
-          <p class="paragraph fade-in-element" #splitTarget>
+          <p class="paragraph">
             Greetings from True Bread Magazine family. We're thrilled to announce the new phase of True Bread Monthly
             Magazine, an online Christian family magazine that began its journey on January 1, 2025.
           </p>
 
-          <p class="paragraph fade-in-element" #splitTarget>
+          <p class="paragraph">
             This endeavor is the result of a dedicated team's tireless efforts, bringing together well-qualified and
             authoritative writers from diverse backgrounds to share insightful articles on various subjects.
           </p>
 
-          <h3 class="column-subtitle fade-in-element" #splitTarget>Our Mission</h3>
+          <h3 class="column-subtitle">Our Mission</h3>
 
-          <p class="paragraph fade-in-element" #splitTarget>
+          <p class="paragraph">
             As a Christian family magazine, True Bread aims on addressing pressing family-related matters, including
             parenting, education, health, counseling, motivation, devotion, and other spiritual and secular concerns
             relevant to our times.
           </p>
 
-          <p class="paragraph fade-in-element" #splitTarget>
+          <p class="paragraph">
             Through ongoing dialogue with our global readership, we strive to fulfill our vision of providing valuable
             content that resonates with families worldwide.
           </p>
 
-          <h3 class="column-subtitle fade-in-element" #splitTarget>A New Chapter</h3>
+          <h3 class="column-subtitle">A New Chapter</h3>
 
-          <p class="paragraph fade-in-element" #splitTarget>
+          <p class="paragraph">
             With great joy, we announce the launch of our website, marking a significant milestone in our journey. We
             look forward to sharing our passion for inspiring and uplifting content with fellow travelers on the path of
             faith and family values.
           </p>
 
-          <p class="paragraph fade-in-element" #splitTarget>
+          <p class="paragraph">
             We welcome and appreciate the valuable feedback from our readers and well-wishers.
           </p>
         </div>

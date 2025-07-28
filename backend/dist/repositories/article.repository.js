@@ -10,36 +10,36 @@ class ArticleRepository {
             SELECT
                 a.*,
                 COALESCE(
-                    json_agg(
-                        json_build_object(
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
                             'url', ai.url,
                             'alt', ai.alt,
                             'caption', ai.caption,
                             'altMl', ai.alt_ml,
                             'captionMl', ai.caption_ml
                         )
-                    ) FILTER (WHERE ai.id IS NOT NULL),
+                    ),
                     '[]'
                 ) as images,
                 COALESCE(
-                    json_agg(
-                        json_build_object(
+                    JSON_ARRAYAGG(
+                        JSON_OBJECT(
                             'tag', at.tag,
                             'tagMl', at.tag_ml
                         )
-                    ) FILTER (WHERE at.id IS NOT NULL),
+                    ),
                     '[]'
                 ) as tags
             FROM articles a
             LEFT JOIN article_images ai ON a.id = ai.article_id
             LEFT JOIN article_tags at ON a.id = at.article_id
-            ${language ? 'WHERE a.language = $1' : ''}
+            ${language ? 'WHERE a.language = ?' : ''}
             GROUP BY a.id
             ORDER BY a.publish_date DESC
         `;
         const values = language ? [language] : [];
-        const result = await this.pool.query(query, values);
-        return this.transformArticles(result.rows);
+        const [rows] = await this.pool.query(query, values);
+        return this.transformArticles(rows);
     }
     async getFeaturedArticles(language) {
         const query = `
@@ -47,12 +47,12 @@ class ArticleRepository {
                 a.*
             FROM articles a
             WHERE a.is_featured = true
-            ${language ? 'AND a.language = $1' : ''}
+            ${language ? 'AND a.language = ?' : ''}
             ORDER BY a.publish_date DESC;
         `;
         const values = language ? [language] : [];
-        const result = await this.pool.query(query, values);
-        return this.transformArticles(result.rows);
+        const [rows] = await this.pool.query(query, values);
+        return this.transformArticles(rows);
     }
     async getArticleById(id) {
         const query = `
@@ -68,14 +68,15 @@ class ArticleRepository {
                 a.alt_text_ml,
                 a.language
             FROM articles a
-            WHERE a.id = $1
+            WHERE a.id = ?
         `;
-        const result = await this.pool.query(query, [id]);
-        if (result.rows.length === 0) {
+        const [rows] = await this.pool.query(query, [id]);
+        const rowsArray = rows;
+        if (rowsArray.length === 0) {
             throw new Error('Article not found');
         }
-        console.log('Database result:', result.rows[0]); // Debug log
-        return this.transformArticle(result.rows[0]);
+        console.log('Database result:', rowsArray[0]); // Debug log
+        return this.transformArticle(rowsArray[0]);
     }
     transformArticles(rows) {
         return rows.map(row => ({

@@ -33,16 +33,16 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log('🏠 Home component ngOnInit called');
-    console.log('🏠 isHomePage:', this.isHomePage);
-    console.log('🏠 showContent:', this.showContent);
+    //console.log('🏠 Home component ngOnInit called');
+    //console.log('🏠 isHomePage:', this.isHomePage);
+    //console.log('🏠 showContent:', this.showContent);
 
     // Only fetch articles if we're on the home page
     if (this.isHomePage) {
-      console.log('🏠 Fetching featured articles...');
+      //console.log('🏠 Fetching featured articles...');
       this.articleService.getFeaturedArticles().subscribe(
         articles => {
-          console.log('🏠 Featured articles received:', articles);
+         // console.log('🏠 Featured articles received:', articles);
           this.featuredArticles = articles;
         }
       );

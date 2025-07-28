@@ -1,57 +1,89 @@
-<div class="publications-page container mx-auto px-4 py-12">
-
+<div class="publications-page container mx-auto px-4 py-30" #publicationsContainer>
 
   <!-- Loading State -->
-  <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh]">
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[50vh] relative z-10">
     <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-stone-900"></div>
   </div>
 
   <!-- Error State -->
-  <div *ngIf="error" class="text-center py-8">
+  <div *ngIf="error" class="text-center py-8 relative z-10">
     <h2 class="text-2xl font-bold text-red-600">Error loading publications</h2>
     <p class="mt-2">Please try again later</p>
   </div>
 
   <!-- Content -->
-  <div *ngIf="!loading && !error">
+  <div *ngIf="!loading && !error" class="relative z-10">
+
     <!-- Year Filter -->
-    <div class="mb-12 flex justify-center space-x-4">
+    <div class="mb-16 flex justify-center space-x-4 filter-container gs_reveal">
       <button (click)="filterByYear(null)" [class.bg-stone-800]="!selectedYear" [class.text-white]="!selectedYear"
-        class="px-4 py-2 rounded-full transition-colors duration-200">
+        class="px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 filter-btn">
         All
       </button>
       <button *ngFor="let year of years" (click)="filterByYear(year)" [class.bg-stone-800]="selectedYear === year"
-        [class.text-white]="selectedYear === year" class="px-4 py-2 rounded-full transition-colors duration-200">
+        [class.text-white]="selectedYear === year"
+        class="px-6 py-3 rounded-full transition-all duration-300 hover:scale-105 filter-btn">
         {{ year }}
       </button>
     </div>
 
-    <!-- Publications Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-      <div *ngFor="let publication of filteredPublications" class="publication-item flex flex-col items-center">
-        <div class="max-w-sm mb-6">
-          <div class="relative group">
-            <img [src]="publication.coverImage" [alt]="publication.title" (load)="onImageLoad()"
-              class="w-full h-auto transition-transform duration-500 group-hover:scale-105">
+    <!-- Publications Two-Column Layout -->
+    <div class="publications-content">
+      <div *ngFor="let publication of filteredPublications; let i = index" class="publication-row gs_reveal"
+        [class.reverse]="i % 2 === 1" [class.gs_reveal_fromLeft]="i % 2 === 0" [class.gs_reveal_fromRight]="i % 2 === 1"
+        [attr.data-index]="i">
+
+        <!-- Text Column -->
+        <div class="text-column">
+          <div class="text-content gs_reveal">
+            <div class="publication-meta gs_reveal">
+              <span class="issue-number">Issue #{{ publication.issueNumber }}</span>
+              <span class="publish-date">{{ publication.month }} {{ publication.year }}</span>
+            </div>
+
+            <h3 class="publication-title gs_reveal">{{ publication.title }}</h3>
+
+            <p class="publication-description gs_reveal" *ngIf="publication.description">
+              {{ publication.description }}
+            </p>
+
+            <div class="publication-highlights gs_reveal"
+              *ngIf="publication.highlights && publication.highlights.length > 0">
+              <h4>In this issue:</h4>
+              <ul>
+                <li *ngFor="let highlight of publication.highlights.slice(0, 3)" class="gs_reveal">{{ highlight }}</li>
+              </ul>
+            </div>
+
+            <!-- Actions -->
+            <div class="action-buttons gs_reveal">
+              <button (click)="onViewPDF(publication.pdfUrl)" [disabled]="!publication.pdfUrl"
+                [class.disabled]="!publication.pdfUrl" class="button js-button primary-btn gs_reveal">
+                <span class="button__inner">
+                  <span class="button__text js-button__text">Read More</span>
+                  <span class="button__hover js-button__hover">Read More</span>
+                </span>
+              </button>
+              <button (click)="onDownloadPDF(publication)" [disabled]="!publication.pdfUrl"
+                [class.disabled]="!publication.pdfUrl" class="button js-button secondary-btn gs_reveal">
+                <span class="button__inner">
+                  <span class="button__text js-button__text">Download</span>
+                  <span class="button__hover js-button__hover">Download</span>
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <h3 class="text-xl font-medium mb-4 text-center">{{ publication.title }}</h3>
-
-        <!-- Actions -->
-        <div class="flex items-center space-x-6">
-          <button (click)="onViewPDF(publication.pdfUrl)" class="button js-button">
-            <span class="button__inner">
-              <span class="button__text js-button__text">Read More</span>
-              <span class="button__hover js-button__hover">Read More</span>
-            </span>
-          </button>
-          <button (click)="onDownloadPDF(publication)" class="button js-button">
-            <span class="button__inner">
-              <span class="button__text js-button__text">Download</span>
-              <span class="button__hover js-button__hover">Download</span>
-            </span>
-          </button>
+        <!-- Image Column -->
+        <div class="image-column gs_reveal">
+          <div class="image-container">
+            <div class="image-wrapper">
+              <img [src]="publication.coverImage" [alt]="publication.title" (load)="onImageLoad()"
+                class="publication-image gs_reveal">
+              <div class="image-overlay"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

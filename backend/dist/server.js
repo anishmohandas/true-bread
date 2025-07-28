@@ -9,26 +9,26 @@ const subscription_routes_1 = __importDefault(require("./routes/subscription.rou
 const editorial_controller_1 = require("./controllers/editorial.controller");
 const publication_controller_1 = require("./controllers/publication.controller");
 const article_controller_1 = require("./controllers/article.controller");
-const pdf_controller_1 = require("./controllers/pdf.controller");
 const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
 // Middleware
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:4200', 'http://localhost:3000'];
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:4200', 'http://localhost:3000'],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
     credentials: true
 }));
 app.use(express_1.default.json());
-// Serve static files for PDF images and files
-app.use('/api/pdf/images', express_1.default.static(path_1.default.join(__dirname, '../public/images')));
+// Serve static files for images and files
 app.use('/api/files', express_1.default.static(path_1.default.join(__dirname, '../public/files')));
 // Routes
 app.use('/api', subscription_routes_1.default);
 app.use('/api/editorials', editorial_controller_1.editorialController);
 app.use('/api/publications', publication_controller_1.publicationController);
 app.use('/api/articles', article_controller_1.articleController);
-app.use('/api/pdf', pdf_controller_1.pdfController);
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

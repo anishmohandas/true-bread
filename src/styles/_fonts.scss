@@ -1,4 +1,4 @@
-/* CLT Absans */
+/* CLT Absans - Used in preloader component */
 @font-face {
     font-family: 'CLT Absans';
     src: url('/assets/fonts/CLT Absans/web/Absans-Regular.woff') format('woff');
@@ -7,163 +7,7 @@
     text-rendering: optimizeLegibility;
 }
 
-/* CLT Mattone */
-@font-face {
-    font-family: 'CLT Mattone';
-    src: url('/assets/fonts/CLT Mattone/web/Mattone-Regular.woff2') format('woff2'),
-         url('/assets/fonts/CLT Mattone/web/Mattone-Regular.woff') format('woff');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* CLT Mattone Bold*/
-@font-face {
-    font-family: 'CLT Mattone';
-    src: url('/assets/fonts/CLT Mattone/web/Mattone-Bold.woff2') format('woff2'),
-         url('/assets/fonts/CLT Mattone/web/Mattone-Bold.woff') format('woff');
-    font-style: normal;
-    font-weight: bold;
-    text-rendering: optimizeLegibility;
-}
-
-/* Black */
-@font-face {
-    font-family: 'CLT Mattone Black';
-    src: url('/assets/fonts/CLT Mattone/web/Mattone-Black.woff2') format('woff2'),
-         url('/assets/fonts/CLT Mattone/web/Mattone-Black.woff') format('woff');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* MangoGrotesque Fonts */
-/* Regular */
-@font-face {
-    font-family: 'MangoGrotesque';
-    src: url('/assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Regular.woff2') format('woff2'),
-         url('/assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Regular.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Bold */
-@font-face {
-    font-family: 'MangoGrotesque';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Bold.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Bold.otf') format('opentype');
-    font-style: normal;
-    font-weight: bold;
-    text-rendering: optimizeLegibility;
-}
-
-/* Thin */
-@font-face {
-    font-family: 'MangoGrotesqueThin';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Thin.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Thin.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Light */
-@font-face {
-    font-family: 'MangoGrotesqueLight';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Light.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Light.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Medium */
-@font-face {
-    font-family: 'MangoGrotesqueMed';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Medium.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Medium.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Semi Bold */
-@font-face {
-    font-family: 'MangoGrotesqueSemBd';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-SemiBold.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-SemiBold.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Extra Bold */
-@font-face {
-    font-family: 'MangoGrotesqueExtBd';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-ExtraBold.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-ExtraBold.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Black */
-@font-face {
-    font-family: 'MangoGrotesqueBlack';
-    src: url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Black.woff2') format('woff2'),
-         url('../assets/fonts/MangoGrotesque/MangoGrotesque/Old Version 1.000/Web-PS/MangoGrotesque-Black.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Migha Display */
-@font-face {
-    font-family: 'Migha Display';
-    src: url('/assets/fonts/Migha Display/MighaDisplay-Regular.woff2') format('woff2'),
-         url('/assets/fonts/Migha Display/MighaDisplay-Regular.woff') format('woff'),
-         url('/assets/fonts/Migha Display/MighaDisplay-Regular.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Migha Display Black Condensed */
-@font-face {
-    font-family: 'Migha Display';
-    src: url('/assets/fonts/Migha Display/Condensed/Migha-BlackCondensed.otf') format('opentype');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Libertinus Font */
-@font-face {
-    font-family: 'Libertinus';
-    src: url('/assets/fonts/Libertinus/WOFF2/LibertinusSerif-Regular.woff2') format('woff2');
-    font-style: normal;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family: 'Libertinus';
-    src: url('/assets/fonts/Libertinus/WOFF2/LibertinusSerif-Bold.woff2') format('woff2');
-    font-style: normal;
-    font-weight: bold;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family: 'Libertinus';
-    src: url('/assets/fonts/Libertinus/WOFF2/LibertinusSerif-Italic.woff2') format('woff2');
-    font-style: italic;
-    font-weight: normal;
-    text-rendering: optimizeLegibility;
-}
-
-/* Montserrat Fonts */
+/* Montserrat Bold - Used in header menu */
 @font-face {
     font-family: 'Montserrat-Bold';
     src: url('/assets/fonts/montserrat/Montserrat-Bold.ttf') format('truetype');
@@ -172,54 +16,7 @@
     text-rendering: optimizeLegibility;
 }
 
-@font-face {
-    font-family: 'Montserrat-Regular';
-    src: url('/assets/fonts/montserrat/Montserrat-Regular.ttf') format('truetype');
-    font-style: normal;
-    font-weight: 400;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family:'helvetica';
-    src: url('/assets/fonts/helvetica-255/helvetica.ttf') format('truetype');
-    font-style: normal;
-    font-weight: 400;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family:'helvetica-bold';
-    src: url('/assets/fonts/helvetica-255/helvetica-Bold.ttf') format('truetype');
-    font-style: normal;
-    font-weight: 400;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family:'butler-black';
-    src: url('/assets/fonts/Butler/OTF/Butler-Free-Blk.otf') format('opentype');
-    font-style: normal;
-    font-weight: 400;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family:'butler-bold';
-    src: url('/assets/fonts/Butler/OTF/Butler-Free-Bd.otf') format('opentype');
-    font-style: normal;
-    font-weight: 400;
-    text-rendering: optimizeLegibility;
-}
-
-@font-face {
-    font-family:'butler-rmn';
-    src: url('/assets/fonts/Butler/OTF/Butler-Free-Rmn.otf') format('opentype');
-    font-style: normal;
-    font-weight: 400;
-    text-rendering: optimizeLegibility;
-}
-
+/* Delight Fonts - Used extensively throughout the app */
 @font-face {
     font-family:'Delight';
     src: url('/assets/fonts/Delight/Web-PS/Delight-Regular.otf') format('opentype'),
@@ -228,6 +25,7 @@
     font-weight: 400;
     text-rendering: optimizeLegibility;
 }
+
 @font-face {
     font-family:'Delight-Bold';
     src: url('/assets/fonts/Delight/Web-PS/Delight-Bold.otf') format('opentype'),
@@ -236,6 +34,7 @@
     font-weight: 700;
     text-rendering: optimizeLegibility;
 }
+
 @font-face {
     font-family:'Delight-Italic';
     src: url('/assets/fonts/Delight/Web-PS/Delight-Italic.otf') format('opentype'),
@@ -244,12 +43,13 @@
     font-weight: 400;
     text-rendering: optimizeLegibility;
 }
+
 @font-face {
     font-family: 'Delight-Black';
     src: url('/assets/fonts/Delight/Web-PS/Delight-Black.otf') format('opentype'),
         url('/assets/fonts/Delight/Web-PS/Delight-Black.woff2') format('woff2');
-    font-style: italic;
-    font-weight: 700;
+    font-style: normal;
+    font-weight: 900;
     text-rendering: optimizeLegibility;
 }
 

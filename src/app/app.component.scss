@@ -1,47 +1,61 @@
+// CUSTOM SCROLLING DISABLED - Using native browser scrolling
 .smooth-scroll {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
+  // Remove fixed positioning and overflow hidden to enable native scrolling
+  position: relative;
+  overflow: visible;
+  min-height: 100vh;
+}
+
+// Hide scroll bar during preloader
+:host:not(.components-loaded) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+// Show scroll bar after preloader
+:host.components-loaded {
+  ::-webkit-scrollbar {
+    display: block;
+  }
+  
+  scrollbar-width: auto;
+  -ms-overflow-style: auto;
 }
 
 .smooth-scroll-content {
-  will-change: transform;
-  transform-origin: top;
+  // Remove transform properties for native scrolling
   position: relative;
-  z-index: 2; // Higher z-index to be above footer
-  min-height: 100vh; // Ensure content is at least full viewport height
-  margin: 0; // Ensure no margins
-  padding: 0; // Ensure no padding
+  z-index: 2;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  // Remove padding-bottom to fix footer positioning
 }
 
 .router-outlet-wrapper {
   position: relative;
-  z-index: 2;
+  z-index: 3; // Higher z-index to be above footer
   display: block;
   background-color: #fff; // Add background to ensure content is opaque
   min-height: 100vh; // Ensure content covers at least the full viewport
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); // Add shadow for better separation
   margin-bottom: 0; // Ensure no bottom margin
-  padding-bottom: 0; // Ensure no bottom padding
+  padding-bottom: 0; // Remove padding - footer will be positioned after content
 }
 
-// Style for the footer in parallax mode
+// Style for the footer in parallax mode - positioned after content with parallax background
 .parallax-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+  position: relative; // Relative positioning to appear after content
   width: 100%;
-  height: auto; // Auto height to fit content
+  height: 100vh; // Full viewport height for proper parallax effect
   z-index: 1; // Lower z-index to be behind content
-  pointer-events: none; // Allow scrolling through the footer initially
-}
-
-// When we've scrolled far enough, enable pointer events on the footer
-.footer-revealed .parallax-footer {
-  pointer-events: auto;
+  pointer-events: auto; // Always allow interaction with footer
+  transform: translateY(0); // Ensure footer is at its natural position
+  margin-top: 0; // No margin to connect seamlessly with content
 }
 
 // Utility class to ensure no gaps

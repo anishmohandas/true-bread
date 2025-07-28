@@ -17,8 +17,13 @@ export class ArticlesComponent implements OnInit {
   constructor(
     private articleService: ArticleService
   ) {}
+  
+  
 
   ngOnInit(): void {
+    // Scroll to top when component loads
+    window.scrollTo(0, 0);   
+    
     this.articleService.getArticles().subscribe({
       next: (articles: Article[]) => {
         this.articles = articles;

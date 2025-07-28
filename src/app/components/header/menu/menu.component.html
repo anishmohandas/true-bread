@@ -4,7 +4,7 @@
       <a [routerLink]="['/']">True Bread</a>
     </div>
     <div class="links">
-      <div class="link " *ngFor="let link of links">
+      <div class="link" *ngFor="let link of links">
         <a [routerLink]="[link.url]" (click)="navigateToRoute(link.url)" [attr.data-text]="link.text">
           <span class="text-original">{{link.text}}</span>
         </a>

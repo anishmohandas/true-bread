@@ -1,109 +1,57 @@
-<div class="w-full">
-  <section class="py-10 w-full">
-    <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center items-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-    </div>
+<!-- horizontal scroll slider -->
+<section id="horizontal-scroll" class="slider">
+  <!-- Section title integrated into slider -->
+  <div class="slider-title">
+    <h1>Featured Articles</h1>
+  </div>
 
-    <!-- Error State -->
-    <div *ngIf="error" class="text-center py-20">
-      <p class="text-red-600">Unable to load featured articles. Please try again later.</p>
-    </div>
+  <!-- Loading state -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading featured articles...</p>
+  </div>
 
-    <!-- Content -->
-    <ng-container *ngIf="!loading && !error && articles.length > 0">
-      <!-- Title Row -->
-      <div class="w-full bg-white py-12 pb-20">
-        <div class="container max-w-[1200px] mx-auto">
-          <div class="flex items-center gap-12 w-[100vw] ml-[calc(-50vw+50%)] mr-[calc(-50vw+50%)]">
-            <h2 class="px-16 text-6xl font-poppins uppercase tracking-wider whitespace-nowrap flex-shrink-0 self-center pb-0">
-              Featured Articles
-            </h2>
-          
+  <!-- Error state -->
+  <div *ngIf="error" class="error-state">
+    <p>Unable to load featured articles. Please try again later.</p>
+  </div>
+
+  <!-- Slider content -->
+  <div class="horizontal-scroll-wrapper" *ngIf="!loading && !error">
+    <div class="horizontal slide-track">
+      <!-- Show actual articles if available -->
+      <div *ngFor="let article of articles; let i = index" class="slide" (click)="navigateToArticle(article.id)">
+        <div class="slide-image">
+          <img [src]="article.imageUrl || '/assets/images/placeholder.jpg'" [alt]="article.altText || 'Article image'"
+            (error)="handleImageError($event)" loading="lazy" />
+        </div>
+        <div class="slide-overlay">
+          <div class="article-info">
+            <p class="article-category">{{ article.category || 'Uncategorized' }}</p>
+            <h3 class="project-title" [ngClass]="{'malayalam-text': article.language === 'ml'}">
+              {{ article.title }}
+            </h3>
+            <p class="article-author">{{ article.author }}</p>
+          </div>
+          <div class="project-arrow">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
           </div>
         </div>
       </div>
 
-      <div class="max-w-[95vw] mx-auto" *ngIf="!loading">
-        <div class="relative overflow-hidden" *ngIf="articles?.length; else noArticles">
-          <!-- First Row -->
-          <div class="mb-8">
-            <div class="article-row flex flex-wrap justify-center transition-transform duration-300 ease-in-out">
-              <ng-container *ngFor="let article of firstRowArticles">
-                <div *ngIf="article?.id" class="w-full md:w-1/3 lg:w-1/3 xl:w-1/3 flex-shrink-0 px-4">
-                  <div [routerLink]="['/articles', article.id]" class="article-card bg-white overflow-hidden cursor-pointer mx-3">
-                    <div class="aspect-[16/9] overflow-hidden">
-                      <img
-                        [src]="article.imageUrl || '/assets/images/placeholder.jpg'"
-                        [alt]="article.altText || 'Article image'"
-                        class="w-full h-auto rounded-lg"
-                        (error)="handleImageError($event)"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div class="article-content" [ngClass]="{'malayalam-text': article.language === 'ml'}">
-                      <p class="text-xs uppercase tracking-wider mb-2">{{ article.category || 'Uncategorized' }}</p>
-                      <h3 [ngClass]="{'malayalam-text': article.language === 'ml', 'font-poppins': article.language !== 'ml'}" class="article-title">
-                        {{ article.title }}
-                      </h3>
-                      <p class="text-stone-600 line-clamp-3">{{ article.excerpt }}</p>
-                    </div>
-                  </div>
-                </div>
-              </ng-container>
-            </div>
-          </div>
-
-          <!-- Second Row -->
-          <div class="mb-8">
-            <div class="article-row flex flex-wrap justify-center transition-transform duration-300 ease-in-out">
-              <ng-container *ngFor="let article of secondRowArticles">
-                <div *ngIf="article?.id" class="w-full md:w-1/3 lg:w-1/3 xl:w-1/3 flex-shrink-0 px-4">
-                  <div [routerLink]="['/articles', article.id]" class="article-card bg-white overflow-hidden cursor-pointer mx-3">
-                    <div class="aspect-[16/9] overflow-hidden">
-                      <img
-                        [src]="article.imageUrl || '/assets/images/placeholder.jpg'"
-                        [alt]="article.altText || 'Article image'"
-                        class="w-full h-auto rounded-lg"
-                        (error)="handleImageError($event)"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div class="article-content" [ngClass]="{'malayalam-text': article.language === 'ml'}">
-                      <p class="text-xs uppercase tracking-wider mb-2">{{ article.category || 'Uncategorized' }}</p>
-                      <h3 [ngClass]="{'malayalam-text': article.language === 'ml', 'font-poppins': article.language !== 'ml'}" class="article-title">
-                        {{ article.title }}
-                      </h3>
-                      <p class="text-stone-600 line-clamp-3">{{ article.excerpt }}</p>
-                    </div>
-                  </div>
-                </div>
-              </ng-container>
-            </div>
+      <!-- Fallback placeholder cards if no articles -->
+      <div *ngIf="articles.length === 0" class="slide placeholder-slide">
+        <div class="slide-image">
+          <div class="placeholder-content">
+            <h3>No Articles Available</h3>
+            <p>Featured articles will appear here when available.</p>
           </div>
         </div>
       </div>
-    </ng-container>
-
-    <ng-template #noArticles>
-      <div class="text-center py-8">
-        <p>No featured articles available at the moment.</p>
-      </div>
-    </ng-template>
-  </section>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    </div>
+  </div>
+</section>
+<!-- horizontal scroll end -->

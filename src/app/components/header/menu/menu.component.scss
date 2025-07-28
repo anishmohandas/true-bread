@@ -16,6 +16,16 @@
   pointer-events: none;
   transform-style: preserve-3d;
   perspective: 1000px;
+  overflow-y: auto; /* Allow vertical scrolling if needed */
+  overflow-x: hidden; /* Hide horizontal scrollbar only */
+  
+  /* Hide scrollbars for webkit browsers */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbars for Firefox */
+  scrollbar-width: none;
 }
 
 .menu-logo {
@@ -60,6 +70,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
+  overflow: visible; // Ensure content is not clipped
 }
 
 .links {
@@ -78,61 +89,30 @@
       font-family: 'Montserrat-Bold', sans-serif;
       display: inline-block;
       position: relative;
-      overflow: hidden;
-      will-change: transform;
-      perspective: 1000px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform-origin: left center;
 
-      // Original text
-      .text-original {
-        display: block;
-        transform-origin: center;
-        backface-visibility: hidden;
-      }
-
-      // Hover text (duplicate)
-      &::after {
-        content: attr(data-text);
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        color: rgb(204, 234, 55);
-        display: flex;
-        align-items: center;
-        transform: rotateX(-90deg);
-        transform-origin: center;
-        backface-visibility: hidden;
-      }
-
+      // Simple consistent hover effect
       &:hover {
-        transform: translateX(30px) scale(1.05);
-        transition: transform 0.4s ease;
-
-        .text-original {
-          transform: rotateX(90deg);
-          transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        &::after {
-          transform: rotateX(0deg);
-          transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
+        color: rgb(204, 234, 55);
+        transform: translateX(20px) scale(1.05);
+        text-shadow: 0 0 20px rgba(204, 234, 55, 0.3);
       }
 
-      &:not(:hover) {
-        transform: translateX(0px) scale(1);
-        transition: transform 0.4s ease;
+      // Add a subtle underline effect
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 3px;
+        background: linear-gradient(90deg, rgb(204, 234, 55), rgba(204, 234, 55, 0.5));
+        transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
 
-        .text-original {
-          transform: rotateX(0deg);
-          transition: none; // No transition on hover out
-        }
-
-        &::after {
-          transform: rotateX(-90deg);
-          transition: none; // No transition on hover out
-        }
+      &:hover::after {
+        width: 100%;
       }
     }
   }
@@ -178,60 +158,30 @@
         text-decoration: none;
         display: inline-block;
         position: relative;
-        overflow: hidden;
-        perspective: 1000px;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        padding: 4px 0;
 
-        // Original text
-        .text-original {
-          display: block;
-          transform-origin: center;
-          backface-visibility: hidden;
-        }
-
-        // Hover text (duplicate)
-        &::after {
-          content: attr(data-text);
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          color: rgb(204, 234, 55);
-          display: flex;
-          align-items: center;
-          transform: rotateX(-90deg);
-          transform-origin: center;
-          backface-visibility: hidden;
-        }
-
+        // Simple consistent hover effect
         &:hover {
-          transform: translateX(20px) scale(1.1);
-          transition: transform 0.4s ease;
-
-          .text-original {
-            transform: rotateX(90deg);
-            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          }
-
-          &::after {
-            transform: rotateX(0deg);
-            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          }
+          color: rgb(204, 234, 55);
+          transform: translateX(10px) scale(1.1);
+          text-shadow: 0 0 10px rgba(204, 234, 55, 0.4);
         }
 
-        &:not(:hover) {
-          transform: translateX(0px) scale(1);
-          transition: transform 0.4s ease;
+        // Add consistent underline effect like main nav
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(90deg, rgb(204, 234, 55), rgba(204, 234, 55, 0.5));
+          transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
 
-          .text-original {
-            transform: rotateX(0deg);
-            transition: none;
-          }
-
-          &::after {
-            transform: rotateX(-90deg);
-            transition: none;
-          }
+        &:hover::after {
+          width: 100%;
         }
       }
     }
@@ -263,61 +213,31 @@
       &.link {
         cursor: pointer;
         position: relative;
-        overflow: hidden;
-        perspective: 1000px;
         display: inline-block;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        padding: 4px 0;
 
-        // Original text
-        .text-original {
-          display: block;
-          transform-origin: center;
-          backface-visibility: hidden;
-        }
-
-        // Hover text (duplicate)
-        &::after {
-          content: attr(data-text);
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          color: rgb(204, 234, 55);
-          display: flex;
-          align-items: center;
-          transform: rotateX(-90deg);
-          transform-origin: center;
-          backface-visibility: hidden;
-        }
-
+        // Simple consistent hover effect - same as other links
         &:hover {
-          transform: translateX(20px) scale(1.1) !important;
-          transition: transform 0.4s ease;
-
-          .text-original {
-            transform: rotateX(90deg);
-            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          }
-
-          &::after {
-            transform: rotateX(0deg);
-            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          }
+          color: rgb(204, 234, 55);
+          transform: translateX(10px) scale(1.1);
+          text-shadow: 0 0 10px rgba(204, 234, 55, 0.4);
         }
 
-        &:not(:hover) {
-          transform: translateX(0px) scale(1) !important;
-          transition: transform 0.4s ease;
+        // Add consistent underline effect like main nav and socials
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(90deg, rgb(204, 234, 55), rgba(204, 234, 55, 0.5));
+          transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
 
-          .text-original {
-            transform: rotateX(0deg);
-            transition: none;
-          }
-
-          &::after {
-            transform: rotateX(-90deg);
-            transition: none;
-          }
+        &:hover::after {
+          width: 100%;
         }
       }
     }

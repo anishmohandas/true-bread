@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool } from 'mysql2/promise';
 import { Editorial, Editor } from '../interfaces/editorial.interface';
 
 export class EditorialRepository {
@@ -61,14 +61,14 @@ export class EditorialRepository {
 
     async getAllEditorials() {
         try {
-            const result = await this.pool.query(`
+            const [rows] = await this.pool.query(`
                 SELECT e.*, ed.name as editor_name, ed.role as editor_role, 
                        ed.image_url as editor_image_url, ed.bio as editor_bio
                 FROM editorials e
                 JOIN editors ed ON e.editor_id = ed.id
                 ORDER BY publish_date DESC
             `);
-            return result.rows;
+            return rows;
         } catch (error) {
             console.error('Database error:', error);
             throw error;
@@ -88,20 +88,20 @@ export class EditorialRepository {
             LIMIT 1
         `;
         
-        const result = await this.pool.query(query);
-        return result.rows.length ? this.transformEditorial(result.rows[0]) : null;
+        const [rows] = await this.pool.query(query);
+        return (rows as any[]).length ? this.transformEditorial((rows as any[])[0]) : null;
     }
 
     async getEditorialById(id: string) {
         try {
-            const result = await this.pool.query(`
+            const [rows] = await this.pool.query(`
                 SELECT e.*, ed.name as editor_name, ed.role as editor_role, 
                        ed.image_url as editor_image_url, ed.bio as editor_bio
                 FROM editorials e
                 JOIN editors ed ON e.editor_id = ed.id
-                WHERE e.id = $1
+                WHERE e.id = ?
             `, [id]);
-            return result.rows.length ? this.transformEditorial(result.rows[0]) : null;
+            return (rows as any[]).length ? this.transformEditorial((rows as any[])[0]) : null;
         } catch (error) {
             console.error('Database error:', error);
             throw error;
@@ -115,8 +115,8 @@ export class EditorialRepository {
                 image_url, month, year, language,
                 title_ml, content_ml, excerpt_ml, month_ml
             ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
-            ) RETURNING *
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
         `;
 
         const values = [
@@ -136,8 +136,21 @@ export class EditorialRepository {
             editorial.monthMl
         ];
 
-        const result = await this.pool.query(query, values);
-        return this.transformEditorial(result.rows[0]);
+        await this.pool.query(query, values);
+        
+        // Get the created editorial
+        const [rows] = await this.pool.query(`
+            SELECT e.*, 
+                   ed.name as editor_name, ed.role as editor_role, 
+                   ed.image_url as editor_image_url, ed.bio as editor_bio,
+                   ed.name_ml as editor_name_ml, ed.role_ml as editor_role_ml,
+                   ed.bio_ml as editor_bio_ml
+            FROM editorials e
+            LEFT JOIN editors ed ON e.editor_id = ed.id
+            WHERE e.id = ?
+        `, [editorial.id]);
+        
+        return this.transformEditorial((rows as any[])[0]);
     }
 
     async createEditor(editor: Editor): Promise<Editor> {
@@ -145,8 +158,7 @@ export class EditorialRepository {
             INSERT INTO editors (
                 name, role, image_url, bio,
                 name_ml, role_ml, bio_ml
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING *
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
 
         const values = [
@@ -159,8 +171,14 @@ export class EditorialRepository {
             editor.bioMl
         ];
 
-        const result = await this.pool.query(query, values);
-        return result.rows[0];
+        const [result] = await this.pool.query(query, values);
+        
+        // Get the created editor
+        const [rows] = await this.pool.query(`
+            SELECT * FROM editors WHERE id = ?
+        `, [(result as any).insertId]);
+        
+        return (rows as any[])[0];
     }
 }
 

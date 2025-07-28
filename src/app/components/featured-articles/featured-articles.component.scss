@@ -3,109 +3,324 @@
   width: 100%;
 }
 
-.article-card {
-  transition: transform 0.3s ease-in-out;
-  margin-bottom: 1.5rem; /* Add spacing between rows */
-  
-  &:hover {
-    transform: scale(1.02);
-  }
-}
-
-.article-content {
-  padding: 1.5rem 0;
-}
-
-.article-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.5rem; /* Tailwind's text-2xl */
-  font-weight: 600; /* Tailwind's font-semibold */
-  color: #000; /* Tailwind's text-black */
-  margin-bottom: 0.75rem; /* Tailwind's mb-3 */
-  line-height: 1.25; /* Tailwind's leading-tight */
-}
-
-#articleContainer {
-  transform: translateX(0);
-  will-change: transform;
-}
-
-.article-slide {
-  flex: 0 0 auto;
-  width: 100%;
-  
-  @media (min-width: 768px) {
-    width: 50%;
-  }
-  
-  @media (min-width: 1024px) {
-    width: 33.333%;
-  }
-  
-  @media (min-width: 1280px) {
-    width: 25%;
-  }
-}
-
-/* Aspect ratio utility */
-.aspect-ratio-container {
+// Slider styles with integrated title
+.slider {
   position: relative;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+  background: #000;
+}
 
+// Integrated title styling
+.slider-title {
+  position: absolute;
+  top: 60px;
+  left: 50px;
+  z-index: 20;
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif;
+    opacity: 0.9;
+  }
+}
+
+// Loading and error states
+.loading-state,
+.error-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 10;
+  
+  p {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #fff;
+  }
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.horizontal-scroll-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-track {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  will-change: transform;
+  
+  // Smooth transitions for better animation quality
+  transition: transform 0.1s ease-out;
+  
+  // GPU acceleration for smoother performance
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.slide {
+  flex-shrink: 0;
+  width: 400px; // Increased width for landscape orientation
+  height: 450px; // Adjusted height to accommodate landscape image
+  margin: 0 20px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  
+  &:first-child {
+    margin-left: 50px;
+  }
+  
+  &:last-child {
+    margin-right: 50px;
+  }
+}
+
+.slide-image {
+  width: 100%;
+  height: 280px; // Fixed height for uniform landscape images
+  overflow: hidden;
+  //border-radius: 12px;
+  position: relative;
+  background: #1a1a1a; // Dark background for contained images
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
   img {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; // Changed to contain for uniform sizing
+    will-change: transform;
+    user-select: none;
+    transition: transform 0.4s ease;
+    transform-origin: center center;
+    max-width: 100%;
+    max-height: 100%;
   }
 }
 
-.article-card {
-  .article-content {
-    padding: 1.5rem;
+.slide:hover .slide-image img {
+  transform: scale(1.05); // Reduced hover effect for contained images
+}
+
+.slide-overlay {
+  position: absolute;
+  bottom: -3rem; // Adjusted for new layout
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+  opacity: 1; // Show text immediately on load
+  padding: 0 4px;
+}
+
+.slide:hover .slide-overlay {
+  opacity: 1; // Keep visible on hover (no change needed)
+}
+
+.article-info {
+  flex: 1;
+  
+  .article-category {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.3rem;
+    line-height: 1;
+  }
+  
+  .project-title {
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: #fff;
+    margin: 0 0 0.3rem 0;
+    line-height: 1.2;
+    max-width: 320px; // Increased for wider slides
     
     &.malayalam-text {
       font-family: 'Noto Sans Malayalam', sans-serif;
-      line-height: 1.8;
-      text-rendering: optimizeLegibility;
-      font-feature-settings: "kern" 1;
-      font-kerning: normal;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      text-transform: none;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+  
+  .article-author {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+    margin: 0;
+    line-height: 1;
+  }
+}
+
+.project-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-left: 1rem;
+  align-self: flex-end;
+  
+  svg {
+    stroke: #fff;
+    stroke-width: 2;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Placeholder slide styling
+.placeholder-slide {
+  .slide-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    
+    .placeholder-content {
+      text-align: center;
+      color: #fff;
       
       h3 {
-        font-size: 1.5rem;
-        margin-bottom: 0.75rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
       }
       
       p {
-        font-size: 1.125rem;
-      }
-      
-      .category {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
+        opacity: 0.8;
+        line-height: 1.4;
       }
     }
   }
 }
 
-// Add Malayalam text support to article titles and excerpts
-.article-title.malayalam-text {
-  font-family: 'Noto Sans Malayalam', sans-serif;
-  line-height: 1.6;
-  font-weight: 700;
-}
-
-.article-excerpt.malayalam-text {
-  font-family: 'Noto Sans Malayalam', sans-serif;
-  line-height: 1.8;
-}
-
-.article-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+// Responsive design
+@media (max-width: 768px) {
+  .slider-title {
+    top: 40px;
+    left: 30px;
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
   
+  .slide {
+    width: 320px; // Adjusted for landscape orientation
+    height: 350px;
+    margin: 0 15px;
+    
+    &:first-child {
+      margin-left: 30px;
+    }
+    
+    &:last-child {
+      margin-right: 30px;
+    }
+  }
+  
+  .slide-image {
+    height: 200px; // Adjusted height for mobile landscape
+  }
+  
+  .slide-overlay {
+    bottom: -2rem;
+  }
+  
+  .project-title {
+    font-size: 0.75rem !important;
+    max-width: 260px; // Adjusted for wider mobile slides
+    
+    &.malayalam-text {
+      font-size: 0.8rem !important;
+    }
+  }
+  
+  .article-category,
+  .article-author {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .slider-title {
+    top: 30px;
+    left: 20px;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .slide {
+    width: 280px; // Maintained landscape aspect for small screens
+    height: 320px;
+    margin: 0 10px;
+    
+    &:first-child {
+      margin-left: 20px;
+    }
+    
+    &:last-child {
+      margin-right: 20px;
+    }
+  }
+  
+  .slide-image {
+    height: 180px; // Adjusted height for small screen landscape
+  }
+  
+  .project-arrow {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .project-title {
+    max-width: 220px; // Adjusted for wider small slides
+  }
 }

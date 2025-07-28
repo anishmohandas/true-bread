@@ -1,11 +1,11 @@
 INSERT INTO publications (id, publication_month, publication_year, title, cover_image, pdf_url, description, publish_date, issue_number) VALUES
-('january-2025', 'January', 2025, 'January 2025', 'assets/images/covers/jan25_cover.jpg', 'assets/files/True Bread _ Jan_2025.pdf', 'Start the year with inspiring stories of faith and renewal.', '2025-01-01', 1),
-('february-2025', 'February', 2025, 'February 2025', 'assets/images/covers/feb25_cover.jpg', 'assets/files/True Bread _ Feb_2025.pdf', 'February''s edition focuses on love, fellowship, and community.', '2025-02-01', 2),
-('march-2025', 'March', 2025, 'March 2025', 'assets/images/covers/march25_cover.jpg', 'assets/files/True Bread _ Mar_2025.pdf', 'In this issue, we explore the depths of Christian faith in modern times.', '2025-03-01', 3),
-('april-2025', 'April', 2025, 'April 2025', 'assets/images/covers/apr25_cover.jpg', 'assets/files/True Bread _ Apr_2025.pdf', 'Easter a celebration of hope', '2025-04-01', 4),
-('may-2025', 'May', 2025, 'May 2025', 'assets/images/covers/may25_cover.jpg', 'assets/files/True Bread_May_2025.pdf', 'Test', '2025-05-01', 5),
-('june-2025', 'June', 2025, 'June 2025', 'assets/images/covers/jun25_cover.jpg', 'assets/files/True Bread_Jun_2025.pdf', 'Test', '2025-06-01', 6),
-('july-2025', 'July', 2025, 'July 2025', 'assets/images/covers/jul25_cover.jpg', 'assets/files/True Bread_Jul_2025.pdf', 'Test', '2025-07-01', 7)
+('january-2025', 'January', 2025, 'January 2025', 'assets/images/covers/jan25_cover.jpg', 'assets/files/TrueBread_Jan_2025.pdf', 'Start the year with inspiring stories of faith and renewal.', '2025-01-01', 1),
+('february-2025', 'February', 2025, 'February 2025', 'assets/images/covers/feb25_cover.jpg', 'assets/files/TrueBread_Feb_2025.pdf', 'February''s edition focuses on love, fellowship, and community.', '2025-02-01', 2),
+('march-2025', 'March', 2025, 'March 2025', 'assets/images/covers/march25_cover.jpg', 'assets/files/TrueBread_Mar_2025.pdf', 'In this issue, we explore the depths of Christian faith in modern times.', '2025-03-01', 3),
+('april-2025', 'April', 2025, 'April 2025', 'assets/images/covers/apr25_cover.jpg', 'assets/files/TrueBread_Apr_2025.pdf', 'Easter a celebration of hope and redemption.', '2025-04-01', 4),
+('may-2025', 'May', 2025, 'May 2025', 'assets/images/covers/may25_cover.jpg', 'assets/files/TrueBread_May_2025.pdf', 'Happy Women''s Day! Celebrate the Godly women in your life.', '2025-05-01', 5),
+('june-2025', 'June', 2025, 'June 2025', 'assets/images/covers/jun25_cover.jpg', 'assets/files/TrueBread_Jun_2025.pdf', 'In this beatiful spring season let''s renew our love of learning and growth.', '2025-06-01', 6),
+('july-2025', 'July', 2025, 'July 2025', 'assets/images/covers/jul25_cover.jpg', 'assets/files/TrueBread_Jul_2025.pdf', 'In this issue, we shine light on the importance of studying the word of God in these times of uncertainty.', '2025-07-01', 7),
 ;
 
 
@@ -19,6 +19,21 @@ INSERT INTO publication_highlights (id, publication_id, title) VALUES
 (7, 'march-2025', 'Voice from the Heart, Beyond Words'),
 (8, 'march-2025', 'For She Loved Much'),
 (9, 'march-2025', 'The Vulture and the Little Girl');
+(7, 'march-2025', 'Voice from the Heart, Beyond Words'),
+(8, 'march-2025', 'For She Loved Much'),
+(9, 'march-2025', 'The Vulture and the Little Girl');
+(10, 'april-2025', 'The resurrection of Jesus empowers believers in times of crisis'),
+(11, 'april-2025', 'Parenting with grace to let go'),
+(12, 'april-2025', 'Awakened church now stand and run');
+(13, 'may-2025', 'Woman is a wonder'),
+(14, 'may-2025', 'Breaking the chains'),
+(15, 'may-2025', 'Benaniah the mighty warrior');
+(16, 'june-2025', 'Spring season of self-discovery'),
+(17, 'june-2025', 'Faith decisions that shake foundations'),
+(18, 'june-2025', 'Re-reading of Child Rights of India');
+(19, 'july-2025', 'Learn to learn'),
+(20, 'july-2025', 'Questioning: An act of spirituality'),
+(21, 'july-2025', 'Are we failing the next generation of biblical leaders?');
 
 
 INSERT INTO editors (id, name, role, image_url, bio, name_ml, role_ml, bio_ml) VALUES

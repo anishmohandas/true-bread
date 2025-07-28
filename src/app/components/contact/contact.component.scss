@@ -7,9 +7,49 @@
   line-height: 2em;
 }
 
-
 .contact-page {
   min-height: calc(100vh - 64px); // Adjust based on your header height
+}
+
+// Hide only specific text elements initially to prevent FOUC (Flash of Unstyled Content)
+// These will be shown by GSAP when animations are ready
+// Only target content text, not form elements
+.contact-page h2,
+.contact-page h3:not(label),
+.contact-page p.text-stone-600,
+.contact-page a[href^="mailto:"],
+.contact-page a[href^="tel:"],
+.contact-page div.p-4 {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+// Handle address separately to preserve line structure
+.contact-page address {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+// Ensure address lines maintain proper spacing
+.contact-page address p {
+  display: block;
+  line-height: 1.5;
+}
+
+// Hide the form initially - it will appear after text animations complete
+.contact-page form {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+// Line wrapper for split text animation
+.line-wrapper {
+  overflow: hidden;
+  display: block;
+}
+
+.line {
+  display: block;
 }
 
 // Optional: Add animations
@@ -27,3 +67,4 @@
     transform: translateY(0);
   }
 }
+ 

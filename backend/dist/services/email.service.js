@@ -5,13 +5,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailService = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const pg_1 = require("pg");
+const db_1 = require("../db");
 const ejs_1 = __importDefault(require("ejs"));
 const path_1 = __importDefault(require("path"));
 const config_1 = require("../config");
 class EmailService {
     constructor() {
         this.config = config_1.config;
+        // Log email configuration (without sensitive data)
+        console.log('Email Service Configuration:');
+        console.log('- Host:', this.config.email.host);
+        console.log('- Port:', this.config.email.port);
+        console.log('- Secure:', this.config.email.secure);
+        console.log('- User:', this.config.email.user ? '***configured***' : 'NOT SET');
+        console.log('- Password:', this.config.email.password ? '***configured***' : 'NOT SET');
+        if (!this.config.email.user || !this.config.email.password) {
+            console.warn('⚠️  WARNING: Email credentials not properly configured. Emails will not be sent.');
+        }
         this.transporter = nodemailer_1.default.createTransport({
             host: this.config.email.host,
             port: this.config.email.port,
@@ -21,7 +31,6 @@ class EmailService {
                 pass: this.config.email.password,
             }
         });
-        this.pool = new pg_1.Pool(this.config.database);
     }
     async renderTemplate(templateName, data) {
         const templatePath = path_1.default.join(__dirname, '../templates/emails', `${templateName}.ejs`);
@@ -43,33 +52,50 @@ class EmailService {
     }
     async sendWelcomeEmail(email) {
         try {
+            console.log(`📧 Attempting to send welcome email to: ${email}`);
+            // Check if email credentials are configured
+            if (!this.config.email.user || !this.config.email.password) {
+                throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASSWORD environment variables.');
+            }
             // Get latest issue for the welcome email
-            const { rows: [latestIssue] } = await this.pool.query('SELECT * FROM publications ORDER BY publish_date DESC LIMIT 1');
+            const [rows] = await db_1.pool.query('SELECT * FROM publications ORDER BY publish_date DESC LIMIT 1');
+            const latestIssue = rows[0];
+            console.log('📖 Latest issue found:', latestIssue ? latestIssue.title : 'No issues found');
             const html = await this.renderTemplate('welcome', {
                 email,
                 latestIssue
             });
-            await this.transporter.sendMail({
-                from: '"True Bread Magazine" <noreply@truebread.com>',
+            console.log('📝 Email template rendered successfully');
+            const mailOptions = {
+                from: `"True Bread Magazine" <${this.config.email.user}>`,
                 to: email,
                 subject: 'Welcome to True Bread Magazine!',
                 html
+            };
+            console.log('📤 Sending email with options:', {
+                from: mailOptions.from,
+                to: mailOptions.to,
+                subject: mailOptions.subject
             });
+            const result = await this.transporter.sendMail(mailOptions);
+            console.log('✅ Welcome email sent successfully:', result.messageId);
+            return result;
         }
         catch (error) {
-            console.error('Error sending welcome email:', error);
+            console.error('❌ Error sending welcome email:', error);
             throw error;
         }
     }
     async sendMonthlyNewsletter() {
         try {
             // Get active subscribers
-            const { rows: subscribers } = await this.pool.query('SELECT email FROM subscribers WHERE is_active = true');
-            // Get latest issue
-            const { rows: [latestIssue] } = await this.pool.query(`
+            const [subscriberRows] = await db_1.pool.query('SELECT email FROM subscribers WHERE is_active = true');
+            const subscribers = subscriberRows;
+            // Get latest issue with highlights (MySQL syntax)
+            const [issueRows] = await db_1.pool.query(`
         SELECT 
           p.*,
-          array_agg(h.title) as highlights
+          GROUP_CONCAT(h.title) as highlights
         FROM publications p
         LEFT JOIN publication_highlights h ON h.publication_id = p.id
         WHERE p.id = (
@@ -79,6 +105,7 @@ class EmailService {
         )
         GROUP BY p.id
       `);
+            const latestIssue = issueRows[0];
             // Render template once since it's the same for all subscribers
             const baseHtml = await this.renderTemplate('newsletter', {
                 issue: latestIssue
@@ -88,7 +115,7 @@ class EmailService {
             for (let i = 0; i < subscribers.length; i += batchSize) {
                 const batch = subscribers.slice(i, i + batchSize);
                 const emailPromises = batch.map(subscriber => this.transporter.sendMail({
-                    from: '"True Bread Magazine" <noreply@truebread.com>',
+                    from: `"True Bread Magazine" <${this.config.email.user}>`,
                     to: subscriber.email,
                     subject: `True Bread Magazine - ${latestIssue.title} Now Available!`,
                     html: baseHtml.replace('${email}', subscriber.email) // Replace placeholder with actual email
@@ -116,7 +143,7 @@ class EmailService {
             });
             await this.transporter.sendMail({
                 from: `"${data.name}" <${data.email}>`,
-                to: '"True Bread Magazine" <truebreadmedia@gmail.com>',
+                to: process.env.CONTACT_EMAIL || '"True Bread Magazine" <truebreadmedia@gmail.com>',
                 subject: `Contact Form: ${data.subject}`,
                 html,
                 replyTo: data.email

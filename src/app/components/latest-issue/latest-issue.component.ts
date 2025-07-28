@@ -130,6 +130,9 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
       // Track PDF view
       this.googleAnalytics.trackPdfView(this.currentIssue.month, this.currentIssue.id);
       window.open(this.currentIssue.pdfUrl, '_blank');
+    } else {
+      console.error('PDF URL not available for current issue');
+      alert('PDF is not available for this issue. Please try again later.');
     }
   }
 
@@ -137,10 +140,23 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.currentIssue?.pdfUrl) {
       // Track PDF download
       this.googleAnalytics.trackPdfDownload(this.currentIssue.month, this.currentIssue.id);
-      const link = document.createElement('a');
-      link.href = this.currentIssue.pdfUrl;
-      link.download = `${this.currentIssue.month}-issue.pdf`;
-      link.click();
+      
+      try {
+        const link = document.createElement('a');
+        link.href = this.currentIssue.pdfUrl;
+        link.download = `${this.currentIssue.month}-issue.pdf`;
+        link.target = '_blank'; // Add target blank for better compatibility
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading PDF:', error);
+        // Fallback to opening in new tab
+        window.open(this.currentIssue.pdfUrl, '_blank');
+      }
+    } else {
+      console.error('PDF URL not available for current issue');
+      alert('PDF is not available for this issue. Please try again later.');
     }
   }
 
@@ -189,17 +205,17 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
     this.observer = new IntersectionObserver((entries) => {
       const isIntersecting = entries[0].isIntersecting;
 
-      console.log('Latest issue is intersecting:', isIntersecting);
+      //console.log('Latest issue is intersecting:', isIntersecting);
 
       // Update the tracker state
       this.scrollTrackerService.setInLatestIssueSection(isIntersecting);
 
       // If we're no longer intersecting and we've scrolled down, we've passed the section
       if (!isIntersecting && entries[0].boundingClientRect.y < 0) {
-        console.log('Scrolled past latest issue section');
+        //console.log('Scrolled past latest issue section');
         this.scrollTrackerService.setPastLatestIssueSection(true);
       } else if (isIntersecting) {
-        console.log('In latest issue section or scrolled back up');
+        //console.log('In latest issue section or scrolled back up');
         this.scrollTrackerService.setPastLatestIssueSection(false);
       }
     }, {
@@ -210,10 +226,10 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
     const latestIssueSection = this.elementRef.nativeElement.querySelector('#latest-issue-section');
     if (latestIssueSection) {
       this.observer.observe(latestIssueSection);
-      console.log('Started observing latest issue section with ID');
+      //console.log('Started observing latest issue section with ID');
     } else {
       this.observer.observe(this.elementRef.nativeElement);
-      console.log('Started observing latest issue component (fallback)');
+      //console.log('Started observing latest issue component (fallback)');
     }
   }
 
@@ -228,7 +244,7 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const isPast = rect.bottom < 0;
 
-      console.log('Scroll listener - isPast:', isPast, 'rect.bottom:', rect.bottom);
+      //console.log('Scroll listener - isPast:', isPast, 'rect.bottom:', rect.bottom);
 
       // Update the tracker state
       this.scrollTrackerService.setPastLatestIssueSection(isPast);
@@ -236,7 +252,7 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Add the scroll listener
     window.addEventListener('scroll', this.scrollListener);
-    console.log('Added scroll listener for latest issue section');
+    //console.log('Added scroll listener for latest issue section');
   }
 
   scrollToNextSection() {

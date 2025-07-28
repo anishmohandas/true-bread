@@ -6,20 +6,22 @@
 <!-- Main content container with touch event handling -->
 <div class="smooth-scroll" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
   (touchend)="onTouchEnd()" (touchcancel)="onTouchCancel()">
-  <!-- Footer positioned behind content -->
-  <app-footer *ngIf="showComponents" class="parallax-footer"></app-footer>
 
-  <!-- Scrollable content above footer -->
+  <!-- Scrollable content -->
   <div #scrollContent class="smooth-scroll-content no-gap" (touchstart)="onTouchStart($event)"
     (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()" (touchcancel)="onTouchCancel()">
     <div class="router-outlet-wrapper no-gap">
       <router-outlet></router-outlet>
     </div>
   </div>
+
+  <!-- Footer positioned AFTER content -->
+  <app-footer *ngIf="showComponents" class="parallax-footer"></app-footer>
 </div>
 
-<!-- Clean Navigation Ball - Fixed to viewport -->
-<div class="navigation-ball" (click)="scrollToNextSection()" *ngIf="isHomePage" [class.at-bottom]="isAtLastSection">
+<!-- Clean Navigation Ball - Fixed to viewport - Hidden during preloader and when menu is open -->
+<div class="navigation-ball" (click)="scrollToNextSection()" *ngIf="showComponents && isHomePage && !isMenuOpen"
+  [class.at-bottom]="isAtLastSection">
   <div class="ball">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <!-- Down arrow (default) -->

@@ -2,20 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editorialController = void 0;
 const express_1 = require("express");
-const pg_1 = require("pg");
-const config_1 = require("../config");
+const db_1 = require("../db");
 const editorial_repository_1 = require("../repositories/editorial.repository");
 const router = (0, express_1.Router)();
-const pool = new pg_1.Pool(config_1.config.database);
-const editorialRepo = new editorial_repository_1.EditorialRepository(pool);
+const editorialRepo = new editorial_repository_1.EditorialRepository(db_1.pool);
 // Test database connection route
 router.get('/test-db', async (req, res) => {
     try {
-        const result = await pool.query('SELECT NOW()');
+        const [rows] = await db_1.pool.query('SELECT NOW() as current_time');
         res.json({
             status: 'success',
             message: 'Database connection successful',
-            timestamp: result.rows[0].now
+            timestamp: rows[0].current_time
         });
     }
     catch (error) {
@@ -31,7 +29,7 @@ router.get('/test-db', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const editorials = await editorialRepo.getAllEditorials();
-        if (!editorials || editorials.length === 0) {
+        if (!editorials || !Array.isArray(editorials) || editorials.length === 0) {
             return res.status(404).json({
                 status: 'error',
                 code: 'EDITORIALS_NOT_FOUND',

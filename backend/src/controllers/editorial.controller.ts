@@ -1,20 +1,18 @@
 import { Router } from 'express';
-import { Pool } from 'pg';
-import { config } from '../config';
+import { pool } from '../db';
 import { EditorialRepository } from '../repositories/editorial.repository';
 
 const router = Router();
-const pool = new Pool(config.database);
 const editorialRepo = new EditorialRepository(pool);
 
 // Test database connection route
 router.get('/test-db', async (req, res) => {
     try {
-        const result = await pool.query('SELECT NOW()');
+        const [rows] = await pool.query('SELECT NOW() as current_time');
         res.json({
             status: 'success',
             message: 'Database connection successful',
-            timestamp: result.rows[0].now
+            timestamp: (rows as any[])[0].current_time
         });
     } catch (error: any) {
         console.error('Database connection test failed:', error);
@@ -30,7 +28,7 @@ router.get('/test-db', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const editorials = await editorialRepo.getAllEditorials();
-        if (!editorials || editorials.length === 0) {
+        if (!editorials || !Array.isArray(editorials) || editorials.length === 0) {
             return res.status(404).json({
                 status: 'error',
                 code: 'EDITORIALS_NOT_FOUND',

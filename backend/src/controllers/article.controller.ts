@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import { Pool } from 'pg';
-import { config } from '../config';
+import { pool } from '../db';
 import { ArticleRepository } from '../repositories/article.repository';
 
 const router = Router();
-const pool = new Pool(config.database);
 const articleRepo = new ArticleRepository(pool);
 
 // Get all articles

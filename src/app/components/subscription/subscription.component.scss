@@ -1,22 +1,279 @@
-/* Component-specific styles can be added here
- * Though in this case, since you're using Tailwind CSS classes,
- * you might not need additional styles unless you want to add
- * custom animations or complex styles that can't be achieved with Tailwind
- */
-
 :host {
   display: block;
   width: 100%;
 }
 
+// Issue Highlights Color Variables
+$bg: #eeece5;
+$primary: #a58725;
+$accent: #fe4e01;
+$text: #08350e;
+$secondary: #00eded;
+
+// Reduce section padding for more compact layout
+section {
+  padding: 2rem 0 !important; // Reduced from default padding
+  background-color: $bg !important; // Use issue highlights background
+}
+
+@media (min-width: 768px) {
+  section {
+    padding: 3rem 0 !important; // Reduced from default padding
+  }
+}
+
+.hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #0057f5;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100%;
+  width: 100%;
+}
+
+@media (min-width: 700px) {
+  .hero {
+    padding: 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero {
+    padding: 6rem;
+  }
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+@media (min-width: 800px) {
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr; // Give more space to form, less to SVG
+    align-items: flex-start; // Align both columns to top
+    gap: 3rem;
+  }
+}
+
+.hero-title {
+  color: $text; // Dark green from issue highlights
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: "Delight", serif; // Use Delight font
+}
+
+.hero-subtitle {
+  color: $primary; // Golden yellow from issue highlights
+  font-size: 1.125rem;
+  margin-bottom: 1.5rem;
+  font-family: "Delight", serif; // Use Delight font
+}
+
+.hero-image {
+  order: -1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2rem; // Add some top padding to align with form content
+}
+
+@media (min-width: 800px) {
+  .hero-image {
+    order: initial;
+    justify-content: flex-start; // Align to left in desktop
+    padding-top: 0; // Remove top padding on desktop
+  }
+}
+
+.hero-image img {
+  width: 100%;
+}
+
+.hero-form {
+  margin-top: 1rem;
+}
+
+@media (min-width: 700px) {
+  .hero-form {
+    margin-top: 2rem;
+  }
+}
+
+.hero-form-input {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem; // Add space between inputs on mobile
+}
+
+@media (min-width: 400px) {
+  .hero-form-input {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.5rem; // Add space between inputs on desktop
+  }
+}
+
+.hero-name-input,
+.hero-email-input {
+  padding: 1rem;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 0;
+  font-size: 1rem;
+  background: #fff;
+  font-family: "Delight", serif; // Use Delight font
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 87, 245, 0.2);
+  }
+  
+  &.error {
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+}
+
+.hero-name-input {
+  border-radius: 0;
+  margin-bottom: 0.5rem;
+}
+
+.hero-email-input {
+  border-radius: 0;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 400px) {
+  .hero-name-input {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+  
+  .hero-email-input {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+}
+
+.hero-form-submit {
+  background-color: #1a2e1a; // Greenish black
+  color: $bg; // Light background color for text
+  //border: 2px solid $primary; // Golden border
+  padding: 1rem 2rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  font-family: "Delight", serif; // Use Delight font
+  
+  &:hover:not(:disabled) {
+    background-color: #2a4a2a; // Lighter greenish black on hover
+    color: $bg;
+    border-color: $primary;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .error-container {
-  min-height: 24px; // Reserve space for error message
+  min-height: 24px;
   overflow: hidden;
+}
+
+.validation-messages {
+  margin-top: 0.5rem;
+}
+
+.message-container {
+  margin-top: 1rem;
+}
+
+// Animated SVG Styles - Now in separate column - Scoped to subscription component
+.hero-image .container {
+  // Position will be set by GSAP to match CodePen exactly
+  width: 350px; // Large size for better visibility
+  height: 350px; // Large size for better visibility
+  pointer-events: none; // Prevent SVG from blocking clicks
+}
+
+.hero-image .container svg {
+  // Visibility and scale will be set by GSAP
+  width: 100%;
+  height: 100%;
+  pointer-events: none; // Prevent SVG from blocking clicks
+}
+
+// Ensure form elements are clickable
+.hero-form {
+  position: relative;
+  z-index: 10; // Higher z-index to be above SVG
+}
+
+.hero-form-input {
+  position: relative;
+  z-index: 10; // Higher z-index
+}
+
+.hero-form-submit {
+  position: relative;
+  z-index: 10; // Higher z-index
+  pointer-events: auto; // Ensure button is clickable
+}
+
+// Make sure the envelope paths are visible initially with issue highlights colors - Scoped to subscription
+.hero-image #messageOutline,
+.hero-image #messageFlap {
+  stroke: $primary; // Golden stroke instead of white
+  stroke-width: 4;
+  fill: none;
+}
+
+// Pop group initial state - Scoped to subscription
+.hero-image #popGroup line {
+  stroke: $primary; // Golden stroke for pop lines
+  stroke-width: 4;
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  opacity: 0;
 }
 
 .validation-message {
   transform-origin: top;
   transition: all 0.2s ease-out;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
   
   &.hidden {
     transform: scaleY(0);
@@ -26,5 +283,29 @@
   &.visible {
     transform: scaleY(1);
     opacity: 1;
+  }
+  
+  &.error-message {
+    color: $accent; // Orange for errors
+  }
+  
+  &.success-message {
+    color: $primary; // Golden for success
+  }
+}
+
+// Responsive adjustments for better mobile experience
+@media (max-width: 399px) {
+  .hero-form-input {
+    margin-bottom: 0.5rem;
+  }
+  
+  .hero-name-input,
+  .hero-email-input {
+    padding: 0.75rem;
+  }
+  
+  .hero-form-submit {
+    padding: 0.75rem 1.5rem;
   }
 }

@@ -38,13 +38,15 @@
         </div>
         <!-- Actions -->
         <div class="flex items-center space-x-6 mb-4">
-          <button (click)="onViewPDF()" class="button js-button">
+          <button (click)="onViewPDF()" [disabled]="!currentIssue?.pdfUrl" [class.disabled]="!currentIssue?.pdfUrl"
+            class="button js-button">
             <span class="button__inner">
               <span class="button__text js-button__text">Read More</span>
               <span class="button__hover js-button__hover">Read More</span>
             </span>
           </button>
-          <button (click)="onDownloadPDF()" class="button js-button">
+          <button (click)="onDownloadPDF()" [disabled]="!currentIssue?.pdfUrl" [class.disabled]="!currentIssue?.pdfUrl"
+            class="button js-button">
             <span class="button__inner">
               <span class="button__text js-button__text">Download</span>
               <span class="button__hover js-button__hover">Download</span>

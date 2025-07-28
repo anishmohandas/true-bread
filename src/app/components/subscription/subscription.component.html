@@ -1,126 +1,102 @@
+<div class="hero" #heroSection>
+  <div class="hero-inner">
+    <!-- Left Column: Form -->
+    <div class="hero-text">
+      <h2 class="hero-title">Stay Connected</h2>
+      <p class="hero-subtitle">Subscribe to us and never miss an issue</p>
 
-<section class="py-4 bg-warm-gray">
-  <div class="container mx-auto px-6">
-    <div class="max-w-7xl mx-auto">
-      <!-- Two-column grid layout -->
-      <div class="grid md:grid-cols-2 gap-8 items-center">
-        <!-- Left column: Form -->
-        <div class="text-left">
-          <h2 class="text-5xl mb-10 font-poppins">Stay Connected</h2>
-          <p class="text-xl text-stone-600 mb-8">
-            Subscribe to us and never miss an issue
-          </p>
-
-          <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()" 
-                class="flex flex-col gap-4">
-            <!-- Name Input -->
-            <div class="flex-grow w-full">
-              <div class="relative">
-                <input type="text"
-                       formControlName="name"
-                       placeholder="name"
-                       [class.border-red-500]="subscriptionForm.get('name')?.invalid && 
-                                             subscriptionForm.get('name')?.touched"
-                       class="w-full shadow appearance-none border rounded p-3 border-stone-100 focus:outline-none focus:border-stone-300">
-              </div>
-              
-              <!-- Name Validation Message -->
-              <div class="error-container">
-                <div class="validation-message text-red-500 text-sm mt-2 pl-4"
-                     [class.visible]="subscriptionForm.get('name')?.invalid && 
-                                    subscriptionForm.get('name')?.touched"
-                     [class.hidden]="!(subscriptionForm.get('name')?.invalid && 
-                                     subscriptionForm.get('name')?.touched)">
-                  {{ getNameErrorMessage() }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Email Input -->
-            <div class="flex-grow w-full">
-              <div class="relative">
-                <input type="email"
-                       formControlName="email"
-                       placeholder="email"
-                       [class.border-red-500]="subscriptionForm.get('email')?.invalid && 
-                                             subscriptionForm.get('email')?.touched"
-                       class="w-full shadow appearance-none border rounded p-3 focus:shadow-outline border-stone-100 focus:outline-none focus:border-stone-300">
-              </div>
-              
-              <!-- Email Validation Message -->
-              <div class="error-container">
-                <div class="validation-message text-red-500 text-sm mt-2 pl-4"
-                     [class.visible]="subscriptionForm.get('email')?.invalid && 
-                                    subscriptionForm.get('email')?.touched"
-                     [class.hidden]="!(subscriptionForm.get('email')?.invalid && 
-                                     subscriptionForm.get('email')?.touched)">
-                  {{ getEmailErrorMessage() }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Error and Success Messages -->
-            <div class="w-full">
-              <div class="error-container">
-                <div class="validation-message text-red-500 text-sm mt-2 pl-4"
-                     [class.visible]="error"
-                     [class.hidden]="!error">
-                  {{ error }}
-                </div>
-                
-                <div class="validation-message text-green-500 text-sm mt-2 pl-4"
-                     [class.visible]="success"
-                     [class.hidden]="!success">
-                  Successfully subscribed! Welcome to True Bread.
-                </div>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="mt-2">
-              <button type="submit"
-                      [disabled]="subscriptionForm.invalid || submitting"
-                      class="px-8 py-3 bg-stone-800 text-white font-semibold 
-                             hover:bg-stone-900 transition-colors duration-300 
-                             disabled:opacity-50 disabled:cursor-not-allowed
-                             flex items-center justify-center min-w-[120px]">
-                <span *ngIf="!submitting">Subscribe</span>
-                <div *ngIf="submitting" 
-                     class="w-5 h-5 border-t-2 border-b-2 border-white animate-spin">
-                </div>
-              </button>
-            </div>
-          </form>
+      <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()" class="hero-form">
+        <div class="hero-form-input">
+          <input type="text" formControlName="name" placeholder="Name" [class.error]="subscriptionForm.get('name')?.invalid && 
+                               subscriptionForm.get('name')?.touched" class="hero-name-input">
+          <input type="email" formControlName="email" placeholder="Email Address" [class.error]="subscriptionForm.get('email')?.invalid && 
+                               subscriptionForm.get('email')?.touched" class="hero-email-input">
+          <button type="submit" [disabled]="subscriptionForm.invalid || submitting" class="hero-form-submit">
+            <span *ngIf="!submitting">Subscribe</span>
+            <div *ngIf="submitting" class="loading-spinner"></div>
+          </button>
         </div>
 
-        <!-- Right column: GIF -->
-        <div class="h-full w-full flex items-center justify-center">
-          <div class="w-[150%] aspect-square relative -mr-20">
-            <video 
-              autoplay 
-              loop 
-              muted 
-              playsinline
-              class="absolute inset-0 w-full h-full object-contain">
-              <source src="assets/images/subs-true-bread.mp4" type="video/mp4">
-            </video>
+        <!-- Validation Messages -->
+        <div class="validation-messages">
+          <div class="error-container">
+            <div class="validation-message" [class.visible]="subscriptionForm.get('name')?.invalid && 
+                                subscriptionForm.get('name')?.touched" [class.hidden]="!(subscriptionForm.get('name')?.invalid && 
+                                 subscriptionForm.get('name')?.touched)">
+              {{ getNameErrorMessage() }}
+            </div>
+          </div>
+
+          <div class="error-container">
+            <div class="validation-message" [class.visible]="subscriptionForm.get('email')?.invalid && 
+                                subscriptionForm.get('email')?.touched" [class.hidden]="!(subscriptionForm.get('email')?.invalid && 
+                                 subscriptionForm.get('email')?.touched)">
+              {{ getEmailErrorMessage() }}
+            </div>
           </div>
         </div>
+
+        <!-- Error and Success Messages -->
+        <div class="message-container">
+          <div class="validation-message error-message" [class.visible]="error" [class.hidden]="!error">
+            {{ error }}
+          </div>
+
+          <div class="validation-message success-message" [class.visible]="success" [class.hidden]="!success">
+            Successfully subscribed! Welcome to True Bread.
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column: SVG Icon -->
+    <div class="hero-image">
+      <div class="container">
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 0 600 600" enable-background="new 0 0 600 600" xml:space="preserve">
+          <defs></defs>
+
+          <path #messageOutline id="messageOutline" fill="none" stroke="#EDEDED" stroke-width="4"
+            stroke-linejoin="round" stroke-linecap="round" stroke-miterlimit="10"
+            d="M345.6,331.6H242.1v-65.9h103.5V331.6z" />
+
+          <path #messageFlap id="messageFlap" fill="none" stroke="#EDEDED" stroke-width="4" stroke-linejoin="round"
+            stroke-linecap="round" stroke-miterlimit="10" d="M242.1,265.7l52.4,52.3l51.1-52.3" />
+
+          <path id="tickOutline" fill="none" stroke="none" stroke-width="4" stroke-linecap="round"
+            stroke-linejoin="round" stroke-miterlimit="10"
+            d="M328.8,298.5c0,18.8-15.2,34-34,34s-34-15.2-34-34s15.2-34,34-34S328.8,279.7,328.8,298.5z" />
+
+          <path id="tick" fill="none" stroke="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+            stroke-miterlimit="10" d="M279.3,298.5l12.3,12.8l22.8-22.5" />
+
+          <path id="crossOutline" fill="none" stroke="none" stroke-width="4" stroke-linecap="round"
+            stroke-linejoin="round" stroke-miterlimit="10"
+            d="M328.8,298.5c0,18.8-15.2,34-34,34s-34-15.2-34-34s15.2-34,34-34S328.8,279.7,328.8,298.5z" />
+
+          <path id="cross" fill="none" stroke="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+            stroke-miterlimit="10" d="M308,312.3l-26.2-26 M281.8,313.3l26.2-27" />
+
+          <g #popGroup id="popGroup">
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="260.8" y1="300.3" x2="235.2" y2="300.7" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="271.8" y1="323.6" x2="253.3" y2="342.7" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="296.1" y1="332.5" x2="296.2" y2="357.3" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="319.1" y1="322.2" x2="336.5" y2="339.5" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="328.7" y1="299.2" x2="354.7" y2="298.8" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="319.1" y1="274.8" x2="336.5" y2="256.8" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="295.9" y1="264.5" x2="295.9" y2="240" />
+            <line fill="none" stroke="#EDEDED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+              stroke-miterlimit="10" x1="270.9" y1="274.3" x2="253.3" y2="256.8" />
+          </g>
+        </svg>
       </div>
     </div>
   </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>

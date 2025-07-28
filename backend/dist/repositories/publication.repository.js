@@ -11,22 +11,25 @@ class PublicationRepository {
                 p.id,
                 p.title,
                 p.description,
-                p.cover_image as "coverImage",
-                p.pdf_url as "pdfUrl",
-                p.publish_date as "publishDate",
-                p.publication_month as "month",
-                p.publication_year as "year",
-                p.issue_number as "issueNumber",
-                ARRAY_AGG(ph.title) as highlights
+                p.cover_image AS coverImage,
+                p.pdf_url AS pdfUrl,
+                p.publish_date AS publishDate,
+                p.publication_month AS month,
+                p.publication_year AS year,
+                p.issue_number AS issueNumber,
+                GROUP_CONCAT(ph.title) AS highlights
             FROM publications p
-            LEFT JOIN publication_highlights ph ON p.id = ph.publication_id
+            LEFT JOIN publication_highlights ph ON p.id = ph.publication_id COLLATE utf8mb4_unicode_ci
             GROUP BY p.id, p.title, p.description, p.cover_image, p.pdf_url, p.publish_date, 
                      p.publication_month, p.publication_year, p.issue_number
             ORDER BY p.publish_date DESC
         `;
         try {
-            const result = await this.pool.query(query);
-            return result.rows;
+            const [rows] = await this.pool.query(query);
+            return rows.map(row => ({
+                ...row,
+                highlights: row.highlights ? row.highlights.split(',') : []
+            }));
         }
         catch (error) {
             console.error('Database error:', error);
@@ -39,23 +42,30 @@ class PublicationRepository {
                 p.id,
                 p.title,
                 p.description,
-                p.cover_image as "coverImage",
-                p.pdf_url as "pdfUrl",
-                p.publish_date as "publishDate",
-                p.publication_month as "month",
-                p.publication_year as "year",
-                p.issue_number as "issueNumber",
-                ARRAY_AGG(ph.title) as highlights
+                p.cover_image AS coverImage,
+                p.pdf_url AS pdfUrl,
+                p.publish_date AS publishDate,
+                p.publication_month AS month,
+                p.publication_year AS year,
+                p.issue_number AS issueNumber,
+                GROUP_CONCAT(ph.title) AS highlights
             FROM publications p
-            LEFT JOIN publication_highlights ph ON p.id = ph.publication_id
+            LEFT JOIN publication_highlights ph ON p.id = ph.publication_id COLLATE utf8mb4_unicode_ci
             GROUP BY p.id, p.title, p.description, p.cover_image, p.pdf_url, p.publish_date, 
                      p.publication_month, p.publication_year, p.issue_number
             ORDER BY p.publish_date DESC
             LIMIT 1
         `;
         try {
-            const result = await this.pool.query(query);
-            return result.rows[0] || null;
+            const [rows] = await this.pool.query(query);
+            if (rows.length === 0) {
+                return null;
+            }
+            const row = rows[0];
+            return {
+                ...row,
+                highlights: row.highlights ? row.highlights.split(',') : []
+            };
         }
         catch (error) {
             console.error('Database error:', error);
@@ -68,22 +78,29 @@ class PublicationRepository {
                 p.id,
                 p.title,
                 p.description,
-                p.cover_image as "coverImage",
-                p.pdf_url as "pdfUrl",
-                p.publish_date as "publishDate",
-                p.publication_month as "month",
-                p.publication_year as "year",
-                p.issue_number as "issueNumber",
-                ARRAY_AGG(ph.title) as highlights
+                p.cover_image AS coverImage,
+                p.pdf_url AS pdfUrl,
+                p.publish_date AS publishDate,
+                p.publication_month AS month,
+                p.publication_year AS year,
+                p.issue_number AS issueNumber,
+                GROUP_CONCAT(ph.title) AS highlights
             FROM publications p
-            LEFT JOIN publication_highlights ph ON p.id = ph.publication_id
-            WHERE p.id = $1
+            LEFT JOIN publication_highlights ph ON p.id = ph.publication_id COLLATE utf8mb4_unicode_ci
+            WHERE p.id = ?
             GROUP BY p.id, p.title, p.description, p.cover_image, p.pdf_url, p.publish_date, 
                      p.publication_month, p.publication_year, p.issue_number
         `;
         try {
-            const result = await this.pool.query(query, [id]);
-            return result.rows[0] || null;
+            const [rows] = await this.pool.query(query, [id]);
+            if (rows.length === 0) {
+                return null;
+            }
+            const row = rows[0];
+            return {
+                ...row,
+                highlights: row.highlights ? row.highlights.split(',') : []
+            };
         }
         catch (error) {
             console.error('Database error:', error);

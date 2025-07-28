@@ -1,38 +1,17 @@
-<section class="issue-highlights">
-  <!-- Initial Content Layout (Single Column) -->
-  <div class="initial-layout">
-    <div class="initial-content">
-      <h2 class="main-header">Issue Highlights</h2>
-      <p class="description-text">
-        Discover the most compelling stories and insights from our latest publication.
-        Each highlight captures the essence of contemporary discourse and thought-provoking perspectives.
-      </p>
-    </div>
-  </div>
+<div id="wrap">
+  <h1 data-splitting="words">Issue Highlights</h1>
+  <p class="subhead">Discover compelling stories from our latest publication</p>
 
-  <!-- Category Layout (Two Column) -->
-  <div class="category-layout">
-    <!-- Left Column: Category Text -->
-    <div class="text-column">
-      <div class="text-content">
-        <div class="category-display">
-          <h2 class="category-title">{{ categories[currentCategoryIndex].title }}</h2>
-          <p class="category-description">{{ categories[currentCategoryIndex].description }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Column: Category Images -->
-    <div class="images-column">
-      <div class="single-image-container" #singleImageContainer>
-        <div class="highlight-card" *ngIf="highlightItems.length > 0">
-          <div class="highlight-image">
-            <div class="image-window">
-              <img [src]="highlightItems[0].img" [alt]="highlightItems[0].name" />
-            </div>
-          </div>
-        </div>
+  <div class="panel" *ngFor="let category of categories; let i = index" [attr.data-index]="i">
+    <h2 data-splitting="words">{{ category.title }}</h2>
+    <div class="thumb">
+      <!-- <p>{{ getCategoryType(i) }}</p> -->
+      <div class="inner">
+        <img [src]="category.imageUrl || getPlaceholderImage(i)" [alt]="category.title" loading="lazy"
+          (error)="onImageError($event, i)" />
       </div>
     </div>
   </div>
-</section>
+
+  <p class="subhead final">Explore More</p>
+</div>

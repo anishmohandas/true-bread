@@ -6,7 +6,99 @@
   font-family: 'Delight', sans-serif;
   line-height: 2em;
 }
+
 .header{
   font-size: 1.5rem;
   line-height: 2em;
+}
+
+// Split text animation styles
+.about-page {
+  // Ensure proper overflow handling for split text animations
+  overflow-x: hidden;
+  
+  // Initially hide text elements that will be animated to prevent FOUC
+  .header, h2, h3, p, li, a {
+    opacity: 0;
+    transform: translateY(20px); // Slight offset for animation
+    
+    // Show elements after animation setup (will be overridden by GSAP)
+    &.animation-ready {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  // Line wrapper styles for overflow hidden effect
+  .line-wrapper {
+    overflow: hidden;
+    display: block;
+    
+    // The actual line that slides up
+    .line {
+      display: block;
+      will-change: transform;
+      backface-visibility: hidden;
+      transform-origin: bottom left;
+    }
+    
+    // Special styling for heading lines
+    &.heading-line {
+      .line {
+        transform-origin: bottom center;
+      }
+    }
+  }
+  
+  // Ensure text elements maintain proper spacing
+  .header, p, li, a {
+    .line-wrapper {
+      line-height: inherit;
+    }
+  }
+  
+  // Heading specific styles
+  h2, h3 {
+    .line-wrapper {
+      line-height: 1.2;
+      
+      .line {
+        font-weight: inherit;
+        font-size: inherit;
+      }
+    }
+  }
+  
+  // List items specific styles
+  li {
+    .line-wrapper {
+      display: inline-block;
+      width: 100%;
+    }
+  }
+  
+  // Link styles
+  a {
+    .line-wrapper {
+      display: inline-block;
+      
+      .line {
+        color: inherit;
+        text-decoration: inherit;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Performance optimizations for animations
+.line-wrapper {
+  .line {
+    backface-visibility: hidden;
+    perspective: 1000px;
+    transform: translate3d(0, 0, 0); // Force hardware acceleration
+  }
 }

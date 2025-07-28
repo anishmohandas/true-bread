@@ -16,7 +16,7 @@ class PublicationsRepository {
                 p.publish_date as "publishDate",
                 p.publication_month as "month",
                 p.publication_year as "year",
-                ARRAY_AGG(ph.title) as highlights
+                JSON_ARRAYAGG(ph.title) as highlights
             FROM publications p
             LEFT JOIN publication_highlights ph ON p.id = ph.publication_id
             GROUP BY p.id, p.title, p.description, p.cover_image, p.pdf_url, p.publish_date, 
@@ -24,8 +24,11 @@ class PublicationsRepository {
             ORDER BY p.publish_date DESC
         `;
         try {
-            const result = await this.pool.query(query);
-            return result.rows;
+            const [rows] = await this.pool.query(query);
+            return rows.map(row => ({
+                ...row,
+                highlights: row.highlights ? JSON.parse(row.highlights) : []
+            }));
         }
         catch (error) {
             console.error('Database error:', error);
@@ -43,7 +46,7 @@ class PublicationsRepository {
                 p.publish_date as "publishDate",
                 p.publication_month as "month",
                 p.publication_year as "year",
-                ARRAY_AGG(ph.title) as highlights
+                JSON_ARRAYAGG(ph.title) as highlights
             FROM publications p
             LEFT JOIN publication_highlights ph ON p.id = ph.publication_id
             GROUP BY p.id, p.title, p.description, p.cover_image, p.pdf_url, p.publish_date, 
@@ -52,8 +55,15 @@ class PublicationsRepository {
             LIMIT 1
         `;
         try {
-            const result = await this.pool.query(query);
-            return result.rows[0] || null;
+            const [rows] = await this.pool.query(query);
+            if (rows.length === 0) {
+                return null;
+            }
+            const row = rows[0];
+            return {
+                ...row,
+                highlights: row.highlights ? JSON.parse(row.highlights) : []
+            };
         }
         catch (error) {
             console.error('Database error:', error);
@@ -71,16 +81,23 @@ class PublicationsRepository {
                 p.publish_date as "publishDate",
                 p.publication_month as "month",
                 p.publication_year as "year",
-                ARRAY_AGG(ph.title) as highlights
+                JSON_ARRAYAGG(ph.title) as highlights
             FROM publications p
             LEFT JOIN publication_highlights ph ON p.id = ph.publication_id
-            WHERE p.id = $1
+            WHERE p.id = ?
             GROUP BY p.id, p.title, p.description, p.cover_image, p.pdf_url, p.publish_date, 
                      p.publication_month, p.publication_year
         `;
         try {
-            const result = await this.pool.query(query, [id]);
-            return result.rows[0] || null;
+            const [rows] = await this.pool.query(query, [id]);
+            if (rows.length === 0) {
+                return null;
+            }
+            const row = rows[0];
+            return {
+                ...row,
+                highlights: row.highlights ? JSON.parse(row.highlights) : []
+            };
         }
         catch (error) {
             console.error('Database error:', error);

@@ -1,33 +1,80 @@
-<h1 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 32px; margin-bottom: 20px;">
+<!-- Logo Header -->
+<div style="text-align: center; margin-bottom: 40px;">
+    <img src="<%= backendUrl %>/api/images/truebread-logo.png" alt="True Bread Magazine Logo"
+        style="max-width: 200px; height: auto; margin-bottom: 20px;"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <div
+        style="display: none; font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px;">
+        TRUE BREAD MAGAZINE
+    </div>
+</div>
+
+<!-- Welcome Title -->
+<h1
+    style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 32px; margin-bottom: 30px; text-align: center; color: #2c3e50;">
     Welcome to True Bread Magazine!
 </h1>
 
-<p style="font-size: 18px; margin-bottom: 30px;">
-    Thank you for subscribing to True Bread Magazine. We're excited to have you join our community of bread enthusiasts!
+<!-- Welcome Message -->
+<p style="font-size: 18px; line-height: 1.6; margin-bottom: 25px; color: #34495e;">
+    Thank you for subscribing to True Bread Magazine. We're delighted to welcome you to the True Bread Magazine family —
+    a community rooted in faith, love, and the timeless truths of God's Word.
 </p>
 
-<div style="background-color: #f8f7f3; padding: 20px; border-radius: 8px; margin: 30px 0;">
-    <h2 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; margin-bottom: 15px;">
-        What to Expect:
-    </h2>
-    <ul style="padding-left: 20px;">
-        <li style="margin-bottom: 10px;">Monthly digital issues</li>
-        <li style="margin-bottom: 10px;">Exclusive recipes and techniques</li>
-        <li style="margin-bottom: 10px;">Expert interviews and features</li>
-        <li style="margin-bottom: 10px;">Community highlights and events</li>
-    </ul>
+<!-- Scripture Quote -->
+<p
+    style="font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #7f8c8d; font-style: italic; text-align: center; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #3498db; border-radius: 4px;">
+    "Man shall not live by bread alone, but by every word that proceeds from the mouth of God." - Matthew 4:4
+</p>
+
+<!-- Mission Statement -->
+<div style="background-color: #f8f7f3; padding: 25px; border-radius: 8px; margin: 30px 0; border: 1px solid #e9ecef;">
+    <p style="font-size: 16px; line-height: 1.7; margin-bottom: 20px; color: #2c3e50;">
+        This magazine is more than just reading material — it's a fellowship space for believers to grow, reflect, and
+        be inspired in every season of life. Each edition brings carefully curated articles, poems, devotions, and
+        insights from voices across the Body of Christ.
+    </p>
+
+    <p style="font-size: 16px; line-height: 1.7; margin-bottom: 20px; color: #2c3e50;">
+        We believe God has led you here with purpose, and we pray each page nourishes your spirit and encourages your
+        walk with Him.
+    </p>
+
+    <p style="font-size: 16px; line-height: 1.7; margin-bottom: 0; color: #2c3e50; font-weight: 500;">
+        Whether you're here to read, write, or simply be refreshed — welcome home.
+    </p>
 </div>
 
+<!-- Latest Issue Section -->
 <% if (latestIssue) { %>
-<div style="margin-top: 30px;">
-    <h2 style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; margin-bottom: 15px;">
-        Start Reading Now
-    </h2>
-    <p>Check out our latest issue:</p>
-    <div class="text-center">
-        <a href="<%= latestIssue.pdfUrl %>" class="button">
-            Read Latest Issue
-        </a>
+    <div style="margin-top: 40px; text-align: center;">
+        <h2
+            style="font-family: 'Mango Grotesque', Arial, sans-serif; font-size: 24px; margin-bottom: 20px; color: #2c3e50;">
+            Start Reading Now
+        </h2>
+
+        <p style="font-size: 16px; margin-bottom: 25px; color: #34495e;">
+            Check out our latest issue and begin your journey with True Bread Magazine:
+        </p>
+
+        <div style="text-align: center;">
+            <a href="<%= latestIssue.pdfUrl %>"
+                style="display: inline-block; background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
+                Read Latest Issue
+            </a>
+        </div>
     </div>
-</div>
-<% } %>
+    <% } %>
+
+        <!-- Footer Message -->
+        <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e9ecef; text-align: center;">
+            <p style="font-size: 14px; color: #7f8c8d; line-height: 1.5; margin-bottom: 10px;">
+                Blessings and peace,<br>
+                <strong>The True Bread Magazine Team</strong>
+            </p>
+
+            <p style="font-size: 12px; color: #95a5a6; margin-bottom: 0;">
+                You're receiving this email because you subscribed to True Bread Magazine. We're honored to have you in
+                our community.
+            </p>
+        </div>

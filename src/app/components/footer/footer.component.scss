@@ -1,20 +1,20 @@
 :host {
   display: block;
   width: 100%;
-  height: auto; // Auto height to fit content
+  height: 100vh; // Full viewport height for parallax effect
   position: relative;
-  margin: 0; // Ensure no margins
-  padding: 0; // Ensure no padding
+  margin: 0;
+  padding: 0;
 }
 
 :host.parallax-footer {
   // When used as a parallax footer
-  height: auto;
+  height: 100vh; // Full viewport height
   background-color: #1a1a1a;
   opacity: 1 !important;
   visibility: visible !important;
-  margin: 0; // Ensure no margins
-  padding: 0; // Ensure no padding
+  margin: 0;
+  padding: 0;
 
   // Ensure all content in the footer is visible
   .footer, .footer-content, .footer-logo, .footer-title {
@@ -26,16 +26,23 @@
 .footer {
   position: relative;
   width: 100%;
-  height: auto; // or your preferred height
+  max-width: 100vw; // Prevent horizontal overflow
+  height: 100vh; // Full viewport height for proper parallax
   background: linear-gradient(to bottom, #1a1a1a 60%, #2d3748 100%);
-  background-attachment: fixed; // This creates the parallax effect
+  background-attachment: fixed; // Add back for enhanced parallax effect
   background-size: cover;
   background-position: center;
   color: white;
+  padding-top: 2vh; // Reduced from 10vh to 2vh to remove extra space
   padding-bottom: 1rem;
   margin-top: 0;
-  overflow: hidden;
+  overflow-x: hidden; // Prevent horizontal scrollbar
+  overflow-y: hidden; // Prevent vertical scrollbar within footer
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; // Center content vertically
+  box-sizing: border-box; // Include padding in width calculation
 
   // Make all links white and ensure visibility
   a, div, p, h1, h2, h3, h4, h5, h6, span {
@@ -49,17 +56,19 @@
 .footer-content {
   position: relative;
   width: 100%;
-  padding-top: 2rem; // Increased padding at the top
+  max-width: 100%; // Prevent content from overflowing
+  padding-top: 0.5rem; // Reduced from 2rem to 0.5rem
   padding-bottom: 1rem; // Added padding at the bottom
   height: auto; // Auto height to fit content
   display: flex;
   flex-direction: column;
   opacity: 1 !important; // Force visibility
   color: white !important; // Ensure text is white
+  box-sizing: border-box; // Include padding in width calculation
 }
 
 .footer-logo-container {
-  margin-top: 2rem;
+  margin-top: 0.5rem; // Reduced from 2rem to 0.5rem
   margin-bottom: 1rem;
   padding: 0;
   display: flex;
@@ -71,12 +80,12 @@
   // Adjust container height on different screen sizes
   @media (max-width: 768px) {
     min-height: 120px; // Smaller height on mobile
-    margin-top: 1.5rem;
+    margin-top: 0.25rem; // Reduced margin
   }
 
   @media (min-width: 1200px) {
     min-height: 180px; // Larger height on desktop
-    margin-top: 2.5rem;
+    margin-top: 0.75rem; // Reduced margin
   }
 }
 
@@ -174,6 +183,7 @@ a {
 }
 .footer-logo {
   width: 100%;
+  max-width: 100%; // Prevent overflow
   padding: 0.5rem 0;
   margin: 0;
   display: flex;
@@ -192,10 +202,12 @@ a {
     font-family: 'Delight-Black', sans-serif !important; // Use Delight-Black font
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); // Add subtle glow
     width: 100%; // Take full width
+    max-width: 100%; // Prevent text from overflowing
     text-align: center; // Center text
     white-space: nowrap; // Prevent wrapping
     color: white !important; // Ensure text is white
     font-weight: normal; // Reset font weight
+    box-sizing: border-box; // Include any padding in width calculation
 
     // Adjust font size on different screen sizes
     @media (max-width: 768px) {
@@ -208,6 +220,47 @@ a {
 
     @media (min-width: 1200px) {
       font-size: 14vw; // Adjusted size for large screens as requested
+    }
+
+    // Split text animation styles
+    .line-wrapper {
+      overflow: hidden;
+      display: block;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .line {
+      display: block;
+      will-change: transform;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+// Additional styles for split text animation
+.footer-title {
+  .line-wrapper {
+    overflow: hidden;
+    display: block;
+  }
+
+  .line {
+    display: block;
+    will-change: transform;
+  }
+  
+  // Styling for individual characters in stagger animation
+  .char {
+    display: inline-block;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+    
+    // Ensure spaces maintain proper width
+    &:empty::before {
+      content: '\00a0'; // Non-breaking space
     }
   }
 }

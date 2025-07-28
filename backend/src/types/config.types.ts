@@ -22,5 +22,6 @@ export interface AppConfig {
     database: DatabaseConfig;
     email: EmailConfig;
     baseUrl: string;
+    backendUrl: string;
     port: number;
 }

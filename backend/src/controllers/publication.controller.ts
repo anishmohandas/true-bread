@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import { Pool } from 'pg';
-import { config } from '../config';
+import { pool } from '../db';
 import { PublicationRepository } from '../repositories/publication.repository';
 
 const router = Router();
-const pool = new Pool(config.database);
 const publicationRepo = new PublicationRepository(pool);
 
 // Get all publications
@@ -65,4 +63,3 @@ router.get('/:id', async (req, res) => {
 });
 
 export const publicationController = router;
-

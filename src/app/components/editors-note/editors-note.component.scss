@@ -3,10 +3,26 @@
 
 .editors-note {
   width: 100%;
-  background: #E7E1DA;
+  background: white;
   padding: 2rem 0;
   position: relative;
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: 'Delight', serif;
+
+  // Text elements are visible by default - ScrollTrigger will handle animations
+  .section-title,
+  .paragraph,
+  .column-subtitle,
+  .editor-name,
+  .editor-role {
+    opacity: 1;
+    transform: none;
+  }
+
+  // Line wrapper for split text animation
+  .line-wrapper {
+    overflow: hidden;
+    display: block;
+  }
 
   .container {
     width: 100%;
@@ -129,6 +145,7 @@
     margin-bottom: 1.5rem;
     text-align: justify;
     hyphens: auto;
+    font-family: 'Delight', serif;
   }
 
   // Drop cap styles removed - using clean paragraph format
@@ -251,6 +268,7 @@
 
     .paragraph {
       font-size: 1rem;
+      font-family: 'Delight', serif;
     }
 
     .column-subtitle {
@@ -282,6 +300,7 @@
 
     .paragraph {
       font-size: 0.95rem;
+      font-family: 'Delight', serif;
     }
 
     .column-subtitle {
@@ -343,10 +362,45 @@
       line-height: 1.4;
     }
   }
-}
-.split-line {
-  overflow: hidden;
-  display: block;
-  position: relative;
-  line-height: 1.4;
+  .split-line {
+    overflow: hidden;
+    display: block;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  // Editorial content styling
+  .editorial-content {
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: #444;
+      margin-bottom: 1.5rem;
+      text-align: justify;
+      hyphens: auto;
+      font-family: 'Delight', serif;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Old Standard TT', serif;
+      color: #333;
+      margin: 1.5rem 0 1rem 0;
+    }
+
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.8rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.3rem; }
+    h5 { font-size: 1.2rem; }
+    h6 { font-size: 1.1rem; }
+
+    // Ensure proper line containers for text elements
+    p, h1, h2, h3, h4, h5, h6 {
+      .line {
+        overflow: hidden;
+        position: relative;
+        line-height: 1.4;
+      }
+    }
+  }
 }

@@ -1,26 +1,12 @@
 
 import express from 'express';
-import { Pool } from 'pg';
+import { pool } from '../db';
 import { validateEmail, getEmailValidationError } from '../utils/validators';
 import { subscriptionLimiter, unsubscribeLimiter } from '../middleware/rateLimiter';
-import { config } from '../config';
+import { EmailService } from '../services/email.service';
 
 const router = express.Router();
-
-// Configure pool with environment variables
-const pool = new Pool({
-    host: config.database.host,
-    port: config.database.port,
-    database: config.database.database,
-    user: config.database.user,
-    password: config.database.password
-});
-
-// Add error handling for pool
-pool.on('error', (err) => {
-    console.error('Unexpected error on idle client', err);
-    process.exit(-1);
-});
+const emailService = new EmailService();
 
 // Subscribe
 router.post('/subscribers', subscriptionLimiter, async (req, res) => {
@@ -36,25 +22,41 @@ router.post('/subscribers', subscriptionLimiter, async (req, res) => {
     }
 
     try {
-        const result = await pool.query(
-            'INSERT INTO subscribers (email, name, subscription_date, is_active) VALUES ($1, $2, NOW(), true) RETURNING *',
+        const [result] = await pool.query(
+            'INSERT INTO subscribers (email, name, subscription_date, is_active) VALUES (?, ?, NOW(), true)',
             [email, name]
         );
         
+        // Get the inserted record
+        const [rows] = await pool.query(
+            'SELECT * FROM subscribers WHERE id = ?',
+            [(result as any).insertId]
+        );
+        
+        const subscriberRow = (rows as any[])[0];
         const subscriber = {
-            id: result.rows[0].id,
-            email: result.rows[0].email,
-            name: result.rows[0].name,
-            subscriptionDate: result.rows[0].subscription_date,
-            isActive: result.rows[0].is_active
+            id: subscriberRow.id,
+            email: subscriberRow.email,
+            name: subscriberRow.name,
+            subscriptionDate: subscriberRow.subscription_date,
+            isActive: subscriberRow.is_active
         };
+        
+        // Send welcome email (don't let email failures break the subscription process)
+        try {
+            await emailService.sendWelcomeEmail(email);
+            console.log(`Welcome email sent successfully to: ${email}`);
+        } catch (emailError) {
+            console.error(`Failed to send welcome email to ${email}:`, emailError);
+            // Continue with successful subscription response even if email fails
+        }
         
         res.status(201).json(subscriber);
     } catch (error: any) {
         console.error('Subscription error:', error);
-        if (error.code === '23505') { // unique violation
+        if (error.code === 'ER_DUP_ENTRY') { // MySQL unique violation
             res.status(409).json({ error: 'Email already subscribed' });
-        } else if (error.code === '42P01') { // relation does not exist
+        } else if (error.code === 'ER_NO_SUCH_TABLE') { // MySQL table does not exist
             res.status(500).json({ error: 'Database table not found' });
         } else {
             res.status(500).json({ error: 'Server error' });
@@ -73,12 +75,12 @@ router.delete('/subscribers/unsubscribe/:email', unsubscribeLimiter, async (req,
     const { email } = req.params;
 
     try {
-        const result = await pool.query(
-            'UPDATE subscribers SET is_active = false WHERE email = $1',
+        const [result] = await pool.query(
+            'UPDATE subscribers SET is_active = false WHERE email = ?',
             [email]
         );
 
-        if (result.rowCount === 0) {
+        if ((result as any).affectedRows === 0) {
             return res.status(404).json({ error: 'Subscriber not found' });
         }
 
