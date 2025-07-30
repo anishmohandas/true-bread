@@ -115,11 +115,13 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const titleElement = this.footerTitle.nativeElement;
     console.log('🔍 FOOTER: Title element found:', titleElement);
-    console.log('🔍 FOOTER: Title text content:', titleElement.textContent);
 
-    // Skip if element is empty or only contains whitespace
-    if (!titleElement.textContent?.trim()) {
-      console.log('⏭️ FOOTER: Skipping empty footer title element');
+    // Get the individual word spans we created in HTML
+    const wordTrue = titleElement.querySelector('.word-true');
+    const wordBread = titleElement.querySelector('.word-bread');
+
+    if (!wordTrue || !wordBread) {
+      console.error('❌ FOOTER: Word spans not found in HTML');
       return;
     }
 
@@ -130,27 +132,35 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
       clearProps: 'transform'
     });
 
-    // Create split text instance for characters to create stagger effect
-    console.log('🔄 FOOTER: Creating SplitType instance for characters...');
-    const split = new SplitType(titleElement, {
+    // Create split text instances for each word separately
+    console.log('🔄 FOOTER: Creating SplitType instances for words...');
+    
+    const splitTrue = new SplitType(wordTrue as HTMLElement, {
       types: 'chars',
       tagName: 'span',
       charClass: 'char'
     });
 
-    this.splitTexts.push(split);
+    const splitBread = new SplitType(wordBread as HTMLElement, {
+      types: 'chars',
+      tagName: 'span',
+      charClass: 'char'
+    });
 
-    if (!split.chars || split.chars.length === 0) {
+    this.splitTexts.push(splitTrue, splitBread);
+
+    // Combine all characters from both words
+    const allChars = [...(splitTrue.chars || []), ...(splitBread.chars || [])];
+
+    if (allChars.length === 0) {
       console.warn('⚠️ FOOTER: No characters created for footer title');
-      console.log('🔍 FOOTER: Split object:', split);
       return;
     }
 
-    console.log(`📏 FOOTER: Created ${split.chars.length} characters for footer title`);
-    console.log('🔍 FOOTER: Characters array:', split.chars);
+    console.log(`📏 FOOTER: Created ${allChars.length} characters for footer title`);
 
     // Set initial state for all characters - hidden and ready for stagger animation
-    gsap.set(split.chars, {
+    gsap.set(allChars, {
       opacity: 0,
       y: 50,
       rotationX: -90,
@@ -161,7 +171,7 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
     const timeline = gsap.timeline({ paused: true });
     
     // Animate characters with stagger effect
-    timeline.to(split.chars, {
+    timeline.to(allChars, {
       opacity: 1,
       y: 0,
       rotationX: 0,
@@ -209,8 +219,8 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   menuItems2: MenuItem[] = [
-    { text: 'Terms', link: '#' },
-    { text: 'Privacy', link: '#' }
+   // { text: 'Terms', link: '#' },
+    //{ text: 'Privacy', link: '#' }
   ];
 
   socialLinks: SocialLink[] = [

@@ -140,7 +140,7 @@
   // Typography
   .paragraph {
     font-size: 1.1rem;
-    line-height: 1.5;
+    line-height: 1.8;
     color: #444;
     margin-bottom: 1.5rem;
     text-align: justify;
@@ -167,16 +167,16 @@
     position: relative;
     border-radius: 8px;
 
-    blockquote {
-      font-size: 1.1rem;
-      font-style: italic;
-      color: #555;
-      margin: 0;
-      line-height: 1.6;
-      text-align: left;
-      position: relative;
-      padding: 1.5rem 0;
-      max-width: 100%;
+      blockquote {
+        font-size: 1.1rem;
+        font-style: italic;
+        color: #555;
+        margin: 0;
+        line-height: 1.9;
+        text-align: left;
+        position: relative;
+        padding: 1.5rem 0;
+        max-width: 100%;
 
       &::before {
         content: '"';
@@ -359,27 +359,27 @@
     .line {
       overflow: hidden;
       position: relative;
-      line-height: 1.4;
+      line-height: 1.7;
     }
   }
   .split-line {
     overflow: hidden;
     display: block;
     position: relative;
-    line-height: 1.4;
+    line-height: 1.7;
   }
 
-  // Editorial content styling
-  .editorial-content {
-    p {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      color: #444;
-      margin-bottom: 1.5rem;
-      text-align: justify;
-      hyphens: auto;
-      font-family: 'Delight', serif;
-    }
+    // Editorial content styling
+    .editorial-content {
+      p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 1.5rem;
+        text-align: justify;
+        hyphens: auto;
+        font-family: 'Delight', serif;
+      }
 
     h1, h2, h3, h4, h5, h6 {
       font-family: 'Old Standard TT', serif;
@@ -399,7 +399,7 @@
       .line {
         overflow: hidden;
         position: relative;
-        line-height: 1.4;
+        line-height: 1.7;
       }
     }
   }

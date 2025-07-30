@@ -12,13 +12,13 @@ $secondary: #00eded;
 
 // Reduce section padding for more compact layout
 section {
-  padding: 2rem 0 !important; // Reduced from default padding
+  padding: 1rem 0 !important; // Further reduced padding
   background-color: $bg !important; // Use issue highlights background
 }
 
 @media (min-width: 768px) {
   section {
-    padding: 3rem 0 !important; // Reduced from default padding
+    padding: 1.5rem 0 !important; // Further reduced padding
   }
 }
 
@@ -26,86 +26,80 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background-color: #0057f5;
+  padding: 1rem; // Reduced padding
+  //background-color: #0057f5;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  height: 100%;
+  min-height: auto; // Remove fixed height
   width: 100%;
 }
 
 @media (min-width: 700px) {
   .hero {
-    padding: 3rem;
+    padding: 1.5rem; // Reduced padding
   }
 }
 
-@media (min-width: 1200px) {
+/*@media (min-width: 1200px) {
   .hero {
-    padding: 6rem;
+    padding: 2rem; // Significantly reduced padding
   }
-}
+}*/
 
 .hero-inner {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
-  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem; // Reduced gap
+  max-width: 600px; // Reduced max-width for better centering
   margin: auto;
-}
-
-@media (min-width: 800px) {
-  .hero-inner {
-    display: grid;
-    grid-template-columns: 2fr 1fr; // Give more space to form, less to SVG
-    align-items: flex-start; // Align both columns to top
-    gap: 3rem;
-  }
 }
 
 .hero-title {
   color: $text; // Dark green from issue highlights
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem; // Reduced margin
   font-family: "Delight", serif; // Use Delight font
 }
 
 .hero-subtitle {
   color: $primary; // Golden yellow from issue highlights
   font-size: 1.125rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem; // Reduced margin
   font-family: "Delight", serif; // Use Delight font
 }
 
 .hero-image {
-  order: -1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 2rem; // Add some top padding to align with form content
-}
-
-@media (min-width: 800px) {
-  .hero-image {
-    order: initial;
-    justify-content: flex-start; // Align to left in desktop
-    padding-top: 0; // Remove top padding on desktop
-  }
+  margin-bottom: 0.5rem; // Reduced margin
 }
 
 .hero-image img {
   width: 100%;
 }
 
+.hero-text {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .hero-form {
-  margin-top: 1rem;
+  margin-top: 0.5rem; // Reduced margin
+  width: 100%;
+  max-width: 500px; // Limit form width for better appearance
 }
 
 @media (min-width: 700px) {
   .hero-form {
-    margin-top: 2rem;
+    margin-top: 0.5rem; // Reduced margin
   }
 }
 
@@ -213,23 +207,21 @@ section {
 }
 
 .validation-messages {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem; // Reduced margin
 }
 
 .message-container {
-  margin-top: 1rem;
+  margin-top: 0.5rem; // Reduced margin
 }
 
-// Animated SVG Styles - Now in separate column - Scoped to subscription component
+// Animated SVG Styles - Now centered above form
 .hero-image .container {
-  // Position will be set by GSAP to match CodePen exactly
-  width: 350px; // Large size for better visibility
-  height: 350px; // Large size for better visibility
+  width: 2.5rem; // Much smaller size for compact layout
+  height: 2.5rem; // Much smaller size for compact layout
   pointer-events: none; // Prevent SVG from blocking clicks
 }
 
 .hero-image .container svg {
-  // Visibility and scale will be set by GSAP
   width: 100%;
   height: 100%;
   pointer-events: none; // Prevent SVG from blocking clicks
@@ -252,7 +244,7 @@ section {
   pointer-events: auto; // Ensure button is clickable
 }
 
-// Make sure the envelope paths are visible initially with issue highlights colors - Scoped to subscription
+// Make sure the envelope paths are visible initially with issue highlights colors
 .hero-image #messageOutline,
 .hero-image #messageFlap {
   stroke: $primary; // Golden stroke instead of white
@@ -260,7 +252,7 @@ section {
   fill: none;
 }
 
-// Pop group initial state - Scoped to subscription
+// Pop group initial state
 .hero-image #popGroup line {
   stroke: $primary; // Golden stroke for pop lines
   stroke-width: 4;
@@ -297,7 +289,7 @@ section {
 // Responsive adjustments for better mobile experience
 @media (max-width: 399px) {
   .hero-form-input {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem; // Reduced margin
   }
   
   .hero-name-input,
@@ -307,5 +299,26 @@ section {
   
   .hero-form-submit {
     padding: 0.75rem 1.5rem;
+  }
+  
+  .hero-image .container {
+    width: 100px; // Much smaller on mobile
+    height: 100px;
+  }
+  
+  .hero-title {
+    font-size: 2rem; // Smaller title on mobile
+  }
+  
+  .hero-inner {
+    gap: 0.5rem; // Smaller gap on mobile
+  }
+}
+
+// Medium screens
+@media (min-width: 768px) {
+  .hero-image .container {
+    width: 300px; // Moderately sized on tablets
+    height: 300px;
   }
 }

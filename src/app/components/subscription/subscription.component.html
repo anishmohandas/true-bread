@@ -1,55 +1,6 @@
 <div class="hero" #heroSection>
   <div class="hero-inner">
-    <!-- Left Column: Form -->
-    <div class="hero-text">
-      <h2 class="hero-title">Stay Connected</h2>
-      <p class="hero-subtitle">Subscribe to us and never miss an issue</p>
-
-      <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()" class="hero-form">
-        <div class="hero-form-input">
-          <input type="text" formControlName="name" placeholder="Name" [class.error]="subscriptionForm.get('name')?.invalid && 
-                               subscriptionForm.get('name')?.touched" class="hero-name-input">
-          <input type="email" formControlName="email" placeholder="Email Address" [class.error]="subscriptionForm.get('email')?.invalid && 
-                               subscriptionForm.get('email')?.touched" class="hero-email-input">
-          <button type="submit" [disabled]="subscriptionForm.invalid || submitting" class="hero-form-submit">
-            <span *ngIf="!submitting">Subscribe</span>
-            <div *ngIf="submitting" class="loading-spinner"></div>
-          </button>
-        </div>
-
-        <!-- Validation Messages -->
-        <div class="validation-messages">
-          <div class="error-container">
-            <div class="validation-message" [class.visible]="subscriptionForm.get('name')?.invalid && 
-                                subscriptionForm.get('name')?.touched" [class.hidden]="!(subscriptionForm.get('name')?.invalid && 
-                                 subscriptionForm.get('name')?.touched)">
-              {{ getNameErrorMessage() }}
-            </div>
-          </div>
-
-          <div class="error-container">
-            <div class="validation-message" [class.visible]="subscriptionForm.get('email')?.invalid && 
-                                subscriptionForm.get('email')?.touched" [class.hidden]="!(subscriptionForm.get('email')?.invalid && 
-                                 subscriptionForm.get('email')?.touched)">
-              {{ getEmailErrorMessage() }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Error and Success Messages -->
-        <div class="message-container">
-          <div class="validation-message error-message" [class.visible]="error" [class.hidden]="!error">
-            {{ error }}
-          </div>
-
-          <div class="validation-message success-message" [class.visible]="success" [class.hidden]="!success">
-            Successfully subscribed! Welcome to True Bread.
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <!-- Right Column: SVG Icon -->
+    <!-- SVG Icon - Now on top -->
     <div class="hero-image">
       <div class="container">
         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -97,6 +48,55 @@
           </g>
         </svg>
       </div>
+    </div>
+
+    <!-- Form Content - Now below SVG -->
+    <div class="hero-text">
+      <h2 class="hero-title">Stay Connected</h2>
+      <p class="hero-subtitle">Subscribe to us and never miss an issue</p>
+
+      <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()" class="hero-form">
+        <div class="hero-form-input">
+          <input type="text" formControlName="name" placeholder="Name" [class.error]="subscriptionForm.get('name')?.invalid && 
+                               subscriptionForm.get('name')?.touched" class="hero-name-input">
+          <input type="email" formControlName="email" placeholder="Email Address" [class.error]="subscriptionForm.get('email')?.invalid && 
+                               subscriptionForm.get('email')?.touched" class="hero-email-input">
+          <button type="submit" [disabled]="subscriptionForm.invalid || submitting" class="hero-form-submit">
+            <span *ngIf="!submitting">Subscribe</span>
+            <div *ngIf="submitting" class="loading-spinner"></div>
+          </button>
+        </div>
+
+        <!-- Validation Messages -->
+        <div class="validation-messages">
+          <div class="error-container">
+            <div class="validation-message" [class.visible]="subscriptionForm.get('name')?.invalid && 
+                                subscriptionForm.get('name')?.touched" [class.hidden]="!(subscriptionForm.get('name')?.invalid && 
+                                 subscriptionForm.get('name')?.touched)">
+              {{ getNameErrorMessage() }}
+            </div>
+          </div>
+
+          <div class="error-container">
+            <div class="validation-message" [class.visible]="subscriptionForm.get('email')?.invalid && 
+                                subscriptionForm.get('email')?.touched" [class.hidden]="!(subscriptionForm.get('email')?.invalid && 
+                                 subscriptionForm.get('email')?.touched)">
+              {{ getEmailErrorMessage() }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Error and Success Messages -->
+        <div class="message-container">
+          <div class="validation-message error-message" [class.visible]="error" [class.hidden]="!error">
+            {{ error }}
+          </div>
+
+          <div class="validation-message success-message" [class.visible]="success" [class.hidden]="!success">
+            Successfully subscribed! Welcome to True Bread.
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

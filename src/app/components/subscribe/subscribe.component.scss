@@ -29,3 +29,13 @@
     }
   }
 }
+
+:host {
+  display: block;
+  width: 100%;
+  margin-top: 300px;
+  padding-bottom: 200px; // Ensure space for footer
+  font-family: 'Delight', sans-serif;
+  line-height: 2em;
+  background-color: #eeece5;
+}

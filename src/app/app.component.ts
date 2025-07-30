@@ -87,11 +87,10 @@ export class AppComponent implements OnInit {
       }
     );
 
-    // Reset preloader on navigation and detect home page
+    // Detect home page on navigation (don't reset preloader)
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event) => {
-      this.animationService.resetPreloader();
       const navEvent = event as NavigationEnd;
       this.isHomePage = navEvent.url === '/' || navEvent.url === '/home';
     });
@@ -107,9 +106,11 @@ export class AppComponent implements OnInit {
     // Wait for content to load
     setTimeout(() => {
       this.initNativeScrolling();
-      if (this.isHomePage) {
-        this.setupScrollListener();
-      }
+      // Setup scroll listener for all pages, not just home page
+      this.setupScrollListener();
+
+      // Initialize enhanced scroll animations
+      this.initScrollAnimations();
 
       // Connect scroll service - but disable resize callback since we're using native scrolling
       this.scrollService.resizeCallback = null;
@@ -267,44 +268,66 @@ export class AppComponent implements OnInit {
 
   scrollToNextSection() {
     if (this.isAtLastSection) {
-      // Scroll to top using native scrolling
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Use enhanced scroll service for smooth scrolling to top
+      this.scrollService.scrollToSection('body', 0);
       return;
     }
 
-    // Define sections in order - removed app-testimonials since it's commented out
-    const sections = [
-      'app-latest-issue',
-      'app-issue-highlights',
-      'app-editors-note',
-      'app-featured-articles',
-      'app-subscription'
-    ];
+    if (this.isHomePage) {
+      // Define sections in order for home page - removed app-testimonials since it's commented out
+      const sections = [
+        'app-latest-issue',
+        'app-issue-highlights',
+        'app-editors-note',
+        'app-featured-articles',
+        'app-subscription'
+      ];
 
-    // Find next section to scroll to
-    const currentScroll = window.scrollY + window.innerHeight / 2;
+      // Find next section to scroll to
+      const currentScroll = window.scrollY + window.innerHeight / 2;
 
-    for (const sectionSelector of sections) {
-      const element = document.querySelector(sectionSelector);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const elementTop = rect.top + window.scrollY;
+      for (const sectionSelector of sections) {
+        const element = document.querySelector(sectionSelector);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const elementTop = rect.top + window.scrollY;
 
-        if (elementTop > currentScroll) {
-          // Use native smooth scrolling
-          window.scrollTo({ top: elementTop, behavior: 'smooth' });
-          return;
+          if (elementTop > currentScroll) {
+            // Use enhanced scroll service with bounce effect
+            this.scrollService.scrollToSection(sectionSelector);
+            return;
+          }
         }
       }
-    }
 
-    // If no next section found, scroll to footer
-    const footerElement = document.querySelector('app-footer');
-    if (footerElement) {
-      const rect = footerElement.getBoundingClientRect();
-      const elementTop = rect.top + window.scrollY;
-      window.scrollTo({ top: elementTop, behavior: 'smooth' });
+      // If no next section found, scroll to footer
+      this.scrollService.scrollToSection('app-footer');
+    } else {
+      // For non-home pages, scroll down by one viewport height
+      const currentScroll = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const targetScroll = currentScroll + viewportHeight;
+      const maxScroll = document.documentElement.scrollHeight - viewportHeight;
+      
+      if (targetScroll >= maxScroll) {
+        // If we would scroll past the end, scroll to footer
+        this.scrollService.scrollToSection('app-footer');
+      } else {
+        // Smooth scroll down by one viewport height
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+      }
     }
+  }
+
+  private initScrollAnimations() {
+    // Add scroll animations to various elements
+    this.scrollService.addScrollAnimation('.gs_reveal', 'animate-in');
+    this.scrollService.addScrollAnimation('.component-section', 'bounce-in');
+    this.scrollService.addScrollAnimation('app-latest-issue', 'fade-in-up');
+    this.scrollService.addScrollAnimation('app-issue-highlights', 'fade-in-up');
+    this.scrollService.addScrollAnimation('app-editors-note', 'fade-in-up');
+    this.scrollService.addScrollAnimation('app-featured-articles', 'fade-in-up');
+    this.scrollService.addScrollAnimation('app-subscription', 'fade-in-up');
   }
 
   // Removed custom scrollToPosition method - using native scrolling

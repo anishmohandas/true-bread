@@ -20,11 +20,19 @@ export class FeaturedArticlesComponent implements OnInit, AfterViewInit, OnDestr
   loading = true;
   error = false;
   private scrollTriggerInstance: ScrollTrigger | null = null;
+  private touchStartX = 0;
+  private touchStartY = 0;
+  private currentTranslateX = 0;
+  private maxTranslateX = 0;
+  private isDragging = false;
+  private isMobile = false;
 
   constructor(
     private articleService: ArticleService,
     private router: Router
-  ) {}
+  ) {
+    this.isMobile = window.innerWidth <= 768;
+  }
 
   ngOnInit() {
     if (!this.articles?.length) {

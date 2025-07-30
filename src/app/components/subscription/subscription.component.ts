@@ -45,6 +45,11 @@ export class SubscriptionComponent implements AfterViewInit {
     }, 200);
   }
 
+  ngOnInit() {
+    // Scroll to top when component loads
+    window.scrollTo(0, 0);    
+  }
+
   private initializeGSAP() {
     try {
       // Register MorphSVG plugin

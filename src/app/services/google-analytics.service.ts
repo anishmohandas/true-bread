@@ -16,29 +16,45 @@ export class GoogleAnalyticsService {
   }
 
   private initializeGoogleAnalytics() {
-    if (!environment.googleAnalytics.measurementId) {
-      console.warn('Google Analytics Measurement ID not found in environment');
+    // Check if measurement ID exists and is not a placeholder
+    if (!environment.googleAnalytics?.measurementId || 
+        environment.googleAnalytics.measurementId === 'G-XXXXXXXXXX' ||
+        environment.googleAnalytics.measurementId.startsWith('G-XXXXXXXXXX')) {
+      console.warn('Google Analytics Measurement ID not configured or is placeholder. Skipping GA initialization.');
       return;
     }
 
-    // Load Google Analytics script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${environment.googleAnalytics.measurementId}`;
-    document.head.appendChild(script);
+    try {
+      // Load Google Analytics script
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${environment.googleAnalytics.measurementId}`;
+      document.head.appendChild(script);
 
-    // Initialize gtag
-    script.onload = () => {
-      (window as any).dataLayer = (window as any).dataLayer || [];
-      gtag = function() {
-        (window as any).dataLayer.push(arguments);
+      // Initialize gtag
+      script.onload = () => {
+        try {
+          (window as any).dataLayer = (window as any).dataLayer || [];
+          (window as any).gtag = function() {
+            (window as any).dataLayer.push(arguments);
+          };
+          gtag = (window as any).gtag;
+          gtag('js', new Date());
+          gtag('config', environment.googleAnalytics.measurementId, {
+            page_title: document.title,
+            page_location: window.location.href
+          });
+        } catch (error) {
+          console.warn('Error initializing Google Analytics:', error);
+        }
       };
-      gtag('js', new Date());
-      gtag('config', environment.googleAnalytics.measurementId, {
-        page_title: document.title,
-        page_location: window.location.href
-      });
-    };
+
+      script.onerror = () => {
+        console.warn('Failed to load Google Analytics script');
+      };
+    } catch (error) {
+      console.warn('Error setting up Google Analytics:', error);
+    }
   }
 
   private trackRouteChanges() {
@@ -52,24 +68,39 @@ export class GoogleAnalyticsService {
 
   // Track page views
   trackPageView(url: string) {
-    if (typeof gtag !== 'undefined') {
-      gtag('config', environment.googleAnalytics.measurementId, {
-        page_path: url,
-        page_title: document.title,
-        page_location: window.location.href
-      });
+    if (this.isGoogleAnalyticsEnabled() && typeof gtag !== 'undefined') {
+      try {
+        gtag('config', environment.googleAnalytics.measurementId, {
+          page_path: url,
+          page_title: document.title,
+          page_location: window.location.href
+        });
+      } catch (error) {
+        console.warn('Error tracking page view:', error);
+      }
     }
   }
 
   // Track custom events
   trackEvent(action: string, category: string, label?: string, value?: number) {
-    if (typeof gtag !== 'undefined') {
-      gtag('event', action, {
-        event_category: category,
-        event_label: label,
-        value: value
-      });
+    if (this.isGoogleAnalyticsEnabled() && typeof gtag !== 'undefined') {
+      try {
+        gtag('event', action, {
+          event_category: category,
+          event_label: label,
+          value: value
+        });
+      } catch (error) {
+        console.warn('Error tracking event:', error);
+      }
     }
+  }
+
+  // Helper method to check if Google Analytics is properly configured
+  private isGoogleAnalyticsEnabled(): boolean {
+    return !!(environment.googleAnalytics?.measurementId && 
+             environment.googleAnalytics.measurementId !== 'G-XXXXXXXXXX' &&
+             !environment.googleAnalytics.measurementId.startsWith('G-XXXXXXXXXX'));
   }
 
   // Track PDF downloads

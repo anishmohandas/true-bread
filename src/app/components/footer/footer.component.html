@@ -15,7 +15,7 @@
             </div>
             <div class="flex items-center space-x-3">
               <div class="w-6">
-                <img src="../../../assets/images/icon-email.svg" alt="Email icon" class="scale-100" />
+                <img src="../../../assets/images/icon-email.svg" alt="Email icon" class="darkBlue scale-100" />
               </div>
               <div>
                 <a [href]="'mailto:' + contactInfo.email">{{ contactInfo.email }}</a>
@@ -46,7 +46,10 @@
       </div>
       <div class="footer-logo-container" #footerContainer>
         <div class="footer-logo">
-          <h1 class="footer-title" #footerTitle>TRUE BREAD</h1>
+          <h1 class="footer-title" #footerTitle>
+            <span class="word-true">TRUE</span>
+            <span class="word-bread">BREAD</span>
+          </h1>
         </div>
       </div>
     </div>

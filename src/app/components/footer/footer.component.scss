@@ -1,7 +1,8 @@
 :host {
   display: block;
   width: 100%;
-  height: 100vh; // Full viewport height for parallax effect
+  height: auto; // Auto height instead of full viewport
+  min-height: 60vh; // Minimum height for content
   position: relative;
   margin: 0;
   padding: 0;
@@ -9,8 +10,9 @@
 
 :host.parallax-footer {
   // When used as a parallax footer
-  height: 100vh; // Full viewport height
-  background-color: #1a1a1a;
+  height: auto; // Auto height instead of full viewport
+  min-height: 60vh; // Minimum height for content
+  background-color: rgb(182, 180, 174);
   opacity: 1 !important;
   visibility: visible !important;
   margin: 0;
@@ -27,14 +29,12 @@
   position: relative;
   width: 100%;
   max-width: 100vw; // Prevent horizontal overflow
-  height: 100vh; // Full viewport height for proper parallax
-  background: linear-gradient(to bottom, #1a1a1a 60%, #2d3748 100%);
-  background-attachment: fixed; // Add back for enhanced parallax effect
-  background-size: cover;
-  background-position: center;
-  color: white;
-  padding-top: 2vh; // Reduced from 10vh to 2vh to remove extra space
-  padding-bottom: 1rem;
+  height: auto; // Auto height instead of full viewport
+  min-height: 60vh; // Minimum height for content
+  background-color: rgb(182, 180, 174); // Updated background color
+  color: #333; // Dark text for light background
+  padding-top: 1rem; // Reduced padding
+  padding-bottom: 1rem; // Reduced padding
   margin-top: 0;
   overflow-x: hidden; // Prevent horizontal scrollbar
   overflow-y: hidden; // Prevent vertical scrollbar within footer
@@ -44,32 +44,40 @@
   justify-content: center; // Center content vertically
   box-sizing: border-box; // Include padding in width calculation
 
-  // Make all links white and ensure visibility
-  a, div, p, h1, h2, h3, h4, h5, h6, span {
-    color: white !important;
+  // Make all text dark for light background
+  a, div, p, h2, h3, h4, h5, h6, span {
+    color: #333 !important;
     opacity: 1 !important;
     visibility: visible !important;
     font-size: 1.1rem; // Increased font size for better readability
+  }
+  
+  // Exclude h1 from global font-size override to allow footer title to use its own sizing
+  h1 {
+    color: #333 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 }
 
 .footer-content {
   position: relative;
+  font-family: 'Delight', serif;
   width: 100%;
   max-width: 100%; // Prevent content from overflowing
-  padding-top: 0.5rem; // Reduced from 2rem to 0.5rem
-  padding-bottom: 1rem; // Added padding at the bottom
+  padding-top: 0.25rem; // Further reduced padding
+  padding-bottom: 0.5rem; // Reduced padding
   height: auto; // Auto height to fit content
   display: flex;
   flex-direction: column;
   opacity: 1 !important; // Force visibility
-  color: white !important; // Ensure text is white
+  color: #333 !important; // Dark text for light background
   box-sizing: border-box; // Include padding in width calculation
 }
 
 .footer-logo-container {
-  margin-top: 0.5rem; // Reduced from 2rem to 0.5rem
-  margin-bottom: 1rem;
+  margin-top: 0.25rem; // Further reduced margin
+  margin-bottom: 0.5rem; // Reduced margin
   padding: 0;
   display: flex;
   justify-content: center;
@@ -79,13 +87,13 @@
 
   // Adjust container height on different screen sizes
   @media (max-width: 768px) {
-    min-height: 120px; // Smaller height on mobile
-    margin-top: 0.25rem; // Reduced margin
+    min-height: 100px; // Reduced height on mobile
+    margin-top: 0.1rem; // Further reduced margin
   }
 
   @media (min-width: 1200px) {
-    min-height: 180px; // Larger height on desktop
-    margin-top: 0.75rem; // Reduced margin
+    min-height: 150px; // Reduced height on desktop
+    margin-top: 0.5rem; // Reduced margin
   }
 }
 
@@ -151,10 +159,10 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
+    left: 0;
   right: 0;
   height: 20px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
+ // background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
   pointer-events: none;
   z-index: -1; // Ensure it doesn't block clicks
 }
@@ -163,12 +171,14 @@ a {
   transition: color 0.2s ease-in;
 
   &:hover {
-    color: #3B82F6;
+    color: #3B82F6 !important; // Blue hover color works on light background
   }
 }
 
 .bg-darkBlue {
-  background-color: #1E3A8A;
+  background-color: RGB(182, 180, 174);
+  height: 40px;
+  width: 40px;
 }
 
 @media (max-width: 768px) {
@@ -184,42 +194,115 @@ a {
 .footer-logo {
   width: 100%;
   max-width: 100%; // Prevent overflow
-  padding: 0.5rem 0;
+  padding: 0.25rem 0; // Reduced padding
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden; // Prevent overflow
-  min-height: 150px; // Ensure minimum height
+  min-height: 120px; // Reduced minimum height
 
   h1.footer-title {
-    font-size: 18vw; // Base responsive font size based on viewport width
+    font-size: 12vw; // Smaller base responsive font size
     line-height: 0.9;
     margin: 0; // Remove margins
-    padding: 0;
+    padding: 0 1rem; // Add horizontal padding for mobile
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-family: 'Delight-Black', sans-serif !important; // Use Delight-Black font
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); // Add subtle glow
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.1); // Subtle dark shadow for light background
     width: 100%; // Take full width
     max-width: 100%; // Prevent text from overflowing
     text-align: center; // Center text
-    white-space: nowrap; // Prevent wrapping
-    color: white !important; // Ensure text is white
+    white-space: normal; // Allow text wrapping on mobile
+    color: #333 !important; // Dark text for light background
     font-weight: normal; // Reset font weight
     box-sizing: border-box; // Include any padding in width calculation
+    word-break: break-word; // Break long words if needed
+    overflow-wrap: break-word; // Modern word breaking
+    display: flex; // Use flexbox for word control
+    flex-direction: column; // Stack words vertically on mobile
+    align-items: center; // Center align words
 
-    // Adjust font size on different screen sizes
-    @media (max-width: 768px) {
-      font-size: 25vw; // Larger on mobile for better visibility
+    // Individual word styling
+    .word-true, .word-bread {
+      display: block; // Each word on its own line
+      width: 100%;
+      text-align: center;
+    }
+
+    // Mobile-first responsive design with fixed pixel sizes to override any global styles
+    @media (max-width: 480px) {
+      font-size: 80px !important; // Fixed large pixel size for maximum visibility on small phones
+      line-height: 0.95; // Optimized line height for readability
+      padding: 0 0.25rem; // Minimal padding to maximize space
+      letter-spacing: 0.01em; // Minimal letter spacing for more space
+      flex-direction: column !important; // Force vertical stacking
+      
+      .word-true, .word-bread {
+        display: block !important; // Force block display
+        width: 100% !important;
+        line-height: 0.95; // Optimized line height for mobile
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 80px !important; // Ensure each word also has the large font size
+      }
+      
+      // Add explicit line break after TRUE
+      .word-true::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 0;
+      }
+    }
+
+    @media (min-width: 481px) and (max-width: 768px) {
+      font-size: 100px !important; // Fixed large pixel size for better visibility on larger phones/small tablets
+      line-height: 1.0; // Better line height
+      padding: 0 0.5rem; // Reduced padding for more space
+      flex-direction: column !important; // Force vertical stacking on tablets
+      
+      .word-true, .word-bread {
+        display: block !important; // Force block display
+        width: 100% !important;
+        line-height: 1.0; // Better line height
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 100px !important; // Ensure each word also has the large font size
+      }
+      
+      // Add explicit line break after TRUE
+      .word-true::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 0;
+      }
     }
 
     @media (min-width: 769px) and (max-width: 1199px) {
-      font-size: 16vw; // Medium size for tablet/small desktop
+      font-size: 10vw; // Medium size for tablets
+      flex-direction: row; // Horizontal layout on larger screens
+      justify-content: center;
+      gap: 0.3em; // Small gap between words
+      
+      .word-true, .word-bread {
+        display: inline-block; // Inline on larger screens
+        width: auto;
+      }
     }
 
     @media (min-width: 1200px) {
-      font-size: 14vw; // Adjusted size for large screens as requested
+      font-size: 8vw; // Smaller size for large screens
+      flex-direction: row; // Horizontal layout on larger screens
+      justify-content: center;
+      gap: 0.3em; // Small gap between words
+      
+      .word-true, .word-bread {
+        display: inline-block; // Inline on larger screens
+        width: auto;
+      }
     }
 
     // Split text animation styles
