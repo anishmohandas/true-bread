@@ -9,6 +9,11 @@
 .prose {
   @apply text-stone-800 leading-relaxed;
   
+  // Ensure left alignment on mobile
+  @media (max-width: 768px) {
+    text-align: left;
+  }
+  
   p {
     @apply mb-6 text-lg;
   }
@@ -52,7 +57,47 @@
 
 .article-meta {
   @apply flex items-center text-stone-600 text-sm;
+  
+  // Mobile-friendly layout
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 0.75rem; /* equivalent to space-y-3 */
+    
+    // Left-align the author info on mobile
+    > .author-info {
+      align-items: flex-start;
+    }
+    
+    // Add some spacing to the share buttons on mobile
+    > div {
+      width: 100%;
+    }
+    
+    // Center the share buttons section
+    > div:last-child {
+      display: flex;
+      align-items: center;
+     // justify-content: center;
+    }
+  }
 }
+
+// Mobile styles for author info
+.author-info {
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    row-gap: 0.25rem; /* Small gap between author name and job info */
+    
+    // Remove the left margin on mobile since they'll be stacked
+    > span {
+      margin-left: 0;
+    }
+  }
+}
+
+
 
 .article-image {
   @apply rounded-xl shadow-lg mb-12;
@@ -95,6 +140,5 @@
   -webkit-font-feature-settings: "mlym" 1;
   font-feature-settings: "mlym" 1;
 }
-
 
 

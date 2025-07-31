@@ -13,11 +13,22 @@ router.post('/contact', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
+    console.log('📧 Attempting to send contact email:', { name, email, subject });
+    
     await emailService.sendContactEmail({ name, email, subject, message });
+    
+    console.log('✅ Contact email sent successfully');
     res.status(200).json({ message: 'Email sent successfully' });
-  } catch (error) {
-    console.error('Error in contact email route:', error);
-    res.status(500).json({ error: 'Failed to send email' });
+  } catch (error: any) {
+    console.error('❌ Error in contact email route:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Provide more specific error message if possible
+    const errorMessage = error.message || 'Failed to send email';
+    res.status(500).json({ error: errorMessage });
   }
 });
 

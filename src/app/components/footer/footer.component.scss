@@ -45,7 +45,7 @@
   box-sizing: border-box; // Include padding in width calculation
 
   // Make all text dark for light background
-  a, div, p, h2, h3, h4, h5, h6, span {
+  a, div, p, h2, h3, h4, h5, h6, :not(.footer-title) > span {
     color: #333 !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -159,10 +159,10 @@
   content: '';
   position: absolute;
   top: 0;
-    left: 0;
+  left: 0;
   right: 0;
   height: 20px;
- // background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
+  // background: linear-gradient(to bottom, rgba(0,0,0,0.2), transparent);
   pointer-events: none;
   z-index: -1; // Ensure it doesn't block clicks
 }
@@ -191,6 +191,7 @@ a {
     align-items: center;
   }
 }
+
 .footer-logo {
   width: 100%;
   max-width: 100%; // Prevent overflow
@@ -282,7 +283,7 @@ a {
     }
 
     @media (min-width: 769px) and (max-width: 1199px) {
-      font-size: 10vw; // Medium size for tablets
+      font-size: 13vw; // Medium size for tablets
       flex-direction: row; // Horizontal layout on larger screens
       justify-content: center;
       gap: 0.3em; // Small gap between words
@@ -294,7 +295,7 @@ a {
     }
 
     @media (min-width: 1200px) {
-      font-size: 8vw; // Smaller size for large screens
+      font-size: 13vw; // Smaller size for large screens
       flex-direction: row; // Horizontal layout on larger screens
       justify-content: center;
       gap: 0.3em; // Small gap between words

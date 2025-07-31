@@ -68,7 +68,7 @@
 .col {
   position: relative;
   height: auto; /* Allow columns to size based on content */
-  padding: 4em 2em 2em 2em; /* Reduced top padding */
+  padding: 8em 2em 2em 2em; /* Reduced top padding */
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Align content to top */
@@ -275,7 +275,7 @@
   
   .col {
     height: auto; /* Allow columns to size based on content */
-    padding: 3em 1.5em 1.5em 1.5em; /* Reduced padding for tablets */
+    padding: 7em 1.5em 1.5em 1.5em; /* Reduced padding for tablets */
     gap: 0.5em; /* Reduced gap between sections */
   }
   

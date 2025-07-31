@@ -90,6 +90,11 @@ class HoverBtn {
 export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
   currentIssue: Issue | null = null;
   loading = true;
+
+  // Add a getter to ensure pdfUrl is always a string
+  get currentPdfUrl(): string {
+    return this.currentIssue?.pdfUrl ?? '';
+  }
   error = false;
 
   private observer: IntersectionObserver | null = null;

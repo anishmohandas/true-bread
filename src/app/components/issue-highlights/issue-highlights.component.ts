@@ -2,6 +2,7 @@ import { Component, Input, AfterViewInit, OnDestroy, ElementRef } from '@angular
 import { PdfImageService } from '../../services/pdf-image.service';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { GoogleAnalyticsService } from 'src/app/services/google-analytics.service';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,6 +20,8 @@ interface CategoryItem {
 })
 export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
   @Input() pdfId: string = 'default';
+  @Input() pdfUrl: string = 'default';
+  @Input() pdfMonth: string = 'default';
   @Input() cardCount: number = 6; // Keep for backward compatibility, not used in new implementation
 
   categories: CategoryItem[] = [
@@ -28,12 +31,12 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "TruthInsight.jpg"
     },
     {
-      title: "Living Message",
+      title: "Bible Study",
       description: "Echoes of truth spoken boldly—messages that breathe life, challenge complacency, and call us deeper into the presence of God.",
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "Mission Focus",
+      title: "Holy Exile",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
@@ -43,7 +46,7 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "Wings.jpg"
     },
     {
-      title: "Everyday Grace",
+      title: "Living Principle",
       description: "Honest reflections on the beauty and struggles of real life through a Christian lens. Quiet reflections from the rhythm of real life—where laughter, struggle, and stillness reveal the gentle fingerprints of God.",
       imageName: "EverydayGrace.jpg"
     }
@@ -57,17 +60,31 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
     "Grace • Life • Reflection"
   ];
 
-  constructor(private pdfImageService: PdfImageService, private elementRef: ElementRef) {}
+  constructor(private pdfImageService: PdfImageService, 
+    private googleAnalytics: GoogleAnalyticsService,
+    private elementRef: ElementRef) {}
 
   ngAfterViewInit() {
     this.loadCategoryImages();
-    
     // Initialize after a short delay to ensure DOM is ready
     setTimeout(() => {
       this.initializeSplitting();
       this.initializeScrollTriggers();
     }, 100);
   }
+
+  onViewPDF() {
+      if (this.pdfUrl) {
+        // Track PDF view
+        this.googleAnalytics.trackPdfView(this.pdfMonth, this.pdfId);
+        window.open(this.pdfUrl, '_blank');
+      } else {
+        console.error('PDF URL not available for current issue');
+        alert('PDF is not available for this issue. Please try again later.');
+      }
+  }
+  
+
 
   private loadCategoryImages() {
     this.pdfImageService.getPageImages(this.pdfId, 5).subscribe({

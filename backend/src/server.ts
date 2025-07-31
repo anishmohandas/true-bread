@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import subscriptionRoutes from './routes/subscription.routes';
 import healthRoutes from './routes/health.routes';
+import emailRoutes from './routes/email.routes';
 import { editorialController } from './controllers/editorial.controller';
 import { publicationController } from './controllers/publication.controller';
 import { articleController } from './controllers/article.controller';
@@ -52,6 +53,7 @@ app.use('/api', healthRoutes);
 
 // API Routes
 app.use('/api', subscriptionRoutes);
+app.use('/api/email', emailRoutes);
 app.use('/api/editorials', editorialController);
 app.use('/api/publications', publicationController);
 app.use('/api/articles', articleController);

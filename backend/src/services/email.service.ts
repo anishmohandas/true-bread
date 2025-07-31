@@ -162,6 +162,13 @@ export class EmailService {
     message: string;
   }) {
     try {
+      console.log(`📧 Attempting to send contact email from: ${data.email}`);
+      
+      // Check if email credentials are configured
+      if (!this.config.email.user || !this.config.email.password) {
+        throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASSWORD environment variables.');
+      }
+      
       const html = await this.renderTemplate('contact', {
         name: data.name,
         email: data.email,
@@ -169,16 +176,28 @@ export class EmailService {
         message: data.message,
         date: new Date().toLocaleString()
       });
+      
+      console.log('📝 Contact email template rendered successfully');
 
-      await this.transporter.sendMail({
-        from: `"${data.name}" <${data.email}>`,
+      const mailOptions = {
+        from: `"True Bread Magazine" <${this.config.email.user}>`,
         to: process.env.CONTACT_EMAIL || '"True Bread Magazine" <truebreadmedia@gmail.com>',
         subject: `Contact Form: ${data.subject}`,
         html,
-        replyTo: data.email
+        replyTo: `"${data.name}" <${data.email}>`
+      };
+      
+      console.log('📤 Sending contact email with options:', {
+        from: mailOptions.from,
+        to: mailOptions.to,
+        subject: mailOptions.subject
       });
+
+      const result = await this.transporter.sendMail(mailOptions);
+      console.log('✅ Contact email sent successfully:', result.messageId);
+      return result;
     } catch (error) {
-      console.error('Error sending contact email:', error);
+      console.error('❌ Error sending contact email:', error);
       throw error;
     }
   }

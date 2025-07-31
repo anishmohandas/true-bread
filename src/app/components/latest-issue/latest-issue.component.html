@@ -69,7 +69,8 @@
 <!-- Issue Highlights Section -->
 <div>
   <ng-container *ngIf="!loading && !error && currentIssue">
-    <app-issue-highlights [pdfId]="currentIssue.id" [cardCount]="6">
+    <app-issue-highlights [pdfId]="currentIssue?.id ?? ''" [cardCount]="6" [pdfUrl]="currentPdfUrl ?? ''"
+      [pdfMonth]="currentIssue.month">
     </app-issue-highlights>
   </ng-container>
 </div>
