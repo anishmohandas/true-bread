@@ -51,8 +51,8 @@ export class PdfImageService {
     console.log('Getting static image paths for:', issueId);
 
     const images: string[] = [];
-    // Always use localhost:3000 for the API URL to avoid CORS issues
-    const apiUrl = 'http://localhost:3000/api';
+    // Use assets/images for local images
+    const baseUrl = 'assets/images';
 
     // For the April 2025 issue, always use april-2025 as the directory
     let cleanIssueId = 'april-2025';
@@ -64,7 +64,7 @@ export class PdfImageService {
 
     for (let i = 1; i <= count; i++) {
       // Use JPG files which should be pre-converted and placed in the correct directory
-      const imageUrl = `${apiUrl}/pdf/images/${cleanIssueId}/page_${i}.jpg`;
+      const imageUrl = `${baseUrl}/highlights/${cleanIssueId}/page_${i}.jpg`;
       images.push(imageUrl);
       console.log('Added image URL:', imageUrl);
     }

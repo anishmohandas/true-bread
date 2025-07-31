@@ -1,39 +1,17 @@
 <section class="editors-note mb-20" #editorsNoteContainer>
   <div class="container">
-
-    <!-- Loading State -->
-    <div class="loading-state" *ngIf="loading">
-      <p>Loading editor information...</p>
-    </div>
-
-    <!-- Error State -->
-    <div class="error-state" *ngIf="error">
-      <p>Unable to load editor information. Please try again later.</p>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" *ngIf="!loading && !error && editorial">
-
+    <div class="main-content">
       <div class="magazine-content">
-
         <!-- Left Column: Editor Details & Quote -->
         <div class="content-column left-column">
-          <div class="editor-profile fade-in-element">
-            <img [src]="editorial.editor.imageUrl" [alt]="editorial.editor.name" class="editor-image"
+          <div class="editor-profile">
+            <img src="assets/images/editors/Viju-Marayamuttom.jpg" alt="Editor" class="editor-image"
               (error)="onImageError($event)">
             <div class="editor-info">
-              <h3 class="editor-name">{{ editorial.editor.name }}</h3>
-              <p class="editor-role">{{ editorial.editor.role }}</p>
+              <h3 class="editor-name">Viju Marayamuttom</h3>
+              <p class="editor-role">Editor-in-Chief</p>
             </div>
           </div>
-
-          <!-- Optional Quote Box -->
-          <!-- <div class="quote-box fade-in-element" #splitTarget>
-            <blockquote>
-              We offer all glory and honor unto our Heavenly Father, the Author of life, who has entrusted us with this
-              mission.
-            </blockquote>
-          </div> -->
         </div>
 
         <!-- Right Column: Title & Content -->
@@ -70,8 +48,8 @@
 
           <p class="paragraph">
             With great joy, we announce the launch of our website, marking a significant milestone in our journey. We
-            look forward to sharing our passion for inspiring and uplifting content with fellow travelers on the path of
-            faith and family values.
+            look forward to sharing our passion for inspiring and uplifting content with fellow travelers on the path
+            of faith and family values.
           </p>
 
           <p class="paragraph">
@@ -79,8 +57,6 @@
           </p>
         </div>
       </div>
-
     </div>
-
   </div>
 </section>

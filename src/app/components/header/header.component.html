@@ -1,29 +1,12 @@
 <ng-container *ngIf="showNav">
-  <div
-    class="header-container"
-    [ngClass]="{'nav-hidden': !isNavVisible || inLatestIssueSection}"
-  >
+  <div class="header-container">
 
-  <app-logo></app-logo>
-  <app-menu-toggle (menuToggled)="onMenuToggle($event)"></app-menu-toggle>
-  <app-menu [isOpen]="isMenuOpen"></app-menu>
+    <app-logo></app-logo>
+    <app-menu-toggle (menuToggled)="onMenuToggle($event)"></app-menu-toggle>
+    <app-menu [isOpen]="isMenuOpen"></app-menu>
 
 
 
-  <!-- Mega Menu -->
- </div>
+    <!-- Mega Menu -->
+  </div>
 </ng-container>
-
-
-
-
-
-
-
-
-
-
-
-
-
-

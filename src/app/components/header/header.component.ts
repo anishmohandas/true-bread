@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private inLatestIssueSectionSubscription: Subscription | null = null;
   private pastLatestIssueSectionSubscription: Subscription | null = null;
   public inLatestIssueSection = false;
-  private pastLatestIssueSection = false;
+  public pastLatestIssueSection = false;
 
   menuItems: MenuItem[] = [
     { text: 'Home', link: '/' },

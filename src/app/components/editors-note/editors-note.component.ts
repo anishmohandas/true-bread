@@ -2,8 +2,6 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } fr
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitType from 'split-type';
-import { EditorialService } from '../../services/editorial.service';
-import { Editorial } from '../../shared/interfaces/editorial.interface';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,87 +13,19 @@ gsap.registerPlugin(ScrollTrigger);
 export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('editorsNoteContainer', { static: false }) editorsNoteContainer!: ElementRef;
 
-  editorial: Editorial | null = null;
-  loading = true;
-  error = false;
-
   private splitTexts: SplitType[] = [];
-  private animations: gsap.core.Timeline[] = [];
-  private animatedElements = new Set<HTMLElement>();
   private elementToSplitMap = new Map<HTMLElement, SplitType>();
-  private scrollListener?: () => void;
-  private animationTimelines = new Map<HTMLElement, gsap.core.Timeline>();
-
-  constructor(private editorialService: EditorialService) {}
 
   ngOnInit() {
-    //console.log('📝 Editor\'s Note component ngOnInit called');
     // Scroll to top when component loads
     window.scrollTo(0, 0);
-    this.loadEditorialData();
-  }
-
-  private loadEditorialData() {
-    this.loading = true;
-    this.error = false;
-
-    this.editorialService.getLatestEditorial().subscribe({
-      next: (response) => {
-        if (!response?.data) {
-          this.error = true;
-          this.loading = false;
-          return;
-        }
-
-        const data = response.data;
-
-        this.editorial = {
-          id: data.id,
-          title: data.language === 'ml' ? (data.titleMl || data.title) : data.title,
-          content: data.language === 'ml' ? (data.contentMl || data.content) : data.content,
-          excerpt: data.language === 'ml' ? (data.excerptMl || data.excerpt) : data.excerpt,
-          publishDate: data.publishDate,
-          month: data.language === 'ml' ? (data.month_ml || data.month) : data.month,
-          year: data.year.toString(),
-          language: data.language,
-          editor: {
-            name: data.editor.name,
-            role: data.editor.role,
-            imageUrl: data.editor.imageUrl,
-            bio: data.editor.bio
-          },
-          imageUrl: data.image_url,
-          titleMl: data.titleMl,
-          contentMl: data.contentMl,
-          excerptMl: data.excerptMl,
-          monthMl: data.month_ml
-        };
-
-        this.loading = false;
-        //console.log('📝 Editorial data loaded:', this.editorial);
-        
-        // Initialize animations after data is loaded and view is ready - reduced delay
-        setTimeout(() => {
-          this.initializeSplitTextAnimations();
-        }, 50);
-      },
-      error: (error) => {
-        console.error('📝 Error fetching editorial data:', error);
-        this.error = true;
-        this.loading = false;
-      }
-    });
   }
 
   ngAfterViewInit(): void {
-    //console.log('📝 Editor\'s Note component initialized');
-    // Clean up any existing animations first
-    this.cleanupAnimations();
-    
-    // Only initialize animations if data is already loaded, otherwise wait for data
-    if (!this.loading && this.editorial) {
+    // Initialize animations after view is ready
+    setTimeout(() => {
       this.initializeSplitTextAnimations();
-    }
+    }, 50);
   }
 
   ngOnDestroy(): void {
@@ -104,18 +34,10 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
     ScrollTrigger.getAll().forEach(trigger => {
       trigger.kill();
     });
-    if (this.scrollListener) {
-      window.removeEventListener('scroll', this.scrollListener);
-    }
   }
 
   private cleanupAnimations(): void {
-    //console.log('🧹 Cleaning up editor animations and split text instances');
-    
     // Clean up animations and split text instances
-    this.animations.forEach(animation => animation.kill());
-    this.animations = [];
-    
     this.splitTexts.forEach(split => split.revert());
     this.splitTexts = [];
     
@@ -143,15 +65,11 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    // Clear animated elements set, element mapping, and animation timelines
-    this.animatedElements.clear();
+    // Clear element mapping
     this.elementToSplitMap.clear();
-    this.animationTimelines.clear();
   }
 
   private initializeSplitTextAnimations(): void {
-    //console.log('🎬 Initializing split text animations for editor component');
-    
     if (!this.editorsNoteContainer?.nativeElement) {
       console.error('❌ Editor container not found');
       return;
@@ -169,27 +87,19 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setupScrollBasedAnimations(): void {
-    //console.log('🎯 Setting up ScrollTrigger animations for editor component');
-
     // Target all text elements that should have split text animation
     const textElements = this.editorsNoteContainer.nativeElement.querySelectorAll(
-      '.section-title, .paragraph, .column-subtitle, .editor-name, .editor-role, .editorial-content p, .editorial-content h1, .editorial-content h2, .editorial-content h3, .editorial-content h4, .editorial-content h5, .editorial-content h6'
+      '.section-title, .paragraph, .column-subtitle, .editor-name, .editor-role'
     );
-
-    //console.log(`📝 Found ${textElements.length} text elements to animate in editor`);
 
     // Collect all lines from all elements for coordinated animation
     const allLines: HTMLElement[] = [];
-    const elementLineMap = new Map<HTMLElement, HTMLElement[]>();
 
     textElements.forEach((element: HTMLElement, index: number) => {
       // Skip if element is empty or only contains whitespace
       if (!element.textContent?.trim()) {
-        //console.log(`⏭️ Skipping empty editor element at index ${index}`);
         return;
       }
-
-      //console.log(`🔄 Processing editor element ${index + 1}/${textElements.length}: ${element.tagName}`);
 
       // Create split text instance for lines
       const split = new SplitType(element, {
@@ -202,11 +112,8 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
       this.elementToSplitMap.set(element, split);
 
       if (!split.lines || split.lines.length === 0) {
-        console.warn(`⚠️ No lines created for editor element ${index}`);
         return;
       }
-
-      //console.log(`📏 Created ${split.lines.length} lines for editor element ${index}`);
 
       const elementLines: HTMLElement[] = [];
 
@@ -232,25 +139,15 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           // Add to collections
           allLines.push(line);
           elementLines.push(line);
-          
-          //console.log(`✅ Wrapped editor line ${lineIndex + 1} for element ${index}`);
         }
       });
 
-      elementLineMap.set(element, elementLines);
-    });
-
-    // Create individual ScrollTriggers for each text element
-    textElements.forEach((element: HTMLElement, index: number) => {
-      const split = this.elementToSplitMap.get(element);
-      if (!split || !split.lines) return;
-
+      // Create ScrollTrigger for each text element
       ScrollTrigger.create({
         trigger: element,
         start: "top 85%",
         end: "bottom 15%",
         onEnter: () => {
-          //console.log(`🎯 ScrollTrigger onEnter for element ${index}`);
           gsap.killTweensOf(split.lines);
           gsap.to(split.lines, {
             yPercent: 0,
@@ -263,7 +160,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         onLeave: () => {
-          //console.log(`🎯 ScrollTrigger onLeave for element ${index}`);
           gsap.killTweensOf(split.lines);
           gsap.to(split.lines, {
             yPercent: 100,
@@ -276,7 +172,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         onEnterBack: () => {
-          //console.log(`🎯 ScrollTrigger onEnterBack for element ${index}`);
           gsap.killTweensOf(split.lines);
           gsap.to(split.lines, {
             yPercent: 0,
@@ -289,7 +184,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         onLeaveBack: () => {
-          //console.log(`🎯 ScrollTrigger onLeaveBack for element ${index}`);
           gsap.killTweensOf(split.lines);
           gsap.to(split.lines, {
             yPercent: 100,
@@ -307,43 +201,10 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
     // Set up ScrollTrigger for editor profile elements
     this.setupEditorProfileScrollTriggers();
 
-    // Refresh ScrollTrigger and check initial states
+    // Refresh ScrollTrigger
     setTimeout(() => {
       ScrollTrigger.refresh();
-      //console.log('🔄 ScrollTrigger refreshed');
     }, 100);
-
-    //console.log(`🎭 Total editor split text instances: ${this.splitTexts.length}`);
-    //console.log(`📏 Total lines for coordinated animation: ${allLines.length}`);
-  }
-
-  private animateAllLines(lines: HTMLElement[], direction: 'in' | 'out'): void {
-    //console.log(`🎬 Animating ${lines.length} lines ${direction}`);
-    
-    // Kill any existing animations on these lines
-    gsap.killTweensOf(lines);
-    
-    if (direction === 'in') {
-      gsap.to(lines, {
-        yPercent: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-        stagger: {
-          amount: 0.6, // Longer stagger for more lines
-          from: 'start'
-        }
-      });
-    } else {
-      gsap.to(lines, {
-        yPercent: 100,
-        duration: 0.6,
-        ease: 'power2.in',
-        stagger: {
-          amount: 0.4, // Shorter stagger for exit
-          from: 'end'
-        }
-      });
-    }
   }
 
   private setupEditorProfileScrollTriggers(): void {
@@ -353,7 +214,7 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
     const editorInfo = this.editorsNoteContainer.nativeElement.querySelector('.editor-info') as HTMLElement;
 
     if (editorImage) {
-      // Create wrapper for slide-up effect similar to text
+      // Create wrapper for slide-up effect
       const wrapper = document.createElement('div');
       wrapper.className = 'editor-image-wrapper';
       wrapper.style.overflow = 'hidden';
@@ -377,7 +238,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           start: "top 85%",
           end: "bottom 15%",
           onEnter: () => {
-            //console.log('🎯 ScrollTrigger onEnter for editor image');
             gsap.killTweensOf(editorImage);
             gsap.to(editorImage, {
               yPercent: 0,
@@ -386,7 +246,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           },
           onLeave: () => {
-            //console.log('🎯 ScrollTrigger onLeave for editor image');
             gsap.killTweensOf(editorImage);
             gsap.to(editorImage, {
               yPercent: 100,
@@ -395,7 +254,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           },
           onEnterBack: () => {
-            //console.log('🎯 ScrollTrigger onEnterBack for editor image');
             gsap.killTweensOf(editorImage);
             gsap.to(editorImage, {
               yPercent: 0,
@@ -404,7 +262,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           },
           onLeaveBack: () => {
-            //console.log('🎯 ScrollTrigger onLeaveBack for editor image');
             gsap.killTweensOf(editorImage);
             gsap.to(editorImage, {
               yPercent: 100,
@@ -413,8 +270,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
             });
           }
         });
-        
-        //console.log('✅ Created ScrollTrigger for editor image');
       }
     }
 
@@ -431,7 +286,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
         start: "top 85%",
         end: "bottom 15%",
         onEnter: () => {
-          //console.log('🎯 ScrollTrigger onEnter for editor info');
           gsap.killTweensOf(editorInfo);
           gsap.to(editorInfo, {
             opacity: 1,
@@ -441,7 +295,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         onLeave: () => {
-          //console.log('🎯 ScrollTrigger onLeave for editor info');
           gsap.killTweensOf(editorInfo);
           gsap.to(editorInfo, {
             opacity: 0,
@@ -451,7 +304,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         onEnterBack: () => {
-          //console.log('🎯 ScrollTrigger onEnterBack for editor info');
           gsap.killTweensOf(editorInfo);
           gsap.to(editorInfo, {
             opacity: 1,
@@ -461,7 +313,6 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         },
         onLeaveBack: () => {
-          //console.log('🎯 ScrollTrigger onLeaveBack for editor info');
           gsap.killTweensOf(editorInfo);
           gsap.to(editorInfo, {
             opacity: 0,
@@ -471,13 +322,11 @@ export class EditorsNoteComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         }
       });
-      
-      //console.log('✅ Created ScrollTrigger for editor info');
     }
   }
 
   onImageError(event: Event) {
     const img = event.target as HTMLImageElement;
-    img.src = 'assets/images/default-editor.jpg';
+    img.src = 'assets/images/editors/Viju-Marayamuttom.jpg';
   }
 }

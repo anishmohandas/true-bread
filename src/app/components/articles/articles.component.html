@@ -10,35 +10,27 @@
 
   <div *ngIf="!loading && !error">
     <div class="flex gap-4 mb-8">
-      <button
-        (click)="filterByCategory(null)"
-        [class.bg-stone-800]="!selectedCategory"
+      <button (click)="filterByCategory(null)" [class.bg-stone-800]="!selectedCategory"
         [class.text-white]="!selectedCategory"
         class="px-4 py-2 rounded-full border border-stone-800 hover:bg-stone-800 hover:text-white transition-colors">
         All
       </button>
-      <button
-        *ngFor="let category of categories"
-        (click)="filterByCategory(category)"
-        [class.bg-stone-800]="selectedCategory === category"
-        [class.text-white]="selectedCategory === category"
+      <button *ngFor="let category of categories" (click)="filterByCategory(category)"
+        [class.bg-stone-800]="selectedCategory === category" [class.text-white]="selectedCategory === category"
         class="px-4 py-2 rounded-full border border-stone-800 hover:bg-stone-800 hover:text-white transition-colors">
         {{category}}
       </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <article *ngFor="let article of filteredArticles" class="border rounded-lg overflow-hidden shadow-lg">
-        <img
-          [src]="article.imageUrl"
-          [alt]="article.altText"
-          class="w-full h-48 object-cover rounded-t-lg"
-        />
-        <div class="p-6">
+      <article *ngFor="let article of filteredArticles"
+        class="border rounded-lg overflow-hidden shadow-lg flex flex-col h-full">
+        <img [src]="article.imageUrl" [alt]="article.altText" class="w-full h-48 object-cover rounded-t-lg" />
+        <div class="p-6 flex flex-col flex-grow">
           <span class="text-sm text-stone-600">{{article.category}}</span>
           <h3 class="text-xl font-bold mt-2 mb-3">{{article.title}}</h3>
-          <p class="text-stone-600 mb-4">{{article.excerpt}}</p>
-          <div class="flex items-center justify-between">
+          <p class="text-stone-600 mb-4 flex-grow">{{article.excerpt}}</p>
+          <div class="flex items-center justify-between mt-auto">
             <span class="text-sm">By {{article.author}}</span>
             <!-- Read More Link -->
             <a [routerLink]="['/articles', article.id]" class="text-stone-800 font-semibold hover:underline">

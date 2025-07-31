@@ -36,7 +36,41 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private el: ElementRef) {}
 
   ngOnInit() {
+    this.initializeData();
     this.initFooterAnimation();
+  }
+
+  private initializeData() {
+    this.menuItems1 = [
+      { text: 'About', link: '/about' },
+      { text: 'Contact', link: '/contact' }
+    ];
+
+    this.menuItems2 = [
+      // { text: 'Terms', link: '#' },
+      // { text: 'Privacy', link: '#' }
+    ];
+
+    this.socialLinks = [
+      {
+        icon: 'assets/images/facebook.svg',
+        url: 'https://www.facebook.com/people/True-Bread-Media/61574408447773',
+        alt: 'Facebook',
+        name: 'Facebook'
+      },
+      {
+        icon: 'assets/images/youtube.svg',
+        url: 'https://www.youtube.com/@truebreadmedia',
+        alt: 'YouTube',
+        name: 'YouTube'
+      },
+      {
+        icon: 'assets/images/instagram.svg',
+        url: 'https://www.instagram.com/truebreadmedia/',
+        alt: 'Instagram',
+        name: 'Instagram'
+      }
+    ];
   }
 
   ngAfterViewInit(): void {
@@ -213,34 +247,7 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
     email: 'contact@thetruebread.com'
   };
 
-  menuItems1: MenuItem[] = [
-    { text: 'About', link: '/about' },
-    { text: 'Contact', link: '/contact' }
-  ];
-
-  menuItems2: MenuItem[] = [
-   // { text: 'Terms', link: '#' },
-    //{ text: 'Privacy', link: '#' }
-  ];
-
-  socialLinks: SocialLink[] = [
-    {
-      icon: 'assets/images/facebook.svg',
-      url: 'https://www.facebook.com/people/True-Bread-Media/61574408447773',
-      alt: 'Facebook',
-      name: 'Facebook'
-    },
-    {
-      icon: 'assets/images/youtube.svg',
-      url: 'https://www.youtube.com/@truebreadmedia',
-      alt: 'YouTube',
-      name: 'YouTube'
-    },
-    {
-      icon: 'assets/images/instagram.svg',
-      url: 'https://www.instagram.com/truebreadmedia/',
-      alt: 'Instagram',
-      name: 'Instagram'
-    }
-  ];
+  menuItems1: MenuItem[] = [];
+  menuItems2: MenuItem[] = [];
+  socialLinks: SocialLink[] = [];
 }
