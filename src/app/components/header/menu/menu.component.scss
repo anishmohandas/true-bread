@@ -9,7 +9,8 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100vh; /* Full viewport height */
+  min-height: 100vh; /* Ensure minimum full viewport height */
   display: flex;
   background-color: #0f0f0f;
   clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
@@ -46,12 +47,14 @@
 
 .col-1 {
   flex: 1;
+  height: auto; /* Allow column to size based on content */
 }
 
 .col-2 {
   flex: 2;
   align-items: center !important; // Override the flex-end alignment from .col
   padding-left: 0 !important; // Override the padding from .col to center content
+  height: auto; /* Allow column to size based on content */
 
   .menu-links-container {
     display: flex;
@@ -64,11 +67,11 @@
 
 .col {
   position: relative;
-  height: 100%;
-  padding: 10em 2em 2em 2em;
+  height: auto; /* Allow columns to size based on content */
+  padding: 4em 2em 2em 2em; /* Reduced top padding */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start; /* Align content to top */
   align-items: flex-end;
   overflow: visible; // Ensure content is not clipped
 }
@@ -263,35 +266,154 @@
   }
 }
 
-@media (max-width: 900px) {
-  .col-1 {
-    flex: 2;
-    align-items: flex-start;
+/* Tablet-specific optimizations (1024px) */
+@media (max-width: 1024px) {
+  .menu {
+    height: 100vh; /* Full viewport height */
+    min-height: 100vh; /* Ensure minimum full viewport height */
   }
-
+  
+  .col {
+    height: auto; /* Allow columns to size based on content */
+    padding: 3em 1.5em 1.5em 1.5em; /* Reduced padding for tablets */
+    gap: 0.5em; /* Reduced gap between sections */
+  }
+  
   .links {
     .link {
       a {
-        font-size: 30px;
+        font-size: 50px; /* Slightly smaller font size for tablets */
       }
     }
   }
-
-  .video-wrapper {
-    padding: 0.4em;
+  
+  .socials,
+  .subscribe-link-container {
+    width: 100%; /* Full width on tablets */
+    gap: 1em; /* Reduced gap */
   }
+  
+  .socials .sub-col,
+  .subscribe-link-container .sub-col {
+    gap: 0.3em; /* Reduced gap between items */
+  }
+}
 
-  .socials {
+/* Mobile-specific optimizations (768px) */
+@media (max-width: 768px) {
+  .menu {
+    height: 100vh; /* Full viewport height */
+    min-height: 100vh; /* Ensure minimum full viewport height */
+    flex-direction: column; /* Stack columns vertically */
+  }
+  
+  .col-1,
+  .col-2 {
+    flex: none; /* Remove flex sizing */
+    width: 100%; /* Full width */
+    height: auto; /* Auto height based on content */
+  }
+  
+  .col {
+    height: auto; /* Allow columns to size based on content */
+    padding: 3em 1.5em 1.5em 1.5em; /* Reduced padding */
+    display: block; /* Change to block for better mobile layout */
+  }
+  
+  .col-1 {
+    order: 1; /* Menu links first */
+    padding-top: 5em; /* Additional padding at the top for the first column */
+  }
+  
+  .col-2 {
+    order: 2; /* Social and subscribe links second */
+    padding: 1.5em !important; /* Consistent padding */
+  }
+  
+  .menu-links-container {
+    display: block; /* Change to block for better mobile layout */
     width: 100%;
-    flex-direction: column;
-    gap: 8em;
   }
-
-  .header {
-    h1 {
-      font-size: 150px;
-      height: 120px;
+  
+  .links {
+    margin-bottom: 2em; /* Space between menu links and social links */
+    
+    .link {
+      a {
+        font-size: 40px; /* Smaller font size for mobile */
+        line-height: 110%; /* Tighter line height */
+      }
     }
+  }
+  
+  .socials,
+  .subscribe-link-container {
+    width: 100%; /* Full width */
+    flex-direction: column; /* Stack vertically */
+    gap: 1em; /* Space between sections */
+  }
+  
+  .socials .sub-col,
+  .subscribe-link-container .sub-col {
+    width: 100%;
+    text-align: start;
+    gap: 0.5em;
+  }
+  
+  .menu-logo {
+    top: 1.5em;
+    left: 1.5em;
+  }
+}
+
+/* Small mobile optimizations (480px) */
+@media (max-width: 480px) {
+  .col {
+    padding: 2.5em 1em 1em 1em; /* Further reduced padding */
+  }
+   .col-1 {
+    order: 1; /* Menu links first */
+    padding-top: 5em; /* Additional padding at the top for the first column */
+  }
+  
+  .col-2 {
+    order: 2; /* Social and subscribe links second */
+    padding: 1.5em !important; /* Consistent padding */
+  }
+  
+  .links {
+    .link {
+      a {
+        font-size: 32px; /* Even smaller font size for small mobile */
+      }
+    }
+  }
+  
+  .socials .sub-col p,
+  .subscribe-link-container .sub-col p {
+    font-size: 11px; /* Smaller font size */
+  }
+  
+  .menu-logo {
+    top: 1em;
+    left: 1em;
+    
+    a {
+      font-size: 28px; /* Smaller logo font size */
+    }
+  }
+}
+
+/* Ensure proper spacing between socials and subscribe sections */
+@media (min-width: 769px) {
+  .socials {
+    margin-bottom: 0.5em; /* Small gap on desktop/tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .socials {
+    margin-bottom: 1em; /* Larger gap on mobile */
   }
 }
 
