@@ -57,33 +57,28 @@
 
       <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()" class="hero-form">
         <div class="hero-form-input">
-          <input type="text" formControlName="name" placeholder="Name" [class.error]="subscriptionForm.get('name')?.invalid && 
-                               subscriptionForm.get('name')?.touched" class="hero-name-input">
-          <input type="email" formControlName="email" placeholder="Email Address" [class.error]="subscriptionForm.get('email')?.invalid && 
-                               subscriptionForm.get('email')?.touched" class="hero-email-input">
-          <button type="submit" [disabled]="subscriptionForm.invalid || submitting" class="hero-form-submit">
-            <span *ngIf="!submitting">Subscribe</span>
-            <div *ngIf="submitting" class="loading-spinner"></div>
-          </button>
-        </div>
-
-        <!-- Validation Messages -->
-        <div class="validation-messages">
-          <div class="error-container">
+          <div class="input-group">
+            <input type="text" formControlName="name" placeholder="Name" [class.error]="subscriptionForm.get('name')?.invalid && 
+                                 subscriptionForm.get('name')?.touched" class="hero-name-input">
             <div class="validation-message" [class.visible]="subscriptionForm.get('name')?.invalid && 
                                 subscriptionForm.get('name')?.touched" [class.hidden]="!(subscriptionForm.get('name')?.invalid && 
                                  subscriptionForm.get('name')?.touched)">
               {{ getNameErrorMessage() }}
             </div>
           </div>
-
-          <div class="error-container">
+          <div class="input-group">
+            <input type="email" formControlName="email" placeholder="Email Address" [class.error]="subscriptionForm.get('email')?.invalid && 
+                                 subscriptionForm.get('email')?.touched" class="hero-email-input">
             <div class="validation-message" [class.visible]="subscriptionForm.get('email')?.invalid && 
                                 subscriptionForm.get('email')?.touched" [class.hidden]="!(subscriptionForm.get('email')?.invalid && 
                                  subscriptionForm.get('email')?.touched)">
               {{ getEmailErrorMessage() }}
             </div>
           </div>
+          <button type="submit" [disabled]="subscriptionForm.invalid || submitting" class="hero-form-submit">
+            <span *ngIf="!submitting">Subscribe</span>
+            <div *ngIf="submitting" class="loading-spinner"></div>
+          </button>
         </div>
 
         <!-- Error and Success Messages -->
