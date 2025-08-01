@@ -131,6 +131,18 @@ export class AppComponent implements OnInit {
       gsap.set(content, { y: 0, clearProps: 'transform' });
     }
     
+    // Detect mobile devices and optimize for native scrolling
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      // Ensure smooth scrolling is enabled on mobile
+      document.documentElement.style.scrollBehavior = 'smooth';
+      // Add hardware acceleration for better mobile performance
+      if (content) {
+        content.style.transform = 'translateZ(0)';
+        content.style.willChange = 'scroll-position';
+      }
+    }
+    
     console.log('✅ Native scrolling enabled');
   }
 

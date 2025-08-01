@@ -89,6 +89,17 @@ export class AnimationService {
   }
 
   createMomentumScroll(velocity: number, currentPosition: number): gsap.core.Tween {
+    // Detect if we're on a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // On mobile devices, don't apply custom momentum scrolling to avoid vibration
+    if (isMobile) {
+      return gsap.to(window, {
+        duration: 0.1, // Minimal duration for immediate stop
+        scrollTo: { y: currentPosition }
+      });
+    }
+    
     const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
     const momentumDistance = velocity * 8;
     let targetScrollY = currentPosition + momentumDistance;
@@ -124,6 +135,17 @@ export class AnimationService {
   }
 
   createBounceEffect(position: number, isTop: boolean): gsap.core.Tween {
+    // Detect if we're on a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // On mobile devices, don't apply bounce effects to avoid vibration
+    if (isMobile) {
+      return gsap.to(window, {
+        duration: 0.1,
+        scrollTo: { y: position }
+      });
+    }
+    
     const bounceDistance = isTop ? 20 : -20;
     return gsap.to(window, {
       duration: 0.4,

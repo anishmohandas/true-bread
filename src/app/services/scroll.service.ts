@@ -9,10 +9,17 @@ export class ScrollService {
   private scrollTimeout: any;
   private bounceElements: HTMLElement[] = [];
   private scrollIndicators: HTMLElement[] = [];
+  private isMobile: boolean;
 
   constructor(private animationService: AnimationService) {
+    // Detect if we're on a mobile device
+    this.isMobile = this.detectMobile();
     this.initSmoothScrolling();
     this.setupScrollFeedback();
+  }
+
+  private detectMobile(): boolean {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
   triggerResize() {
@@ -22,45 +29,61 @@ export class ScrollService {
   }
 
   private initSmoothScrolling() {
-    // Disable native smooth scrolling to implement custom momentum
-    const style = document.createElement('style');
-    style.textContent = `
-      html {
-        scroll-behavior: auto;
-      }
+    // Only implement custom scrolling on desktop
+    if (!this.isMobile) {
+      // Disable native smooth scrolling to implement custom momentum
+      const style = document.createElement('style');
+      style.textContent = `
+        html {
+          scroll-behavior: auto;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(45deg, #1b1b1c, #333);
+          border-radius: 4px;
+          transition: all 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(45deg, #333, #555);
+          transform: scale(1.1);
+        }
+      `;
+      document.head.appendChild(style);
       
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      
-      ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-      }
-      
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(45deg, #1b1b1c, #333);
-        border-radius: 4px;
-        transition: all 0.3s ease;
-      }
-      
-      ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(45deg, #333, #555);
-        transform: scale(1.1);
-      }
-    `;
-    document.head.appendChild(style);
-    
-    // Initialize momentum scrolling
-    this.initMomentumScrolling();
+      // Initialize momentum scrolling only on desktop
+      this.initMomentumScrolling();
+    } else {
+      // On mobile, ensure native scrolling is enabled
+      const style = document.createElement('style');
+      style.textContent = `
+        html {
+          scroll-behavior: smooth;
+        }
+      `;
+      document.head.appendChild(style);
+    }
   }
 
   private initMomentumScrolling() {
+    // Only implement custom momentum scrolling on desktop to avoid mobile vibration
+    if (this.isMobile) {
+      return;
+    }
+
     let velocity = 0;
     let lastScrollY = window.pageYOffset;
     let lastTime = Date.now();
-    let isAnimating = false;
     let currentTween: gsap.core.Tween | null = null;
     let wheelTimeout: any;
     let accumulatedDelta = 0;
@@ -135,6 +158,11 @@ export class ScrollService {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      // On mobile, don't interfere with native scrolling
+      if (this.isMobile) {
+        return;
+      }
+      
       const currentTime = Date.now();
       const currentScrollY = window.pageYOffset;
       const deltaTime = currentTime - lastTime;
@@ -149,6 +177,11 @@ export class ScrollService {
     };
 
     const handleTouchEnd = () => {
+      // Only apply momentum on desktop
+      if (this.isMobile) {
+        return;
+      }
+      
       // Apply momentum using AnimationService after touch ends
       if (Math.abs(velocity) > 2) {
         const currentScrollY = window.pageYOffset;
@@ -156,7 +189,7 @@ export class ScrollService {
       }
     };
 
-    // Add event listeners
+    // Add event listeners with proper passive settings
     window.addEventListener('wheel', handleWheel, { passive: false });
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
@@ -188,13 +221,27 @@ export class ScrollService {
     const targetPosition = rect.top + window.pageYOffset - offset;
 
     // Use AnimationService for coordinated scrolling
-    this.animationService.smoothScrollTo(targetPosition, {
-      duration: 1.2,
-      ease: "power2.out"
-    });
+    if (this.isMobile) {
+      // On mobile, use native smooth scrolling for better performance
+      window.scrollTo({ 
+        top: targetPosition, 
+        behavior: 'smooth' 
+      });
+    } else {
+      // On desktop, use custom animation
+      this.animationService.smoothScrollTo(targetPosition, {
+        duration: 1.2,
+        ease: "power2.out"
+      });
+    }
   }
 
   private addBounceEffect(element: HTMLElement) {
+    // Only add bounce effects on desktop
+    if (this.isMobile) {
+      return;
+    }
+    
     element.classList.add('scroll-bounce');
     setTimeout(() => {
       element.classList.remove('scroll-bounce');
@@ -202,6 +249,11 @@ export class ScrollService {
   }
 
   private addScrollCompleteBounce() {
+    // Only add bounce effects on desktop
+    if (this.isMobile) {
+      return;
+    }
+    
     // Create a temporary bounce indicator
     const bounceIndicator = document.createElement('div');
     bounceIndicator.style.cssText = `

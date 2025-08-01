@@ -70,6 +70,10 @@ body {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    
+    // Optimize for mobile scrolling
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto; // Use native scrolling on mobile for better performance
   }
 }
 
@@ -315,6 +319,13 @@ section, .section {
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+  
+  // Optimize scrolling performance on mobile
+  .smooth-scroll, .smooth-scroll-content {
+    -webkit-overflow-scrolling: touch !important;
+    transform: translateZ(0) !important; // Enable hardware acceleration
+    will-change: scroll-position !important;
   }
 }
 
