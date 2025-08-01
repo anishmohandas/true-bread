@@ -1,14 +1,33 @@
 .subscribe-page {
-  min-height: 100vh;
+  min-height: auto; // Reduced height for mobile
   display: flex;
   flex-direction: column;
   justify-content: center;
   background-color: #f9f9f9;
+  padding: 1rem; // Add padding for mobile
 
   .subscription-container {
     margin: 0 auto;
     background-color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 100%; // Full width on mobile
+    border-radius: 0; // Remove rounded corners on mobile
+  }
+  
+  // Mobile optimization
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+    min-height: auto;
+    
+    .subscription-container {
+      box-shadow: none; // Remove shadow on mobile for cleaner look
+    }
+  }
+  
+  // Further optimization for smaller screens
+  @media (max-width: 480px) {
+    padding: 0.25rem;
   }
 }
 
@@ -17,6 +36,7 @@
   app-subscription {
     section {
       width: 100%;
+      padding: 1rem 0 !important; // Reduced padding for mobile
 
       .container {
         width: 100%;
@@ -28,14 +48,37 @@
       }
     }
   }
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    app-subscription {
+      section {
+        padding: 0.5rem 0 !important;
+      }
+    }
+  }
 }
 
 :host {
   display: block;
   width: 100%;
-  margin-top: 300px;
-  padding-bottom: 200px; // Ensure space for footer
+  margin-top: 50px; // Reduced top margin for mobile
+  padding-bottom: 50px; // Reduced bottom padding for mobile
   font-family: 'Delight', sans-serif;
-  line-height: 2em;
+  line-height: 1.6em; // Reduced line height for better mobile readability
   background-color: #eeece5;
+  
+  // Mobile optimization
+  @media (max-width: 768px) {
+    margin-top: 20px; // Further reduced top margin on mobile
+    padding-bottom: 20px; // Further reduced bottom padding on mobile
+  }
+  
+  // Further optimization for smaller screens
+  @media (max-width: 480px) {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    line-height: 1.5em;
+  }
 }
+

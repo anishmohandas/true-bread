@@ -11,6 +11,99 @@
   overflow: hidden;
   user-select: none;
   background: #000;
+  
+  // Reduce height on mobile devices
+  @media (max-width: 768px) {
+    height: 80vh; // Reduced from 100vh to 80vh
+  }
+  
+  @media (max-width: 480px) {
+    height: 70vh; // Further reduced for small screens
+  }
+}
+
+// Native scroll styles for mobile
+.native-scroll {
+  scroll-snap-type: x mandatory !important;
+  overflow-x: scroll !important;
+  scroll-behavior: smooth !important;
+  -webkit-overflow-scrolling: touch !important;
+  
+  // Hide scrollbar for cleaner look
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+// Ensure slides align properly with scroll-snap
+.slide {
+  scroll-snap-align: start;
+  
+  // Add will-change for performance optimization
+  will-change: transform;
+  
+  // Hardware acceleration
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+// Swipe indicator styles
+.swipe-indicator {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  opacity: 0.7;
+  pointer-events: none;
+  
+  .swipe-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    animation: pulse 2s infinite;
+    
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  // Reduce bottom space on mobile
+  @media (max-width: 768px) {
+    bottom: 10px;
+  }
+  
+  @media (max-width: 480px) {
+    bottom: 5px;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(10px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+}
+
+// Hide swipe indicator on desktop
+@media (min-width: 1025px) {
+  .swipe-indicator {
+    display: none;
+  }
 }
 
 // Integrated title styling
@@ -29,6 +122,25 @@
     text-transform: uppercase;
     font-family: 'Poppins', sans-serif;
     opacity: 0.9;
+  }
+  
+  // Reduce top space on mobile
+  @media (max-width: 768px) {
+    top: 30px;
+    left: 20px;
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    top: 20px;
+    left: 15px;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
   }
 }
 
@@ -87,6 +199,12 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
+  
+  // Ensure proper display on mobile
+  @media (max-width: 768px) {
+    // Add touch action for better mobile scrolling
+    touch-action: pan-x;
+  }
 }
 
 .slide {
@@ -101,6 +219,50 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  
+  // Initial state for lazy loading
+  opacity: 0;
+  transform: translateY(-50%) translateX(-20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  
+  // When in view
+  &.in-view {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  
+  // Stagger effect for each slide
+  &:nth-child(1) { transition-delay: 0.1s; }
+  &:nth-child(2) { transition-delay: 0.2s; }
+  &:nth-child(3) { transition-delay: 0.3s; }
+  &:nth-child(4) { transition-delay: 0.4s; }
+  &:nth-child(5) { transition-delay: 0.5s; }
+  &:nth-child(6) { transition-delay: 0.6s; }
+  &:nth-child(7) { transition-delay: 0.7s; }
+  &:nth-child(8) { transition-delay: 0.8s; }
+  &:nth-child(9) { transition-delay: 0.9s; }
+  &:nth-child(10) { transition-delay: 1.0s; }
+  
+  // Reduce vertical space on mobile
+  @media (max-width: 768px) {
+    height: 350px; // Reduced height for mobile
+    top: 45%; // Adjust vertical position
+    transform: translateY(-45%);
+    
+    &.in-view {
+      transform: translateY(-45%) translateX(0);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    height: 320px; // Further reduced for small screens
+    top: 40%; // Adjust vertical position
+    transform: translateY(-40%);
+    
+    &.in-view {
+      transform: translateY(-40%) translateX(0);
+    }
+  }
   
   &:first-child {
     margin-left: 30px; // Reduced margin from 50px to 30px
@@ -133,6 +295,15 @@
     max-width: 100%;
     max-height: 100%;
   }
+  
+  // Reduce image height on mobile to better utilize space
+  @media (max-width: 768px) {
+    height: 180px; // Reduced height for mobile
+  }
+  
+  @media (max-width: 480px) {
+    height: 150px; // Further reduced for small screens
+  }
 }
 
 .slide:hover .slide-image img {
@@ -152,6 +323,15 @@
   transition: opacity 0.3s ease;
   opacity: 1; // Show text immediately on load
   padding: 0 4px;
+  
+  // Reduce bottom space on mobile
+  @media (max-width: 768px) {
+    bottom: -2rem;
+  }
+  
+  @media (max-width: 480px) {
+    bottom: -1.5rem;
+  }
 }
 
 .slide:hover .slide-overlay {

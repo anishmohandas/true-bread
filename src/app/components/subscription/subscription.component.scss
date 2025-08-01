@@ -14,6 +14,15 @@ $secondary: #00eded;
 section {
   padding: 1rem 0 !important; // Further reduced padding
   background-color: $bg !important; // Use issue highlights background
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    padding: 0.5rem 0 !important;
+  }
+  
+  @media (max-width: 360px) {
+    padding: 0.25rem 0 !important;
+  }
 }
 
 @media (min-width: 768px) {
@@ -41,6 +50,13 @@ section {
   }
 }
 
+// Mobile optimization for smaller screens
+@media (max-width: 480px) {
+  .hero {
+    padding: 0.75rem;
+  }
+}
+
 /*@media (min-width: 1200px) {
   .hero {
     padding: 2rem; // Significantly reduced padding
@@ -55,6 +71,18 @@ section {
   gap: 1rem; // Reduced gap
   max-width: 600px; // Reduced max-width for better centering
   margin: auto;
+  width: 100%; // Full width for better mobile layout
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+    padding: 0 0.5rem; // Add slight padding on small screens
+  }
+  
+  @media (max-width: 360px) {
+    gap: 0.5rem;
+    padding: 0 0.25rem;
+  }
 }
 
 .hero-title {
@@ -63,6 +91,15 @@ section {
   font-weight: bold;
   margin-bottom: 0.5rem; // Reduced margin
   font-family: "Delight", serif; // Use Delight font
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    font-size: 2rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 1.75rem;
+  }
 }
 
 .hero-subtitle {
@@ -70,6 +107,15 @@ section {
   font-size: 1.125rem;
   margin-bottom: 0.5rem; // Reduced margin
   font-family: "Delight", serif; // Use Delight font
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 0.875rem;
+  }
 }
 
 .hero-image {
@@ -77,6 +123,11 @@ section {
   align-items: center;
   justify-content: center;
   margin-bottom: 0.5rem; // Reduced margin
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    margin-bottom: 0.25rem;
+  }
 }
 
 .hero-image img {
@@ -89,12 +140,26 @@ section {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    width: 95%; // Slight reduction for better margins
+  }
+  
+  @media (max-width: 360px) {
+    width: 90%; // Further reduction for very small screens
+  }
 }
 
 .hero-form {
   margin-top: 0.5rem; // Reduced margin
   width: 100%;
   max-width: 500px; // Limit form width for better appearance
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    margin-top: 0.25rem;
+  }
 }
 
 @media (min-width: 700px) {
@@ -109,11 +174,35 @@ section {
   gap: 0.75rem; // Add space between inputs on mobile
 }
 
-@media (min-width: 400px) {
+@media (min-width: 400px) and (max-width: 429px) {
+  .hero-form-input {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 430px) {
   .hero-form-input {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
     gap: 0.5rem; // Add space between inputs on desktop
+  }
+}
+
+// Mobile optimization for very small screens
+@media (max-width: 360px) {
+  .hero-form-input {
+    gap: 0.5rem;
+  }
+}
+
+// Specific optimization for iPhone 14 Pro Max and similar devices
+@media (min-width: 430px) and (max-width: 500px) and (min-height: 900px) {
+  .hero-form-input {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 }
 
@@ -126,6 +215,9 @@ section {
   font-size: 1rem;
   background: #fff;
   font-family: "Delight", serif; // Use Delight font
+  // Mobile optimization for better touch targets
+  min-height: 48px; // Minimum touch target size
+  width: 100%; // Ensure full width on mobile
   
   &:focus {
     outline: none;
@@ -134,6 +226,36 @@ section {
   
   &.error {
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+  
+  // Specific optimization for iPhone 14 Pro Max and similar devices
+  @media (min-width: 430px) and (max-width: 500px) and (min-height: 900px) {
+    width: 100%;
+  }
+}
+
+// Mobile optimization for smaller screens
+@media (max-width: 480px) {
+  .hero-name-input,
+  .hero-email-input {
+    padding: 0.875rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-name-input,
+  .hero-email-input {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+// Specific optimization for iPhone 12 and similar devices
+@media (min-width: 390px) and (max-width: 429px) and (min-height: 800px) and (max-height: 900px) {
+  .hero-name-input,
+  .hero-email-input {
+    width: 100%;
   }
 }
 
@@ -174,6 +296,7 @@ section {
   justify-content: center;
   min-height: 48px;
   font-family: "Delight", serif; // Use Delight font
+  width: 100%; // Full width on mobile for better touch target
   
   &:hover:not(:disabled) {
     background-color: #2a4a2a; // Lighter greenish black on hover
@@ -184,6 +307,21 @@ section {
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+  
+  // Desktop layout
+  @media (min-width: 430px) {
+    width: auto; // Auto width on desktop
+  }
+  
+  // Specific optimization for iPhone 14 Pro Max and similar devices
+  @media (min-width: 430px) and (max-width: 500px) and (min-height: 900px) {
+    width: 100%;
+  }
+  
+  // Specific optimization for iPhone 12 and similar devices
+  @media (min-width: 390px) and (max-width: 429px) and (min-height: 800px) and (max-height: 900px) {
+    width: 100%;
   }
 }
 
@@ -204,14 +342,33 @@ section {
 .error-container {
   min-height: 24px;
   overflow: hidden;
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    min-height: 20px;
+  }
+  
+  @media (max-width: 360px) {
+    min-height: 16px;
+  }
 }
 
 .validation-messages {
   margin-top: 0.25rem; // Reduced margin
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    margin-top: 0.125rem;
+  }
 }
 
 .message-container {
   margin-top: 0.5rem; // Reduced margin
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    margin-top: 0.25rem;
+  }
 }
 
 // Animated SVG Styles - Now centered above form
@@ -219,6 +376,17 @@ section {
   width: 2.5rem; // Much smaller size for compact layout
   height: 2.5rem; // Much smaller size for compact layout
   pointer-events: none; // Prevent SVG from blocking clicks
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  @media (max-width: 360px) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
 
 .hero-image .container svg {
@@ -283,6 +451,15 @@ section {
   
   &.success-message {
     color: $primary; // Golden for success
+  }
+  
+  // Mobile optimization for smaller screens
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
+  
+  @media (max-width: 360px) {
+    font-size: 0.625rem;
   }
 }
 

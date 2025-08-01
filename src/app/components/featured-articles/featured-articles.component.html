@@ -18,7 +18,7 @@
 
   <!-- Slider content -->
   <div class="horizontal-scroll-wrapper" *ngIf="!loading && !error">
-    <div class="horizontal slide-track">
+    <div class="horizontal slide-track" tabindex="0">
       <!-- Show actual articles if available -->
       <div *ngFor="let article of articles; let i = index" class="slide" (click)="navigateToArticle(article.id)">
         <div class="slide-image">

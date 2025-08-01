@@ -79,6 +79,7 @@
 .links {
   .link {
     position: relative;
+    margin-bottom: 1em;
     transform: translateY(30px);
     opacity: 0;
 
@@ -322,7 +323,7 @@
   
   .col-1 {
     order: 1; /* Menu links first */
-    padding-top: 5em; /* Additional padding at the top for the first column */
+    padding-top: 8em; /* Additional padding at the top for the first column */
   }
   
   .col-2 {
@@ -336,7 +337,7 @@
   }
   
   .links {
-    margin-bottom: 2em; /* Space between menu links and social links */
+    margin-bottom: 3em; /* Space between menu links and social links */
     
     .link {
       a {
@@ -373,7 +374,7 @@
   }
    .col-1 {
     order: 1; /* Menu links first */
-    padding-top: 5em; /* Additional padding at the top for the first column */
+    padding-top: 8em; /* Additional padding at the top for the first column */
   }
   
   .col-2 {
