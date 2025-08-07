@@ -70,6 +70,8 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.initializeSplitting();
       this.initializeScrollTriggers();
+      // Add mobile-specific image handling
+      this.handleMobileImages();
     }, 100);
   }
 
@@ -168,6 +170,28 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
 
   getPlaceholderImage(index: number): string {
     return `https://picsum.photos/400/600?random=${index + 100}`;
+  }
+
+  onImageLoad(event: Event) {
+    const img = event.target as HTMLImageElement;
+    // Add loaded class for mobile slide-up animation
+    img.classList.add('loaded');
+  }
+
+  private handleMobileImages() {
+    // Check if we're on a mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // For mobile devices, ensure images are properly handled
+      const images = this.elementRef.nativeElement.querySelectorAll('.thumb img');
+      images.forEach((img: HTMLImageElement) => {
+        // If image is already loaded, add the loaded class
+        if (img.complete) {
+          img.classList.add('loaded');
+        }
+      });
+    }
   }
 
   onImageError(event: Event, index: number) {

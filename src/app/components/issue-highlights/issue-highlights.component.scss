@@ -138,6 +138,12 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
     box-sizing: border-box;
     opacity: 1;
     
+    @media (max-width: 768px) {
+      height: 80vh; // Reduce height on mobile
+      max-height: 60vh; // Reduce max height on mobile
+      margin-bottom: 1vh; // Reduce margin on mobile
+    }
+    
     &:nth-of-type(even) {
       .thumb {
         &:after {
@@ -199,6 +205,11 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
       -webkit-text-stroke: 2px $y;
       line-height: 1;
       opacity: 0.15;
+      
+      @media (max-width: 768px) {
+        font-size: 300px; // Adjust number size for mobile
+        opacity: 0.25; // Make numbers more visible on mobile
+      }
     }
     
     h2 {
@@ -297,7 +308,7 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
         
         @media (max-width: 768px) {
           grid-area: 2 / 1 / 5 / 6;
-          max-width: 250px;
+          max-width: 200px; // Further reduce image size for better visibility of numbers
         }
         
         p {
@@ -331,7 +342,7 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
       
       @media (max-width: 768px) {
         grid-area: 2 / 1 / 5 / 6;
-        max-width: 250px;
+        max-width: 200px; // Further reduce image size for better visibility of numbers
       }
       
       p {
@@ -420,6 +431,28 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
         filter: blur(calc(10px * (1 - var(--progress, 0))));
         transition: filter 0.3s ease;
         border-radius: 15px;
+        
+        // Mobile-specific optimizations to fix image loading issues
+        @media (max-width: 768px) {
+          filter: none; // Remove blur effect on mobile
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.5s ease, transform 0.5s ease;
+          
+          // Add class for loaded state
+          &.loaded {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          
+          // Fallback for browsers that don't support the load event properly
+          // This ensures images are visible even if the load event doesn't fire
+          &:not(.loaded) {
+            opacity: 1;
+            transform: translateY(0);
+            transition: none;
+          }
+        }
       }
     }
   }
@@ -428,7 +461,7 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
 // Responsive design
 @media (max-width: 768px) {
   #wrap {
-    padding: 2.5vh 25px 25vh;
+    padding: 2.5vh 25px 15vh; // Reduce bottom padding to fit more content
     
     h1 {
       font-size: 60px;
@@ -442,7 +475,29 @@ $expo: cubic-bezier(1, 0.885, 0.32, 1);
       
       .thumb {
         grid-area: 2 / 1 / 5 / 6;
+        
+        // Reduce image size to show the number behind
+        max-width: 200px;
+        justify-self: center;
       }
+    }
+    
+    // Reduce gap between categories
+    .panel {
+      margin-bottom: 1vh; // Further reduce gap between categories
+      max-height: 50vh; // Reduce height to fit more content
+      padding: 10px; // Reduce padding to fit more content
+    }
+  }
+}
+
+
+
+// Add mobile-specific optimizations for image loading
+@media (max-width: 768px) {
+  .thumb {
+    .inner {
+      overflow: visible; // Allow for slide-up animation
     }
   }
 }

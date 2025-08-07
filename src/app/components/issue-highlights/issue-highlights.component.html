@@ -8,7 +8,7 @@
       <!-- <p>{{ getCategoryType(i) }}</p> -->
       <div class="inner">
         <img [src]="category.imageUrl || getPlaceholderImage(i)" [alt]="category.title" loading="lazy"
-          (error)="onImageError($event, i)" />
+          (load)="onImageLoad($event)" (error)="onImageError($event, i)" />
       </div>
     </div>
   </div>

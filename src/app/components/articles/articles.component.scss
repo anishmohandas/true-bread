@@ -12,10 +12,10 @@
 }
 
 .category-filter {
-  @apply mb-8;
+  @apply mb-8 flex flex-wrap gap-2;
   
   button {
-    @apply px-4 py-2 mr-2 mb-2 rounded-full transition-colors duration-200;
+    @apply px-4 py-2 rounded-full transition-colors duration-200 whitespace-nowrap;
     
     &.active {
       @apply bg-stone-800 text-white;
