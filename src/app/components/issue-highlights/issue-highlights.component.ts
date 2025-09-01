@@ -36,7 +36,7 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "Holy Exile",
+      title: "Articles",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
