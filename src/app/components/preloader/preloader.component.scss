@@ -96,14 +96,6 @@
     position: relative;
     transform-origin: left center;
     will-change: transform, font-size, top, left;
-    transition: padding-left 1.5s ease-in-out;
-
-    &.scaled {
-      padding-left: 0; // Reduced padding for final position
-      h1 {
-        padding-left: 0; // Reduced padding for final position
-      }
-    }
   }
 }
 

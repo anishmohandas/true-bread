@@ -73,26 +73,17 @@ export class PreloaderComponent implements OnInit {
         onStart: () => console.log('Fading out non-last line wrappers'),
         onComplete: () => console.log('Completed fading out non-last line wrappers')
       }, "+=1")
-      .add(() => {
-        console.log('Adding scaled class to final-line');
-        const finalLine = document.querySelector('.final-line');
-        if (finalLine) {
-          finalLine.classList.add('scaled');
-          console.log('Added scaled class successfully');
-        } else {
-          console.error('Could not find .final-line element');
-        }
-      })
       .to(".line-wrapper.final-line", {
         scale: 1.1,
         x: "10vw",
+        paddingLeft: "0",
         duration: 1.5,
         ease: "power2.inOut",
         onStart: () => console.log('Scaling final line'),
         onComplete: () => console.log('Completed scaling final line')
       })
       .to(".pre-loader-container", {
-        paddingLeft: "0",
+       // paddingLeft: "0",
         duration: 1.5,
         ease: "power2.inOut",
         onStart: () => console.log('Adjusting pre-loader-container padding'),
@@ -100,6 +91,7 @@ export class PreloaderComponent implements OnInit {
       }, "<")
       .to(".line-wrapper.final-line h1", {
         fontSize: "12vw",
+        paddingLeft: "0",
         duration: 1.5,
         ease: "power2.inOut",
         onStart: () => console.log('Adjusting final line font size'),
