@@ -31,7 +31,7 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "TruthInsight.jpg"
     },
     {
-      title: "Bible Study",
+      title: "Treasure Youth",
       description: "Echoes of truth spoken boldly—messages that breathe life, challenge complacency, and call us deeper into the presence of God.",
       imageName: "LivingMessage.jpg"
     },
