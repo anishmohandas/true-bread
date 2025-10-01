@@ -1,0 +1,5 @@
+- [x] Move scale animation to h1 element for better performance
+- [x] Change ease to "expo.out" for smoother transitions
+- [x] Increase duration to 2 seconds
+- [x] Test on mobile to verify smoothness
+- [x] Test positioning to ensure final line is centered when scaled

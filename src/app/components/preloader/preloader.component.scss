@@ -28,7 +28,7 @@
 .header {
   overflow: visible;
   position: relative;
-  text-align: left;
+  text-align: center;
   
   h2 {
     font-family: 'CLT Absans', sans-serif;
@@ -56,7 +56,7 @@
       font-family: 'Delight-Black', sans-serif;
       font-size: 6vw;
       color: #000;
-      padding-left: 4rem;
+      //padding-left: 4rem;
       line-height: 1;
     }
   }
@@ -64,18 +64,16 @@
   .line-wrapper:last-child {
     position: relative;
     padding-top: 0.4em;
-    
+
     h1 {
       font-size: 7vw;
       position: relative;
       color: #000;
       -webkit-text-stroke: 0;
       text-stroke: 0;
-      transform-origin: left center;
+      transform-origin: center center;
       will-change: transform, font-size, top, left;
-      padding-left: 4rem; // Restore initial padding
-      transition: padding-left 1.5s ease-in-out;
-      
+
       &::before {
         content: 'True Bread.';
         position: absolute;
@@ -94,7 +92,7 @@
 
   .final-line {
     position: relative;
-    transform-origin: left center;
+    transform-origin: center center;
     will-change: transform, font-size, top, left;
   }
 }
