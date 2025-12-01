@@ -31,12 +31,12 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "TruthInsight.jpg"
     },
     {
-      title: "On Fire for Christ",
+      title: "From the Cross",
       description: "Echoes of truth spoken boldly—messages that breathe life, challenge complacency, and call us deeper into the presence of God.",
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "666: The Mark of the Beast",
+      title: "The Christmas story",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
