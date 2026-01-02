@@ -26,6 +26,11 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
 
   categories: CategoryItem[] = [
     {
+      title: "New Year Greetings",
+      description: "Honest reflections on the beauty and struggles of real life through a Christian lens. Quiet reflections from the rhythm of real life—where laughter, struggle, and stillness reveal the gentle fingerprints of God.",
+      imageName: "EverydayGrace.jpg"
+    },
+    {
       title: "Truth & Insight",
       description: "Where timeless truths meet everyday journeys—words that stir the heart, renew the mind, and illuminate the sacred in the ordinary.",
       imageName: "TruthInsight.jpg"
@@ -36,7 +41,7 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "The Christmas story",
+      title: "Chosen & Called",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
@@ -44,11 +49,6 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       title: "Wings - A series",
       description: "A soaring thread from issue to issue—one voice unfolding over time, lifting hearts toward hope, healing, and holy transformation.",
       imageName: "Wings.jpg"
-    },
-    {
-      title: "Living Principle",
-      description: "Honest reflections on the beauty and struggles of real life through a Christian lens. Quiet reflections from the rhythm of real life—where laughter, struggle, and stillness reveal the gentle fingerprints of God.",
-      imageName: "EverydayGrace.jpg"
     }
   ];
 
