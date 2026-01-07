@@ -95,6 +95,22 @@ export class LatestIssueComponent implements OnInit, AfterViewInit, OnDestroy {
   get currentPdfUrl(): string {
     return this.currentIssue?.pdfUrl ?? '';
   }
+
+  // Calculate volume number based on year (2025 = Volume 1)
+  get volumeNumber(): number {
+    if (!this.currentIssue?.year) return 1;
+    return this.currentIssue.year - 2025 + 1;
+  }
+
+  // Calculate issue number within the volume (resets to 1 after every 12 issues)
+  get issueNumber(): number {
+    if (!this.currentIssue?.issueNumber) return 1;
+    const issueNum = this.currentIssue.issueNumber;
+    // Calculate issue number within the volume (1-12)
+    const issueInVolume = ((issueNum - 1) % 12) + 1;
+    return issueInVolume;
+  }
+
   error = false;
 
   private observer: IntersectionObserver | null = null;

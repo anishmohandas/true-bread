@@ -18,6 +18,7 @@ export class IssueService {
       map(publication => ({
         id: publication.id,
         month: publication.month,
+        year: publication.year,
         coverImage: publication.coverImage,
         description: publication.description,
         highlights: publication.highlights,
