@@ -37,7 +37,8 @@
         <div class="text-column">
           <div class="text-content gs_reveal">
             <div class="publication-meta gs_reveal">
-              <span class="issue-number">Issue #{{ publication.issueNumber }}</span>
+              <span class="issue-number">Volume {{ getVolumeNumber(publication.year) }}&nbsp;&nbsp;Issue {{
+                getIssueNumber(publication.issueNumber) }}</span>
               <span class="publish-date">{{ publication.month }} {{ publication.year }}</span>
             </div>
 

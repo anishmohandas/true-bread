@@ -420,6 +420,20 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.publications.filter(pub => pub.year === this.selectedYear);
   }
 
+  // Calculate volume number based on year (2025 = Volume 1)
+  getVolumeNumber(year: number): number {
+    if (!year) return 1;
+    return year - 2025 + 1;
+  }
+
+  // Calculate issue number within the volume (resets to 1 after every 12 issues)
+  getIssueNumber(issueNumber: number): number {
+    if (!issueNumber) return 1;
+    // Calculate issue number within the volume (1-12)
+    const issueInVolume = ((issueNumber - 1) % 12) + 1;
+    return issueInVolume;
+  }
+
   filterByYear(year: number | null) {
     this.selectedYear = year;
 
