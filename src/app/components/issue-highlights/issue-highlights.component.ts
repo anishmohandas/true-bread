@@ -26,7 +26,7 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
 
   categories: CategoryItem[] = [
     {
-      title: "New Year Greetings",
+      title: "Christ Centered Life",
       description: "Honest reflections on the beauty and struggles of real life through a Christian lens. Quiet reflections from the rhythm of real life—where laughter, struggle, and stillness reveal the gentle fingerprints of God.",
       imageName: "EverydayGrace.jpg"
     },
@@ -41,7 +41,7 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "Chosen & Called",
+      title: "New Year Renewed Submission",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
