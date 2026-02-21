@@ -1,0 +1,256 @@
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 64px;
+$topbar-height: 64px;
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f5f5;
+  font-family: 'CLT Absans', sans-serif;
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+.sidebar {
+  width: $sidebar-width;
+  background: #000;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 100;
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+
+.admin-layout.sidebar-collapsed .sidebar {
+  width: $sidebar-collapsed-width;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: $topbar-height;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    color: #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 0.375rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: color 0.2s, background 0.2s;
+
+  &:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Nav
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  &.active {
+    background: #fff;
+    color: #000;
+  }
+}
+
+.nav-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Footer
+.sidebar-footer {
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.875rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+}
+
+// ─── Main Content ─────────────────────────────────────────────────────────────
+.main-content {
+  flex: 1;
+  margin-left: $sidebar-width;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.25s ease;
+}
+
+.admin-layout.sidebar-collapsed .main-content {
+  margin-left: $sidebar-collapsed-width;
+}
+
+// Topbar
+.topbar {
+  height: $topbar-height;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.page-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.admin-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  .admin-avatar {
+    width: 36px;
+    height: 36px;
+    background: #000;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .admin-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+// Content area
+.content-area {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .sidebar {
+    width: $sidebar-collapsed-width;
+  }
+
+  .admin-layout.sidebar-collapsed .sidebar {
+    width: $sidebar-collapsed-width;
+  }
+
+  .main-content {
+    margin-left: $sidebar-collapsed-width;
+  }
+
+  .admin-layout.sidebar-collapsed .main-content {
+    margin-left: $sidebar-collapsed-width;
+  }
+
+  .nav-label,
+  .brand-name,
+  .logout-btn span {
+    display: none;
+  }
+}

@@ -24,7 +24,11 @@ const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'subscribe', component: SubscribeComponent },
   { path: 'preview', component: PdfPreviewComponent },
-  { path: 'preview/:id', component: PdfPreviewComponent }
+  { path: 'preview/:id', component: PdfPreviewComponent },
+  {
+    path: 'admin',
+    loadChildren: () => import('./components/admin/admin.module').then(m => m.AdminModule)
+  }
 ];
 
 @NgModule({
