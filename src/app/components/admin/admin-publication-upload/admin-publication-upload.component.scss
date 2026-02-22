@@ -121,22 +121,10 @@
   color: #dc2626;
 }
 
-// Grid
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 1.5rem;
-  align-items: start;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.form-column {
+// Single-column form actions (Save button container)
+.form-actions {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  justify-content: flex-end;
 }
 
 // Card

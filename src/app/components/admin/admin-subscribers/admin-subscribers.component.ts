@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AdminService, Subscriber } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-subscribers',
   templateUrl: './admin-subscribers.component.html',
   styleUrls: ['./admin-subscribers.component.scss']

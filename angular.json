@@ -15,18 +15,22 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/true-bread",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
+              {
+                "glob": "favicon.ico",
+                "input": "src",
+                "output": "/"
+              },
               {
                 "glob": "**/*",
                 "input": "src/assets",
@@ -39,6 +43,7 @@
               }
             ],
             "styles": [
+              "node_modules/quill/dist/quill.snow.css",
               "src/styles.scss",
               "src/styles/abstracts/_variables.scss",
               "src/styles/abstracts/_mixins.scss"
@@ -47,10 +52,6 @@
               "includePaths": [
                 "src/styles"
               ]
-            },
-            "customWebpackConfig": {
-              "path": "./webpack.config.js",
-              "replaceDuplicatePlugins": true
             },
             "scripts": [],
             "allowedCommonJsDependencies": []
@@ -75,26 +76,30 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
-              ],
-              "optimization": true,
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "true-bread:build"
+            "buildTarget": "true-bread:build:development"
           },
           "configurations": {
             "production": {
-              "browserTarget": "true-bread:build:production"
+              "buildTarget": "true-bread:build:production"
+            },
+            "development": {
+              "buildTarget": "true-bread:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -117,6 +122,5 @@
         }
       }
     }
-  },
-  "defaultProject": "true-bread"
+  }
 }

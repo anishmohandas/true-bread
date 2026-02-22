@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 
+import { QuillModule } from 'ngx-quill';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
@@ -76,6 +77,7 @@ import { EditorsNoteComponent } from './components/editors-note/editors-note.com
     BrowserAnimationsModule,
     ReactiveFormsModule,
     CommonModule,
+    QuillModule.forRoot(),
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

@@ -80,8 +80,19 @@
 
     <img [src]="article.imageUrl" [alt]="article.altText" class="w-full h-auto rounded-lg shadow-lg" />
 
-    <div class="prose max-w-none mt-8" [ngClass]="{'malayalam-text': article.language === 'ml'}"
-      [attr.lang]="article.language === 'ml' ? 'ml' : 'en'" [attr.dir]="article.language === 'ml' ? 'ltr' : 'auto'">
+    <!-- Quill HTML content (articles edited via admin Quill editor) -->
+    <div *ngIf="isHtmlContent()" class="prose quill-content max-w-none mt-8"
+      [ngClass]="{'malayalam-text': article.language === 'ml'}" [attr.lang]="article.language === 'ml' ? 'ml' : 'en'"
+      [attr.dir]="article.language === 'ml' ? 'ltr' : 'auto'">
+      <div class="ql-container ql-snow">
+        <div class="ql-editor" [innerHTML]="article.content | safeHtml"></div>
+      </div>
+    </div>
+
+    <!-- Plain text content (legacy articles not yet edited in Quill) -->
+    <div *ngIf="!isHtmlContent()" class="prose max-w-none mt-8"
+      [ngClass]="{'malayalam-text': article.language === 'ml'}" [attr.lang]="article.language === 'ml' ? 'ml' : 'en'"
+      [attr.dir]="article.language === 'ml' ? 'ltr' : 'auto'">
       <ng-container *ngFor="let paragraph of getFormattedContent()">
         <p [innerHTML]="paragraph | safeHtml"></p>
       </ng-container>

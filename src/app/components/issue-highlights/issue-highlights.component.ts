@@ -14,6 +14,7 @@ interface CategoryItem {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-issue-highlights',
   templateUrl: './issue-highlights.component.html',
   styleUrls: ['./issue-highlights.component.scss']

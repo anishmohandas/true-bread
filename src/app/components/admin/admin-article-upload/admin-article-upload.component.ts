@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-article-upload',
   templateUrl: './admin-article-upload.component.html',
   styleUrls: ['./admin-article-upload.component.scss']
@@ -17,13 +18,22 @@ export class AdminArticleUploadComponent implements OnInit {
   selectedImageFile: File | null = null;
   imagePreviewUrl: string | null = null;
 
-  // Reference to the contenteditable editor div
-  @ViewChild('editorContent') editorContent!: ElementRef<HTMLDivElement>;
-
   // Edit mode
   editMode = false;
   editId: string | null = null;
   existingImageUrl = '';
+
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      ['blockquote'],
+      [{ header: [1, 2, 3, false] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      ['link'],
+      ['clean']
+    ]
+  };
 
   categories = [
     'Faith & Spirituality',
@@ -88,7 +98,7 @@ export class AdminArticleUploadComponent implements OnInit {
               .map((para: string) => `<p>${para.replace(/\n/g, '<br>')}</p>`)
               .join('');
 
-        // Patch all form fields
+        // Patch non-Quill fields immediately
         this.articleForm.patchValue({
           title: a.title,
           author: a.author,
@@ -105,13 +115,6 @@ export class AdminArticleUploadComponent implements OnInit {
           language: a.language || 'en'
         });
 
-        // Set innerHTML directly on the contenteditable div — no timing issues
-        setTimeout(() => {
-          if (this.editorContent?.nativeElement) {
-            this.editorContent.nativeElement.innerHTML = htmlContent;
-          }
-        }, 0);
-
         if (a.imageUrl) {
           this.imagePreviewUrl = a.imageUrl;
         }
@@ -122,52 +125,6 @@ export class AdminArticleUploadComponent implements OnInit {
         this.isLoadingData = false;
       }
     });
-  }
-
-  // Called on (input) event from the contenteditable div
-  onEditorInput(event: Event): void {
-    const html = (event.target as HTMLElement).innerHTML || '';
-    this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-    this.articleForm.get('content')?.markAsDirty();
-  }
-
-  // Intercept Tab key to insert indentation instead of changing focus
-  onEditorKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      if (event.shiftKey) {
-        // Shift+Tab → outdent
-        document.execCommand('outdent', false);
-      } else {
-        // Tab → indent (works for lists); for plain paragraphs insert spaces
-        const handled = document.execCommand('indent', false);
-        if (!handled) {
-          // Fallback: insert 4 non-breaking spaces at cursor
-          document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;');
-        }
-      }
-      const html = this.editorContent.nativeElement.innerHTML || '';
-      this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-      this.articleForm.get('content')?.markAsDirty();
-    }
-  }
-
-  // Execute a formatting command on the selected text
-  execCommand(command: string, value?: string): void {
-    document.execCommand(command, false, value);
-    this.editorContent.nativeElement.focus();
-    const html = this.editorContent.nativeElement.innerHTML || '';
-    this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-    this.articleForm.get('content')?.markAsDirty();
-  }
-
-  // Insert a heading at cursor position
-  insertHeading(tag: string): void {
-    document.execCommand('formatBlock', false, tag);
-    this.editorContent.nativeElement.focus();
-    const html = this.editorContent.nativeElement.innerHTML || '';
-    this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-    this.articleForm.get('content')?.markAsDirty();
   }
 
   onImageFileChange(event: Event): void {
@@ -250,9 +207,6 @@ export class AdminArticleUploadComponent implements OnInit {
     this.selectedImageFile = null;
     this.imagePreviewUrl = null;
     this.existingImageUrl = '';
-    if (this.editorContent?.nativeElement) {
-      this.editorContent.nativeElement.innerHTML = '';
-    }
   }
 
   goBack(): void {

@@ -6,6 +6,7 @@ import { ShareService } from '../../services/share.service';
 import { Article } from '../../shared/interfaces/article.interface';
 
 @Component({
+  standalone: false,
   selector: 'app-article-detail',
   templateUrl: './article-detail.component.html',
   styleUrls: ['./article-detail.component.scss']
@@ -71,6 +72,12 @@ export class ArticleDetailComponent implements OnInit {
         }
       });
     });
+  }
+
+  /** Returns true if content is Quill-generated HTML (starts with an HTML tag) */
+  isHtmlContent(): boolean {
+    const content = this.article?.content;
+    return !!content && content.trim().startsWith('<');
   }
 
   getFormattedContent(): string[] {

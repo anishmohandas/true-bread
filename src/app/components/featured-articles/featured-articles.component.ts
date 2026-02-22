@@ -11,6 +11,7 @@ if (typeof window !== 'undefined') {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-featured-articles',
   templateUrl: './featured-articles.component.html',
   styleUrls: ['./featured-articles.component.scss']

@@ -1,7 +1,7 @@
 <!-- Preloader - shown only when preloader hasn't been  seen -->
 <app-preloader *ngIf="!showComponents"></app-preloader>
 
-<app-header *ngIf="showComponents"></app-header>
+<app-header *ngIf="showComponents && !isAdminRoute"></app-header>
 
 <!-- Main content container with touch event handling -->
 <div class="smooth-scroll" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)"
@@ -16,11 +16,11 @@
   </div>
 
   <!-- Footer positioned AFTER content -->
-  <app-footer *ngIf="showComponents" class="parallax-footer"></app-footer>
+  <app-footer *ngIf="showComponents && !isAdminRoute" class="parallax-footer"></app-footer>
 </div>
 
-<!-- Clean Navigation Ball - Fixed to viewport - Hidden during preloader and when menu is open -->
-<div class="navigation-ball" (click)="scrollToNextSection()" *ngIf="showComponents && !isMenuOpen"
+<!-- Clean Navigation Ball - Fixed to viewport - Hidden during preloader, menu open, and admin routes -->
+<div class="navigation-ball" (click)="scrollToNextSection()" *ngIf="showComponents && !isMenuOpen && !isAdminRoute"
   [class.at-bottom]="isAtLastSection">
   <div class="ball">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

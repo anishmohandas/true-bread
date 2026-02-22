@@ -42,207 +42,197 @@
   </div>
 
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" novalidate>
-    <div class="form-grid">
 
-      <!-- LEFT COLUMN -->
-      <div class="form-column">
+    <!-- Save Button — TOP -->
+    <div class="form-actions">
+      <button type="submit" class="submit-btn" [disabled]="isLoading || isLoadingData">
+        <span *ngIf="!isLoading">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          {{ editMode ? 'Save Changes' : 'Publish Article' }}
+        </span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" class="spin">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          {{ editMode ? 'Saving...' : 'Publishing...' }}
+        </span>
+      </button>
+    </div>
 
-        <!-- Article Details Card -->
-        <div class="form-card">
-          <h3 class="card-title">Article Details</h3>
+    <!-- Article Details Card -->
+    <div class="form-card">
+      <h3 class="card-title">Article Details</h3>
 
-          <div class="form-group">
-            <label class="form-label required">Title</label>
-            <input type="text" class="form-input" formControlName="title" placeholder="Article title"
-              [class.input-error]="f['title'].invalid && f['title'].touched" />
-            <span class="field-error" *ngIf="f['title'].invalid && f['title'].touched">
-              Title is required (min 3 characters).
-            </span>
-          </div>
+      <div class="form-group">
+        <label class="form-label required">Title</label>
+        <input type="text" class="form-input" formControlName="title" placeholder="Article title"
+          [class.input-error]="f['title'].invalid && f['title'].touched" />
+        <span class="field-error" *ngIf="f['title'].invalid && f['title'].touched">
+          Title is required (min 3 characters).
+        </span>
+      </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label required">Author</label>
-              <input type="text" class="form-input" formControlName="author" placeholder="Author name"
-                [class.input-error]="f['author'].invalid && f['author'].touched" />
-              <span class="field-error" *ngIf="f['author'].invalid && f['author'].touched">
-                Author is required.
-              </span>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Job Title</label>
-              <input type="text" class="form-input" formControlName="jobTitle" placeholder="e.g. Pastor" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Works At</label>
-              <input type="text" class="form-input" formControlName="worksAt" placeholder="Organization" />
-            </div>
-            <div class="form-group">
-              <label class="form-label required">Category</label>
-              <select class="form-input" formControlName="category"
-                [class.input-error]="f['category'].invalid && f['category'].touched">
-                <option value="">Select category</option>
-                <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-              </select>
-              <span class="field-error" *ngIf="f['category'].invalid && f['category'].touched">
-                Category is required.
-              </span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Excerpt</label>
-            <textarea class="form-input form-textarea" formControlName="excerpt"
-              placeholder="Short summary (max 500 characters)" rows="3"></textarea>
-            <span class="char-count">{{ f['excerpt'].value?.length || 0 }}/500</span>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label required">Content</label>
-            <div class="editor-wrapper" [class.editor-error]="f['content'].invalid && f['content'].touched">
-              <!-- Toolbar -->
-              <div class="editor-toolbar">
-                <button type="button" class="tb-btn" title="Bold" (click)="execCommand('bold')"><b>B</b></button>
-                <button type="button" class="tb-btn" title="Italic" (click)="execCommand('italic')"><i>I</i></button>
-                <button type="button" class="tb-btn" title="Underline"
-                  (click)="execCommand('underline')"><u>U</u></button>
-                <span class="tb-sep"></span>
-                <button type="button" class="tb-btn" title="Heading 1" (click)="insertHeading('h1')">H1</button>
-                <button type="button" class="tb-btn" title="Heading 2" (click)="insertHeading('h2')">H2</button>
-                <button type="button" class="tb-btn" title="Heading 3" (click)="insertHeading('h3')">H3</button>
-                <span class="tb-sep"></span>
-                <button type="button" class="tb-btn" title="Ordered List"
-                  (click)="execCommand('insertOrderedList')">OL</button>
-                <button type="button" class="tb-btn" title="Unordered List"
-                  (click)="execCommand('insertUnorderedList')">UL</button>
-                <span class="tb-sep"></span>
-                <button type="button" class="tb-btn" title="Indent (Tab)"
-                  (click)="execCommand('indent')">&#8594;</button>
-                <button type="button" class="tb-btn" title="Outdent (Shift+Tab)"
-                  (click)="execCommand('outdent')">&#8592;</button>
-                <span class="tb-sep"></span>
-                <button type="button" class="tb-btn" title="Blockquote" (click)="insertHeading('blockquote')">"</button>
-                <button type="button" class="tb-btn" title="Remove Formatting"
-                  (click)="execCommand('removeFormat')">&#10005;</button>
-              </div>
-              <!-- Contenteditable editor area — Tab indents, Shift+Tab outdents -->
-              <div #editorContent class="editor-area" contenteditable="true" (input)="onEditorInput($event)"
-                (keydown)="onEditorKeydown($event)" data-placeholder="Write the full article content here...">
-              </div>
-            </div>
-            <span class="field-error" *ngIf="f['content'].invalid && f['content'].touched">
-              Content is required (min 50 characters).
-            </span>
-          </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Author</label>
+          <input type="text" class="form-input" formControlName="author" placeholder="Author name"
+            [class.input-error]="f['author'].invalid && f['author'].touched" />
+          <span class="field-error" *ngIf="f['author'].invalid && f['author'].touched">
+            Author is required.
+          </span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Job Title</label>
+          <input type="text" class="form-input" formControlName="jobTitle" placeholder="e.g. Pastor" />
         </div>
       </div>
 
-      <!-- RIGHT COLUMN -->
-      <div class="form-column form-column--side">
-
-        <!-- Publish Settings -->
-        <div class="form-card">
-          <h3 class="card-title">Publish Settings</h3>
-
-          <div class="form-group">
-            <label class="form-label required">Publish Date</label>
-            <input type="date" class="form-input" formControlName="publishDate" />
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Read Time (min)</label>
-              <input type="number" class="form-input" formControlName="readTime" min="1" max="120" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Language</label>
-              <select class="form-input" formControlName="language">
-                <option value="en">English</option>
-                <option value="ml">Malayalam</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="toggle-label">
-              <input type="checkbox" formControlName="isFeatured" class="toggle-checkbox" />
-              <span class="toggle-text">Featured Article</span>
-            </label>
-          </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Works At</label>
+          <input type="text" class="form-input" formControlName="worksAt" placeholder="Organization" />
         </div>
-
-        <!-- Image -->
-        <div class="form-card">
-          <h3 class="card-title">Article Image</h3>
-
-          <div class="form-group">
-            <label class="form-label">Image URL</label>
-            <input type="text" class="form-input" formControlName="imageUrl"
-              placeholder="assets/images/articles/my-image.jpg" />
-            <p class="field-hint">Enter a URL or upload a file below.</p>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Alt Text</label>
-            <input type="text" class="form-input" formControlName="altText" placeholder="Image description" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Upload Image File</label>
-            <div class="file-drop-zone" (click)="imageFileInput.click()">
-              <input #imageFileInput type="file" id="imageFile" accept="image/jpeg,image/png,image/webp"
-                (change)="onImageFileChange($event)" style="display:none" />
-              <div *ngIf="!imagePreviewUrl" class="drop-placeholder">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                  stroke="#9ca3af" stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                  <polyline points="21 15 16 10 5 21"></polyline>
-                </svg>
-                <p>Click to upload image</p>
-                <span>JPG, PNG, WEBP — max 10MB</span>
-              </div>
-              <div *ngIf="imagePreviewUrl" class="image-preview">
-                <img [src]="imagePreviewUrl" alt="Preview" />
-                <button type="button" class="remove-image" (click)="$event.stopPropagation(); removeImage()">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <p class="field-hint" *ngIf="selectedImageFile">
-              Selected: {{ selectedImageFile?.name }} — will be saved to <code>assets/images/articles/</code>
-            </p>
-          </div>
+        <div class="form-group">
+          <label class="form-label required">Category</label>
+          <select class="form-input" formControlName="category"
+            [class.input-error]="f['category'].invalid && f['category'].touched">
+            <option value="">Select category</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+          <span class="field-error" *ngIf="f['category'].invalid && f['category'].touched">
+            Category is required.
+          </span>
         </div>
+      </div>
 
-        <!-- Submit -->
-        <button type="submit" class="submit-btn" [disabled]="isLoading || isLoadingData">
-          <span *ngIf="!isLoading">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="12" y1="18" x2="12" y2="12"></line>
-              <line x1="9" y1="15" x2="15" y2="15"></line>
-            </svg>
-            {{ editMode ? 'Save Changes' : 'Publish Article' }}
-          </span>
-          <span *ngIf="isLoading" class="loading-spinner">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" class="spin">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-            </svg>
-            {{ editMode ? 'Saving...' : 'Publishing...' }}
-          </span>
-        </button>
+      <div class="form-group">
+        <label class="form-label">Excerpt</label>
+        <textarea class="form-input form-textarea" formControlName="excerpt"
+          placeholder="Short summary (max 500 characters)" rows="3"></textarea>
+        <span class="char-count">{{ f['excerpt'].value?.length || 0 }}/500</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Content</label>
+        <div class="quill-wrapper" [class.quill-error]="f['content'].invalid && f['content'].touched">
+          <quill-editor formControlName="content" [modules]="quillModules" placeholder="Write article content here..."
+            [styles]="{'min-height': '400px', 'font-size': '0.9375rem', 'font-family': 'inherit'}">
+          </quill-editor>
+        </div>
+        <span class="field-error" *ngIf="f['content'].invalid && f['content'].touched">
+          Content is required (min 50 characters).
+        </span>
       </div>
     </div>
+
+    <!-- Publish Settings Card -->
+    <div class="form-card">
+      <h3 class="card-title">Publish Settings</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Publish Date</label>
+          <input type="date" class="form-input" formControlName="publishDate" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Read Time (min)</label>
+          <input type="number" class="form-input" formControlName="readTime" min="1" max="120" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Language</label>
+          <select class="form-input" formControlName="language">
+            <option value="en">English</option>
+            <option value="ml">Malayalam</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="toggle-label">
+          <input type="checkbox" formControlName="isFeatured" class="toggle-checkbox" />
+          <span class="toggle-text">Featured Article</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Article Image Card -->
+    <div class="form-card">
+      <h3 class="card-title">Article Image</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <input type="text" class="form-input" formControlName="imageUrl"
+            placeholder="assets/images/articles/my-image.jpg" />
+          <p class="field-hint">Enter a URL or upload a file below.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Alt Text</label>
+          <input type="text" class="form-input" formControlName="altText" placeholder="Image description" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Upload Image File</label>
+        <div class="file-drop-zone" (click)="imageFileInput.click()">
+          <input #imageFileInput type="file" id="imageFile" accept="image/jpeg,image/png,image/webp"
+            (change)="onImageFileChange($event)" style="display:none" />
+          <div *ngIf="!imagePreviewUrl" class="drop-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="#9ca3af" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <p>Click to upload image</p>
+            <span>JPG, PNG, WEBP — max 10MB</span>
+          </div>
+          <div *ngIf="imagePreviewUrl" class="image-preview">
+            <img [src]="imagePreviewUrl" alt="Preview" />
+            <button type="button" class="remove-image" (click)="$event.stopPropagation(); removeImage()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <p class="field-hint" *ngIf="selectedImageFile">
+          Selected: {{ selectedImageFile?.name }} — will be saved to <code>assets/images/articles/</code>
+        </p>
+      </div>
+    </div>
+
+    <!-- Save Button — BOTTOM -->
+    <div class="form-actions">
+      <button type="submit" class="submit-btn" [disabled]="isLoading || isLoadingData">
+        <span *ngIf="!isLoading">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          {{ editMode ? 'Save Changes' : 'Publish Article' }}
+        </span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" class="spin">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          {{ editMode ? 'Saving...' : 'Publishing...' }}
+        </span>
+      </button>
+    </div>
+
   </form>
 </div>

@@ -4,6 +4,7 @@ import { Editorial } from '../../shared/interfaces/editorial.interface';
 import { EditorialService } from '../../services/editorial.service';
 
 @Component({
+  standalone: false,
   selector: 'app-editorial',
   templateUrl: './editorial.component.html',
   styleUrls: ['./editorial.component.scss']

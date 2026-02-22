@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AdminService, AdminPublication } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-publications',
   templateUrl: './admin-publications.component.html',
   styleUrls: ['./admin-publications.component.scss']

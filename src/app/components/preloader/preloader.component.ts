@@ -3,6 +3,7 @@ import { AnimationService } from '../../services/animation.service';
 import { gsap } from 'gsap';
 
 @Component({
+  standalone: false,
   selector: 'app-preloader',
   templateUrl: './preloader.component.html',
   styleUrls: ['./preloader.component.scss']

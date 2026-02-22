@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-publication-upload',
   templateUrl: './admin-publication-upload.component.html',
   styleUrls: ['./admin-publication-upload.component.scss']

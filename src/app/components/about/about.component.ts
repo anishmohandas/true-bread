@@ -7,6 +7,7 @@ import SplitType from 'split-type';
 gsap.registerPlugin(ScrollTrigger);
 
 @Component({
+  standalone: false,
   selector: 'app-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.scss']

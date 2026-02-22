@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { QuillModule } from 'ngx-quill';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
@@ -27,7 +28,8 @@ import { AdminPublicationsComponent } from './admin-publications/admin-publicati
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
-    AdminRoutingModule
+    AdminRoutingModule,
+    QuillModule
   ],
   providers: [DatePipe]
 })

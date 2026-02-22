@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
+  standalone: false,
   selector: 'app-pdf-preview',
   templateUrl: './pdf-preview.component.html',
   styleUrls: ['./pdf-preview.component.scss']
