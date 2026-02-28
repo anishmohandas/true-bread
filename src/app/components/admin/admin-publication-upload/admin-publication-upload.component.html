@@ -15,6 +15,24 @@
     </button>
   </div>
 
+  <!-- Stepper Header -->
+  <div class="stepper">
+    <ng-container *ngFor="let step of steps; let i = index">
+      <div class="step" [class.active]="currentStep === i + 1" [class.completed]="currentStep > i + 1"
+        (click)="goToStep(i + 1)" [class.clickable]="canGoToStep(i + 1)">
+        <div class="step-circle">
+          <svg *ngIf="currentStep > i + 1" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span *ngIf="currentStep <= i + 1">{{ i + 1 }}</span>
+        </div>
+        <span class="step-label">{{ step.label }}</span>
+      </div>
+      <div class="step-connector" *ngIf="i < steps.length - 1" [class.completed]="currentStep > i + 1"></div>
+    </ng-container>
+  </div>
+
   <!-- Loading Data State (edit mode) -->
   <div class="loading-data" *ngIf="isLoadingData">
     <div class="spinner-inline"></div>
@@ -43,186 +61,320 @@
 
   <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()" novalidate>
 
-    <!-- Save Button — TOP -->
-    <div class="form-actions">
-      <button type="submit" class="submit-btn" [disabled]="isLoading || isLoadingData">
-        <span *ngIf="!isLoading">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
-          {{ editMode ? 'Save Changes' : 'Publish Issue' }}
-        </span>
-        <span *ngIf="isLoading" class="loading-spinner">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" class="spin">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-          </svg>
-          {{ editMode ? 'Saving...' : 'Publishing...' }}
-        </span>
-      </button>
-    </div>
+    <!-- ── STEP 1: Publication Details ───────────────────────────────── -->
+    <div class="step-panel" *ngIf="currentStep === 1">
+      <div class="form-card">
+        <h3 class="card-title">Publication Details</h3>
 
-    <!-- Publication Details Card -->
-    <div class="form-card">
-      <h3 class="card-title">Publication Details</h3>
-
-      <div class="form-group">
-        <label class="form-label required">Title</label>
-        <input type="text" class="form-input" formControlName="title"
-          placeholder="e.g. True Bread Magazine - March 2026"
-          [class.input-error]="f['title'].invalid && f['title'].touched" />
-        <span class="field-error" *ngIf="f['title'].invalid && f['title'].touched">
-          Title is required (min 3 characters).
-        </span>
-      </div>
-
-      <div class="form-row">
         <div class="form-group">
-          <label class="form-label required">Month</label>
-          <select class="form-input" formControlName="month"
-            [class.input-error]="f['month'].invalid && f['month'].touched">
-            <option value="">Select month</option>
-            <option *ngFor="let m of months" [value]="m">{{ m }}</option>
-          </select>
-          <span class="field-error" *ngIf="f['month'].invalid && f['month'].touched">
-            Month is required.
+          <label class="form-label required">Title</label>
+          <input type="text" class="form-input" formControlName="title"
+            placeholder="e.g. True Bread Magazine - March 2026"
+            [class.input-error]="f['title'].invalid && f['title'].touched" />
+          <span class="field-error" *ngIf="f['title'].invalid && f['title'].touched">
+            Title is required (min 3 characters).
           </span>
         </div>
-        <div class="form-group">
-          <label class="form-label required">Year</label>
-          <select class="form-input" formControlName="year"
-            [class.input-error]="f['year'].invalid && f['year'].touched">
-            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label required">Publish Date</label>
-          <input type="date" class="form-input" formControlName="publishDate" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Issue Number</label>
-          <input type="number" class="form-input" formControlName="issueNumber" placeholder="e.g. 24" min="1" />
-        </div>
-      </div>
 
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea class="form-input form-textarea" formControlName="description"
-          placeholder="Brief description of this issue..." rows="4"></textarea>
-      </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label required">Month</label>
+            <select class="form-input" formControlName="month"
+              [class.input-error]="f['month'].invalid && f['month'].touched">
+              <option value="">Select month</option>
+              <option *ngFor="let m of months" [value]="m">{{ m }}</option>
+            </select>
+            <span class="field-error" *ngIf="f['month'].invalid && f['month'].touched">
+              Month is required.
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Year</label>
+            <select class="form-input" formControlName="year"
+              [class.input-error]="f['year'].invalid && f['year'].touched">
+              <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Publish Date</label>
+            <input type="date" class="form-input" formControlName="publishDate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Issue Number</label>
+            <input type="number" class="form-input" formControlName="issueNumber"
+              [placeholder]="isLoadingIssueNumber ? 'Calculating...' : '—'" min="1" readonly
+              style="background:#f3f4f6; cursor:default;" />
+            <p class="field-hint" *ngIf="!editMode && nextIssueNumber !== null">
+              Auto-calculated as <strong>#{{ nextIssueNumber }}</strong> based on existing publications.
+            </p>
+          </div>
+        </div>
 
-      <div class="form-group">
-        <label class="form-label">Cover Image URL</label>
-        <input type="text" class="form-input" formControlName="coverImage"
-          placeholder="assets/images/cover-march-2026.jpg" />
-        <p class="field-hint">URL to the cover image for this publication.</p>
-      </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input form-textarea" formControlName="description"
+            placeholder="Brief description of this issue..." rows="4"></textarea>
+        </div>
 
-      <div class="form-group">
-        <label class="form-label">Issue Highlights</label>
-        <textarea class="form-input form-textarea" formControlName="highlights"
-          placeholder="Enter each highlight on a new line:&#10;Article 1 title&#10;Article 2 title&#10;Special feature..."
-          rows="5"></textarea>
-        <p class="field-hint">One highlight per line. These appear on the publications page.</p>
+        <div class="form-group">
+          <label class="form-label">Cover Image URL</label>
+          <input type="text" class="form-input" formControlName="coverImage"
+            placeholder="assets/images/cover-march-2026.jpg" />
+          <p class="field-hint">URL to the cover image for this publication.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Issue Highlights</label>
+          <textarea class="form-input form-textarea" formControlName="highlights"
+            placeholder="Enter each highlight on a new line:&#10;Article 1 title&#10;Article 2 title&#10;Special feature..."
+            rows="5"></textarea>
+          <p class="field-hint">One highlight per line. These appear on the publications page.</p>
+        </div>
       </div>
     </div>
 
-    <!-- PDF File Card -->
-    <div class="form-card">
-      <h3 class="card-title">PDF File</h3>
+    <!-- ── STEP 2: PDF Upload ─────────────────────────────────────────── -->
+    <div class="step-panel" *ngIf="currentStep === 2">
+      <div class="form-card">
+        <h3 class="card-title">PDF File</h3>
 
-      <!-- Expected filename info -->
-      <div class="filename-info">
+        <!-- Expected filename info -->
+        <div class="filename-info">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <div>
+            <p class="filename-label">File will be saved as:</p>
+            <code class="filename-value">{{ expectedPdfName }}</code>
+            <p class="filename-path">in <code>src/assets/files/</code></p>
+          </div>
+        </div>
+
+        <!-- Existing PDF info (edit mode) -->
+        <div class="existing-pdf" *ngIf="editMode && existingPdfUrl && !selectedPdfFile">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="#16a34a" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <div>
+            <p class="existing-pdf-label">Current PDF:</p>
+            <code class="existing-pdf-name">{{ existingPdfUrl.split('/').pop() }}</code>
+            <p class="existing-pdf-hint">Upload a new file below to replace it, or leave empty to keep current.</p>
+          </div>
+        </div>
+
+        <!-- PDF Drop Zone -->
+        <div class="form-group">
+          <label class="form-label" [class.required]="!editMode">Upload PDF</label>
+          <div class="file-drop-zone" [class.has-file]="selectedPdfFile" (click)="pdfFileInput.click()">
+            <input #pdfFileInput type="file" id="pdfFile" accept="application/pdf" (change)="onPdfFileChange($event)"
+              style="display:none" />
+
+            <div *ngIf="!selectedPdfFile" class="drop-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                stroke="#9ca3af" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="12" y1="18" x2="12" y2="12" />
+                <line x1="9" y1="15" x2="15" y2="15" />
+              </svg>
+              <p>Click to upload PDF</p>
+              <span>PDF only — max 50MB</span>
+            </div>
+
+            <div *ngIf="selectedPdfFile" class="pdf-selected">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                stroke="#16a34a" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <polyline points="9 15 12 18 15 15" />
+                <line x1="12" y1="12" x2="12" y2="18" />
+              </svg>
+              <div class="pdf-info">
+                <p class="pdf-name">{{ pdfFileName }}</p>
+                <p class="pdf-size">{{ selectedPdfFile ? (selectedPdfFile.size / 1024 / 1024).toFixed(2) : '0' }} MB</p>
+              </div>
+              <button type="button" class="remove-btn" (click)="$event.stopPropagation(); removePdf()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Review & Publish ──────────────────────────────────── -->
+    <div class="step-panel" *ngIf="currentStep === 3">
+
+      <!-- Preview Panel -->
+      <div class="preview-panel" *ngIf="showPreview">
+        <div class="preview-header">
+          <h3>Publication Preview</h3>
+          <button type="button" class="preview-close" (click)="togglePreview()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Close Preview
+          </button>
+        </div>
+        <div class="preview-body">
+          <div class="pub-preview-card">
+            <div class="pub-preview-cover" *ngIf="f['coverImage'].value">
+              <img [src]="f['coverImage'].value" [alt]="f['title'].value" />
+            </div>
+            <div class="pub-preview-cover pub-preview-cover--placeholder" *ngIf="!f['coverImage'].value">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="#9ca3af" stroke-width="1.5">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+              <span>No cover image</span>
+            </div>
+            <div class="pub-preview-info">
+              <h2 class="pub-preview-title">{{ f['title'].value }}</h2>
+              <p class="pub-preview-date">{{ f['month'].value }} {{ f['year'].value }}</p>
+              <p class="pub-preview-desc" *ngIf="f['description'].value">{{ f['description'].value }}</p>
+              <div class="pub-preview-highlights" *ngIf="f['highlights'].value">
+                <p class="pub-preview-highlights-label">Highlights:</p>
+                <ul>
+                  <li *ngFor="let h of f['highlights'].value.split('\n')">{{ h }}</li>
+                </ul>
+              </div>
+              <div class="pub-preview-pdf" *ngIf="selectedPdfFile || existingPdfUrl">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="#16a34a" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <span>{{ selectedPdfFile ? pdfFileName : existingPdfUrl.split('/').pop() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Summary -->
+      <div class="form-card review-card">
+        <h3 class="card-title">Review Summary</h3>
+        <div class="review-grid">
+          <div class="review-item">
+            <span class="review-label">Title</span>
+            <span class="review-value">{{ f['title'].value || '—' }}</span>
+          </div>
+          <div class="review-item">
+            <span class="review-label">Issue</span>
+            <span class="review-value">{{ f['month'].value }} {{ f['year'].value }}</span>
+          </div>
+          <div class="review-item">
+            <span class="review-label">Publish Date</span>
+            <span class="review-value">{{ f['publishDate'].value | date:'mediumDate' }}</span>
+          </div>
+          <div class="review-item">
+            <span class="review-label">Issue Number</span>
+            <span class="review-value">{{ f['issueNumber'].value || '—' }}</span>
+          </div>
+          <div class="review-item">
+            <span class="review-label">Cover Image</span>
+            <span class="review-value">{{ f['coverImage'].value || 'None' }}</span>
+          </div>
+          <div class="review-item">
+            <span class="review-label">PDF File</span>
+            <span class="review-value">{{ selectedPdfFile ? pdfFileName : (existingPdfUrl ?
+              existingPdfUrl.split('/').pop() : 'None') }}</span>
+          </div>
+          <div class="review-item review-item--full" *ngIf="f['description'].value">
+            <span class="review-label">Description</span>
+            <span class="review-value review-value--truncate">{{ f['description'].value }}</span>
+          </div>
+        </div>
+
+        <!-- Validation warnings -->
+        <div class="review-warnings" *ngIf="publicationForm.invalid || (!editMode && !selectedPdfFile)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span *ngIf="publicationForm.invalid">Some required fields are incomplete. Please go back and fill them
+            in.</span>
+          <span *ngIf="!editMode && !selectedPdfFile && publicationForm.valid">A PDF file is required. Please go back
+            and upload one.</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="review-actions">
+        <button type="button" class="btn-cancel" (click)="goBack()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Cancel
+        </button>
+        <div class="review-actions-right">
+          <button type="button" class="btn-nav btn-nav--back" (click)="prevStep()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Back
+          </button>
+          <button type="button" class="btn-preview" (click)="togglePreview()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            {{ showPreview ? 'Hide Preview' : 'Preview Publication' }}
+          </button>
+          <button type="submit" class="submit-btn submit-btn--inline" [disabled]="isLoading || isLoadingData">
+            <span *ngIf="!isLoading">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+              {{ editMode ? 'Save Changes' : 'Publish Issue' }}
+            </span>
+            <span *ngIf="isLoading" class="loading-spinner">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" class="spin">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+              </svg>
+              {{ editMode ? 'Saving...' : 'Publishing...' }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Step Navigation ───────────────────────────────────────────── -->
+    <div class="step-nav" *ngIf="!isLoadingData && currentStep < totalSteps">
+      <button type="button" class="btn-nav btn-nav--back" *ngIf="currentStep > 1" (click)="prevStep()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
+          <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
-        <div>
-          <p class="filename-label">File will be saved as:</p>
-          <code class="filename-value">{{ expectedPdfName }}</code>
-          <p class="filename-path">in <code>src/assets/files/</code></p>
-        </div>
-      </div>
-
-      <!-- Existing PDF info (edit mode) -->
-      <div class="existing-pdf" *ngIf="editMode && existingPdfUrl && !selectedPdfFile">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a"
-          stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
+        Back
+      </button>
+      <button type="button" class="btn-nav btn-nav--next" *ngIf="currentStep < totalSteps" (click)="nextStep()">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
-        <div>
-          <p class="existing-pdf-label">Current PDF:</p>
-          <code class="existing-pdf-name">{{ existingPdfUrl.split('/').pop() }}</code>
-          <p class="existing-pdf-hint">Upload a new file below to replace it, or leave empty to keep current.</p>
-        </div>
-      </div>
-
-      <!-- PDF Drop Zone -->
-      <div class="form-group">
-        <label class="form-label" [class.required]="!editMode">Upload PDF</label>
-        <div class="file-drop-zone" [class.has-file]="selectedPdfFile" (click)="pdfFileInput.click()">
-          <input #pdfFileInput type="file" id="pdfFile" accept="application/pdf" (change)="onPdfFileChange($event)"
-            style="display:none" />
-
-          <div *ngIf="!selectedPdfFile" class="drop-placeholder">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
-              stroke="#9ca3af" stroke-width="1.5">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="12" y1="18" x2="12" y2="12" />
-              <line x1="9" y1="15" x2="15" y2="15" />
-            </svg>
-            <p>Click to upload PDF</p>
-            <span>PDF only — max 50MB</span>
-          </div>
-
-          <div *ngIf="selectedPdfFile" class="pdf-selected">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-              stroke="#16a34a" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <polyline points="9 15 12 18 15 15" />
-              <line x1="12" y1="12" x2="12" y2="18" />
-            </svg>
-            <div class="pdf-info">
-              <p class="pdf-name">{{ pdfFileName }}</p>
-              <p class="pdf-size">{{ selectedPdfFile ? (selectedPdfFile.size / 1024 / 1024).toFixed(2) : '0' }} MB</p>
-            </div>
-            <button type="button" class="remove-btn" (click)="$event.stopPropagation(); removePdf()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Save Button — BOTTOM -->
-    <div class="form-actions">
-      <button type="submit" class="submit-btn" [disabled]="isLoading || isLoadingData">
-        <span *ngIf="!isLoading">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
-          {{ editMode ? 'Save Changes' : 'Publish Issue' }}
-        </span>
-        <span *ngIf="isLoading" class="loading-spinner">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" class="spin">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-          </svg>
-          {{ editMode ? 'Saving...' : 'Publishing...' }}
-        </span>
       </button>
     </div>
 

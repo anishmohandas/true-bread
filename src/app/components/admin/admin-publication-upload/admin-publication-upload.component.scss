@@ -121,10 +121,311 @@
   color: #dc2626;
 }
 
-// Single-column form actions (Save button container)
-.form-actions {
+// ── Stepper ──────────────────────────────────────────────────────────────
+.stepper {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+
+  &.clickable { cursor: pointer; }
+
+  .step-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: #fff;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #9ca3af;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  &.active {
+    .step-circle { border-color: #000; background: #000; color: #fff; }
+    .step-label { color: #000; font-weight: 700; }
+  }
+
+  &.completed {
+    .step-circle { border-color: #000; background: #000; color: #fff; }
+    .step-label { color: #374151; }
+  }
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  min-width: 24px;
+  margin-bottom: 1.4rem;
+  transition: background 0.2s;
+  &.completed { background: #000; }
+}
+
+// ── Step panel ────────────────────────────────────────────────────────────
+.step-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ── Step navigation ───────────────────────────────────────────────────────
+.step-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+}
+
+.btn-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &--back { background: #f3f4f6; color: #374151; &:hover { background: #e5e7eb; } }
+  &--next { background: #000; color: #fff; margin-left: auto; &:hover { background: #222; } }
+}
+
+// ── Review step ───────────────────────────────────────────────────────────
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem 1.5rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.review-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  &--full { grid-column: 1 / -1; }
+}
+
+.review-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.review-value {
+  font-size: 0.9375rem;
+  color: #111;
+  &--truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+}
+
+.review-warnings {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+.review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.review-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #f9fafb; border-color: #9ca3af; color: #374151; }
+}
+
+.btn-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #e5e7eb; border-color: #9ca3af; }
+}
+
+// ── Preview panel ─────────────────────────────────────────────────────────
+.preview-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: #f9fafb;
+
+  h3 { font-size: 0.9375rem; font-weight: 700; color: #111; margin: 0; }
+}
+
+.preview-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #555;
+  cursor: pointer;
+  &:hover { background: #f3f4f6; }
+}
+
+.preview-body {
+  padding: 2rem;
+}
+
+// Publication preview card
+.pub-preview-card {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.pub-preview-cover {
+  img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  &--placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: #f3f4f6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #9ca3af;
+    font-size: 0.8125rem;
+  }
+}
+
+.pub-preview-title {
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 0.5rem;
+}
+
+.pub-preview-date {
+  font-size: 0.9375rem;
+  color: #6b7280;
+  margin: 0 0 1rem;
+}
+
+.pub-preview-desc {
+  font-size: 0.9375rem;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0 0 1rem;
+}
+
+.pub-preview-highlights-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pub-preview-highlights ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+
+  li {
+    font-size: 0.9375rem;
+    color: #374151;
+    margin-bottom: 0.25rem;
+  }
+}
+
+.pub-preview-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #16a34a;
+  font-weight: 500;
 }
 
 // Card
@@ -354,6 +655,11 @@ select.form-input { cursor: pointer; }
 }
 
 // Submit button
+.submit-btn--inline {
+  width: auto !important;
+  padding: 0.75rem 1.5rem;
+}
+
 .submit-btn {
   width: 100%;
   padding: 0.875rem;

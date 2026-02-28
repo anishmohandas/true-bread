@@ -23,6 +23,25 @@ export class AdminArticleUploadComponent implements OnInit {
   editId: string | null = null;
   existingImageUrl = '';
 
+  // Stepper
+  currentStep = 1;
+  readonly totalSteps = 4;
+
+  steps = [
+    { label: 'Basic Info' },
+    { label: 'Content' },
+    { label: 'Settings' },
+    { label: 'Review' }
+  ];
+
+  /** Fields that must be valid before leaving each step */
+  stepFields: { [key: number]: string[] } = {
+    1: ['title', 'author', 'category'],
+    2: ['content'],
+    3: ['publishDate'],
+    4: []
+  };
+
   quillModules = {
     toolbar: [
       ['bold', 'italic', 'underline', 'strike'],
@@ -55,6 +74,102 @@ export class AdminArticleUploadComponent implements OnInit {
     private router: Router
   ) {}
 
+  // ── Stepper helpers ──────────────────────────────────────────────────────
+
+  isStepValid(step: number): boolean {
+    return (this.stepFields[step] || []).every(
+      f => this.articleForm.get(f)?.valid
+    );
+  }
+
+  isStepCompleted(step: number): boolean {
+    return step < this.currentStep;
+  }
+
+  canGoToStep(step: number): boolean {
+    return step < this.currentStep || this.isStepCompleted(step - 1);
+  }
+
+  goToStep(step: number): void {
+    if (this.canGoToStep(step)) {
+      this.currentStep = step;
+      window.scrollTo(0, 0);
+    }
+  }
+
+  nextStep(): void {
+    (this.stepFields[this.currentStep] || []).forEach(f =>
+      this.articleForm.get(f)?.markAsTouched()
+    );
+    if (this.isStepValid(this.currentStep)) {
+      this.currentStep = Math.min(this.currentStep + 1, this.totalSteps);
+      window.scrollTo(0, 0);
+    }
+  }
+
+  prevStep(): void {
+    this.currentStep = Math.max(this.currentStep - 1, 1);
+    window.scrollTo(0, 0);
+  }
+
+  /** Open article preview in a new tab */
+  openPreview(): void {
+    if (this.editMode && this.editId) {
+      // Edit mode: open the live article page
+      window.open('/articles/' + this.editId, '_blank');
+      return;
+    }
+
+    // Create mode: store form data in sessionStorage and open preview route.
+    // NOTE: Never store base64 imagePreviewUrl — it can be several MB and
+    // will exceed the sessionStorage quota. Use the URL field value only.
+    const v = this.articleForm.value;
+    const previewData = {
+      title: v.title || '',
+      author: v.author || '',
+      category: v.category || '',
+      publishDate: v.publishDate || new Date().toISOString().split('T')[0],
+      readTime: v.readTime || 5,
+      content: v.content || '',
+      imageUrl: v.imageUrl || '',   // URL string only — no base64
+      altText: v.altText || '',
+      excerpt: v.excerpt || '',
+      language: v.language || 'en',
+      isFeatured: !!v.isFeatured
+    };
+
+    const storeAndOpen = (data: typeof previewData) => {
+      sessionStorage.setItem('admin_article_preview', JSON.stringify(data));
+      window.open('/admin/preview/article', '_blank');
+    };
+
+    try {
+      storeAndOpen(previewData);
+    } catch {
+      // Content too large — truncate to first 15 000 chars and retry
+      try {
+        storeAndOpen({ ...previewData, content: previewData.content.substring(0, 15000) });
+      } catch {
+        // Last resort — open without content body
+        storeAndOpen({ ...previewData, content: '' });
+      }
+    }
+  }
+
+  get previewContent(): string {
+    return this.articleForm.get('content')?.value || '';
+  }
+
+  /** Strip HTML tags and decode entities for the review summary */
+  get contentPlainText(): string {
+    const html = this.previewContent;
+    if (!html) return '';
+    // Use a temporary div to strip tags (browser DOM)
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+  }
+
   ngOnInit(): void {
     this.initForm();
     this.editId = this.route.snapshot.paramMap.get('id');
@@ -68,8 +183,6 @@ export class AdminArticleUploadComponent implements OnInit {
     this.articleForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       author: ['', [Validators.required, Validators.minLength(2)]],
-      jobTitle: [''],
-      worksAt: [''],
       category: ['', Validators.required],
       imageUrl: [''],
       altText: [''],
@@ -89,7 +202,12 @@ export class AdminArticleUploadComponent implements OnInit {
         const a = res.data;
         this.existingImageUrl = a.imageUrl || '';
 
-        // Convert plain text to HTML if needed (content stored as plain text in DB)
+        // Ensure the article's category is in the dropdown options
+        if (a.category && !this.categories.includes(a.category)) {
+          this.categories = [...this.categories, a.category];
+        }
+
+        // Convert plain text to HTML if needed
         const rawContent = a.content || '';
         const htmlContent = rawContent.trim().startsWith('<')
           ? rawContent
@@ -98,12 +216,9 @@ export class AdminArticleUploadComponent implements OnInit {
               .map((para: string) => `<p>${para.replace(/\n/g, '<br>')}</p>`)
               .join('');
 
-        // Patch non-Quill fields immediately
         this.articleForm.patchValue({
           title: a.title,
           author: a.author,
-          jobTitle: a.jobTitle || '',
-          worksAt: a.worksAt || '',
           category: a.category,
           imageUrl: a.imageUrl || '',
           altText: a.altText || '',
@@ -187,7 +302,8 @@ export class AdminArticleUploadComponent implements OnInit {
         next: (response) => {
           this.successMessage = `Article "${response.data?.title}" created successfully!`;
           this.isLoading = false;
-          this.resetForm();
+          // Navigate away after a short delay so the success message is visible
+          setTimeout(() => this.router.navigate(['/admin/dashboard/articles']), 1500);
         },
         error: (err) => {
           this.errorMessage = err.message || 'Failed to create article.';

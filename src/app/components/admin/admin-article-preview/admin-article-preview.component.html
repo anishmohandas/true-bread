@@ -1,0 +1,78 @@
+<!-- Preview Banner -->
+<div class="preview-banner">
+  <div class="preview-banner-inner">
+    <div class="preview-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      Preview Mode — This is how the article will appear to readers
+    </div>
+    <button class="preview-close-btn" (click)="close()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      Close Preview
+    </button>
+  </div>
+</div>
+
+<!-- Not Found -->
+<div *ngIf="notFound" class="not-found">
+  <h2>No preview data found.</h2>
+  <p>Please go back to the article upload form and click "Preview Article" again.</p>
+</div>
+
+<!-- Article Detail View — use "as a" to satisfy strict null checks -->
+<ng-container *ngIf="article as a">
+  <div class="article-page-wrap">
+    <div class="article-inner max-w-4xl mx-auto" [attr.lang]="a.language === 'ml' ? 'ml' : 'en'"
+      [ngClass]="{'malayalam-text': a.language === 'ml'}">
+
+      <div class="article-header">
+        <h1 class="article-title" [attr.dir]="a.language === 'ml' ? 'ltr' : 'auto'">
+          {{ a.title }}
+        </h1>
+        <div class="article-meta">
+          <div class="author-info">
+            <span class="font-medium">By {{ a.author }}</span>
+          </div>
+          <div class="meta-row">
+            <span>{{ a.publishDate | date:'mediumDate' }}</span>
+            <span class="sep">•</span>
+            <span>{{ a.readTime }} min read</span>
+            <span class="sep">•</span>
+            <span>{{ a.category }}</span>
+          </div>
+        </div>
+      </div>
+
+      <img *ngIf="a.imageUrl" [src]="a.imageUrl" [alt]="a.altText" class="article-hero-img" />
+
+      <div *ngIf="a.excerpt" class="article-excerpt">
+        <em>{{ a.excerpt }}</em>
+      </div>
+
+      <!-- HTML content (Quill) -->
+      <div *ngIf="isHtmlContent()" class="prose quill-content max-w-none mt-8"
+        [ngClass]="{'malayalam-text': a.language === 'ml'}" [attr.lang]="a.language === 'ml' ? 'ml' : 'en'"
+        [attr.dir]="a.language === 'ml' ? 'ltr' : 'auto'">
+        <div class="ql-container ql-snow">
+          <div class="ql-editor" [innerHTML]="getSafeHtml()"></div>
+        </div>
+      </div>
+
+      <!-- Plain text content -->
+      <div *ngIf="!isHtmlContent()" class="prose max-w-none mt-8" [ngClass]="{'malayalam-text': a.language === 'ml'}"
+        [attr.lang]="a.language === 'ml' ? 'ml' : 'en'" [attr.dir]="a.language === 'ml' ? 'ltr' : 'auto'">
+        <ng-container *ngFor="let paragraph of getFormattedContent()">
+          <p [innerHTML]="paragraph"></p>
+        </ng-container>
+      </div>
+
+    </div>
+  </div>
+</ng-container>

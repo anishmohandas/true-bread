@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import sharp from 'sharp';
 import { pool } from '../db';
 import { authenticateAdmin } from '../middleware/auth.middleware';
 import { v4 as uuidv4 } from 'uuid';
@@ -32,20 +33,67 @@ const PUBLICATIONS_FILES_DIR = path.join(__dirname, '../../../src/assets/files')
   }
 });
 
-// Article image upload storage
-const articleImageStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, ARTICLE_IMAGES_DIR);
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const safeName = path.basename(file.originalname, ext)
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/-+/g, '-');
-    cb(null, `${safeName}${ext}`);
+// ─── Slug helper ─────────────────────────────────────────────────────────────
+
+/**
+ * Generate a URL-friendly slug from a title string.
+ * e.g. "Cure for Hopelessness" → "cure-for-hopelessness"
+ */
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')   // strip non-alphanumeric (keep spaces & hyphens)
+    .trim()
+    .replace(/\s+/g, '-')            // spaces → hyphens
+    .replace(/-+/g, '-')             // collapse consecutive hyphens
+    .replace(/^-+|-+$/g, '');        // trim leading/trailing hyphens
+}
+
+/**
+ * Ensure the slug is unique in the articles table.
+ * If "my-slug" already exists, tries "my-slug-2", "my-slug-3", …
+ */
+async function uniqueSlug(base: string): Promise<string> {
+  let candidate = base;
+  let suffix = 2;
+  while (true) {
+    const [rows] = await pool.query('SELECT id FROM articles WHERE id = ? LIMIT 1', [candidate]);
+    if ((rows as any[]).length === 0) return candidate;
+    candidate = `${base}-${suffix++}`;
   }
-});
+}
+
+// Article image upload — use memory storage so sharp can process the buffer
+const articleImageStorage = multer.memoryStorage();
+
+/**
+ * Optimise an uploaded image buffer with sharp:
+ *  - Resize to max 1200 px wide (no upscaling)
+ *  - Convert to WebP at quality 82
+ *  - Save to ARTICLE_IMAGES_DIR
+ * Returns the relative asset URL string.
+ */
+async function optimizeAndSaveImage(
+  buffer: Buffer,
+  originalName: string
+): Promise<string> {
+  const ext = path.extname(originalName).toLowerCase();
+  const baseName = path.basename(originalName, ext)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  const outputFilename = `${baseName}.webp`;
+  const outputPath = path.join(ARTICLE_IMAGES_DIR, outputFilename);
+
+  await sharp(buffer)
+    .resize(1200, undefined, { withoutEnlargement: true, fit: 'inside' })
+    .webp({ quality: 82 })
+    .toFile(outputPath);
+
+  return `assets/images/articles/${outputFilename}`;
+}
 
 // Publication PDF upload storage
 const publicationPdfStorage = multer.diskStorage({
@@ -225,10 +273,10 @@ router.post('/articles', authenticateAdmin, uploadArticleImage.single('imageFile
     // Determine image URL: uploaded file takes priority over URL string
     let finalImageUrl = imageUrl || '';
     if (req.file) {
-      finalImageUrl = `assets/images/articles/${req.file.filename}`;
+      finalImageUrl = await optimizeAndSaveImage(req.file.buffer, req.file.originalname);
     }
 
-    const id = uuidv4();
+    const id = await uniqueSlug(generateSlug(title));
     const featured = isFeatured === 'true' || isFeatured === true ? 1 : 0;
     const lang = language || 'en';
     const date = publishDate || new Date().toISOString().split('T')[0];
@@ -292,7 +340,7 @@ router.put('/articles/:id', authenticateAdmin, uploadArticleImage.single('imageF
     // If a new image file was uploaded, use it; otherwise keep existing imageUrl
     let finalImageUrl = imageUrl || '';
     if (req.file) {
-      finalImageUrl = `assets/images/articles/${req.file.filename}`;
+      finalImageUrl = await optimizeAndSaveImage(req.file.buffer, req.file.originalname);
     }
 
     const featured = isFeatured === 'true' || isFeatured === true ? 1 : 0;

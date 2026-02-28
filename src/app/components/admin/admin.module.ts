@@ -12,6 +12,7 @@ import { AdminArticleUploadComponent } from './admin-article-upload/admin-articl
 import { AdminPublicationUploadComponent } from './admin-publication-upload/admin-publication-upload.component';
 import { AdminArticlesComponent } from './admin-articles/admin-articles.component';
 import { AdminPublicationsComponent } from './admin-publications/admin-publications.component';
+import { AdminArticlePreviewComponent } from './admin-article-preview/admin-article-preview.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AdminPublicationsComponent } from './admin-publications/admin-publicati
     AdminArticleUploadComponent,
     AdminPublicationUploadComponent,
     AdminArticlesComponent,
-    AdminPublicationsComponent
+    AdminPublicationsComponent,
+    AdminArticlePreviewComponent
   ],
   imports: [
     CommonModule,
