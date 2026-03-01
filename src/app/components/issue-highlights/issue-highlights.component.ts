@@ -26,22 +26,22 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
 
   categories: CategoryItem[] = [
     {
-      title: "Christ Centered Life",
+      title: "Pain to Promise",
       description: "Honest reflections on the beauty and struggles of real life through a Christian lens. Quiet reflections from the rhythm of real life—where laughter, struggle, and stillness reveal the gentle fingerprints of God.",
       imageName: "EverydayGrace.jpg"
     },
     {
-      title: "Truth & Insight",
+      title: "Preaching: The Art",
       description: "Where timeless truths meet everyday journeys—words that stir the heart, renew the mind, and illuminate the sacred in the ordinary.",
       imageName: "TruthInsight.jpg"
     },
     {
-      title: "From the Cross",
+      title: "One of Them?",
       description: "Echoes of truth spoken boldly—messages that breathe life, challenge complacency, and call us deeper into the presence of God.",
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "New Year Renewed Submission",
+      title: "Christian Online Communication",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
