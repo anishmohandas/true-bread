@@ -83,12 +83,24 @@ fi
 
 # Rebuild sharp for the current Node.js version and Linux platform
 # (sharp is a native module that must be compiled per Node.js version)
-echo "Rebuilding sharp for linux-x64..."
-npm install --platform=linux --arch=x64 sharp
+# --unsafe-perm is required to allow install scripts to run with correct permissions
+echo "Rebuilding sharp native module..."
+
+# Ensure libvips-dev is installed (required for sharp compilation)
+if ! dpkg -l | grep -q libvips-dev; then
+    echo "Installing libvips-dev (required for sharp)..."
+    apt-get install -y libvips-dev 2>/dev/null || true
+fi
+
+# Remove existing sharp binary (may be compiled for wrong Node.js version)
+rm -rf node_modules/sharp
+
+# Reinstall sharp with unsafe-perm to allow native compilation scripts
+npm install --unsafe-perm sharp
 
 if [ $? -ne 0 ]; then
-    echo "WARNING: Failed to rebuild sharp, attempting npm rebuild..."
-    npm rebuild sharp
+    echo "WARNING: sharp reinstall failed. Attempting fallback..."
+    npm install @img/sharp-linux-x64 @img/sharp-libvips-linux-x64 2>/dev/null || true
 fi
 
 echo "Dependencies installed successfully"
