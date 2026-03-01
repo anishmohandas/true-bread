@@ -17,8 +17,8 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active" class="nav-item"
-        [title]="item.label">
+      <a *ngFor="let item of navItems" [routerLink]="item.route" routerLinkActive="active"
+        [routerLinkActiveOptions]="{exact: true}" class="nav-item" [title]="item.label">
         <!-- Users icon -->
         <svg *ngIf="item.icon === 'users'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" stroke-width="2">

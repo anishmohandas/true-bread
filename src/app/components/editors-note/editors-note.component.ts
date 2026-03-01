@@ -6,6 +6,7 @@ import SplitType from 'split-type';
 gsap.registerPlugin(ScrollTrigger);
 
 @Component({
+  standalone: false,
   selector: 'app-editors-note',
   templateUrl: './editors-note.component.html',
   styleUrls: ['./editors-note.component.scss']

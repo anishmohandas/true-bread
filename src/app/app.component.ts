@@ -11,6 +11,7 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
@@ -60,6 +61,7 @@ export class AppComponent implements OnInit {
   isHomePage = false;
   isAtLastSection = false;
   isMenuOpen = false;
+  isAdminRoute = false;
 
   constructor(
     private elementRef: ElementRef,
@@ -87,16 +89,18 @@ export class AppComponent implements OnInit {
       }
     );
 
-    // Detect home page on navigation (don't reset preloader)
+    // Detect home page and admin route on navigation
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event) => {
       const navEvent = event as NavigationEnd;
       this.isHomePage = navEvent.url === '/' || navEvent.url === '/home';
+      this.isAdminRoute = navEvent.url.startsWith('/admin');
     });
 
-    // Initial check for home page
+    // Initial checks
     this.isHomePage = this.router.url === '/' || this.router.url === '/home';
+    this.isAdminRoute = this.router.url.startsWith('/admin');
 
     // Listen for menu state changes
     window.addEventListener('menuStateChange', (event: any) => {

@@ -3,6 +3,7 @@ import { ArticleService } from '../../services/article.service';
 import { Article } from '../../shared/interfaces/article.interface';
 
 @Component({
+  standalone: false,
   selector: 'app-articles',
   templateUrl: './articles.component.html',
   styleUrls: ['./articles.component.scss']

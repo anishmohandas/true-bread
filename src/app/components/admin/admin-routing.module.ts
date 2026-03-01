@@ -7,10 +7,13 @@ import { AdminArticleUploadComponent } from './admin-article-upload/admin-articl
 import { AdminPublicationUploadComponent } from './admin-publication-upload/admin-publication-upload.component';
 import { AdminArticlesComponent } from './admin-articles/admin-articles.component';
 import { AdminPublicationsComponent } from './admin-publications/admin-publications.component';
+import { AdminArticlePreviewComponent } from './admin-article-preview/admin-article-preview.component';
 import { AdminAuthGuard } from '../../guards/admin-auth.guard';
 
 const routes: Routes = [
   { path: 'login', component: AdminLoginComponent },
+  // Preview route — no auth guard, opened in new tab
+  { path: 'preview/article', component: AdminArticlePreviewComponent },
   {
     path: 'dashboard',
     component: AdminDashboardComponent,

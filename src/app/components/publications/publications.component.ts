@@ -84,6 +84,7 @@ class HoverBtn {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-publications',
   templateUrl: './publications.component.html',
   styleUrls: ['./publications.component.scss']

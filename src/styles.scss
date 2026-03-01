@@ -79,6 +79,58 @@ body {
 
 /* NATIVE SCROLLING ENABLED - Show scrollbars and enable normal scrolling */
 
+/* Quill editor — force full width block display */
+quill-editor {
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Quill editor toolbar SVG fix — override global * { max-width: 100% } */
+.ql-toolbar.ql-snow button svg,
+.ql-snow .ql-toolbar button svg {
+  width: 22px !important;
+  height: 22px !important;
+  max-width: none !important;
+  float: left;
+  display: inline-block;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label svg,
+.ql-snow .ql-toolbar .ql-picker-label svg {
+  width: 22px !important;
+  height: 22px !important;
+  max-width: none !important;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Quill toolbar icon color fix — Tailwind/global resets can wash out SVG stroke/fill */
+.ql-snow .ql-stroke {
+  fill: none !important;
+  stroke: #374151 !important;
+}
+.ql-snow .ql-fill {
+  fill: #374151 !important;
+  stroke: none !important;
+}
+.ql-snow .ql-stroke.ql-fill {
+  fill: #374151 !important;
+  stroke: #374151 !important;
+}
+.ql-snow .ql-thin.ql-stroke {
+  fill: none !important;
+  stroke: #374151 !important;
+  stroke-width: 1 !important;
+}
+.ql-snow .ql-even.ql-fill {
+  fill: #374151 !important;
+}
+.ql-snow .ql-picker {
+  color: #374151 !important;
+}
+
 /* Enable native scrolling for html and body */
 html, body {
   margin: 0;

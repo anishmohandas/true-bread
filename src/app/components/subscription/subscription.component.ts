@@ -7,6 +7,7 @@ declare const gsap: any;
 declare const MorphSVGPlugin: any;
 
 @Component({
+  standalone: false,
   selector: 'app-subscription',
   templateUrl: './subscription.component.html',
   styleUrls: ['./subscription.component.scss'],

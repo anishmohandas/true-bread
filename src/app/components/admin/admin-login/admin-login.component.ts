@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-login',
   templateUrl: './admin-login.component.html',
   styleUrls: ['./admin-login.component.scss']

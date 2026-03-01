@@ -11,6 +11,7 @@ interface SocialLink {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss']

@@ -144,4 +144,77 @@
   font-feature-settings: "mlym" 1;
 }
 
+// Quill HTML content rendering (articles edited via admin Quill editor)
+.quill-content {
+  ::ng-deep {
+    // Remove Quill container border and reset font
+    .ql-container.ql-snow {
+      border: 0;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    // Reset Quill editor padding/overflow so it flows naturally in the page
+    .ql-editor {
+      padding: 0;
+      overflow: visible;
+      max-width: 100%;
+      font-family: inherit;
+      font-size: 1.125rem; // text-lg equivalent
+      line-height: 1.75;
+      color: inherit;
+
+      // Prevent any element from overflowing the container
+      * {
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        box-sizing: border-box;
+      }
+
+      p {
+        @apply mb-6 text-lg;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        @apply font-bold text-stone-900 mt-8 mb-4;
+      }
+
+      h2 { @apply text-2xl; }
+      h3 { @apply text-xl; }
+
+      ul, ol {
+        @apply my-6 ml-6;
+        li { @apply mb-2; }
+      }
+
+      ul { @apply list-disc; }
+      ol { @apply list-decimal; }
+
+      blockquote {
+        @apply pl-4 border-l-4 border-stone-300 italic my-6 text-stone-600;
+        border-right: none;
+      }
+
+      // Remove Quill's default placeholder styling
+      &.ql-blank::before {
+        display: none;
+      }
+
+      // Ensure images don't overflow
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      // Quill alignment classes
+      .ql-align-center { text-align: center; }
+      .ql-align-right  { text-align: right; }
+      .ql-align-justify { text-align: justify; }
+    }
+  }
+}
+
 

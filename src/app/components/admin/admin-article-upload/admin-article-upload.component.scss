@@ -85,22 +85,330 @@
   color: #dc2626;
 }
 
-// Grid layout
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 1.5rem;
-  align-items: start;
+// ── Stepper ──────────────────────────────────────────────────────────────
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+}
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+
+  &.clickable { cursor: pointer; }
+
+  .step-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: #fff;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #9ca3af;
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  &.active {
+    .step-circle {
+      border-color: #000;
+      background: #000;
+      color: #fff;
+    }
+    .step-label { color: #000; font-weight: 700; }
+  }
+
+  &.completed {
+    .step-circle {
+      border-color: #000;
+      background: #000;
+      color: #fff;
+    }
+    .step-label { color: #374151; }
   }
 }
 
-.form-column {
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  min-width: 24px;
+  margin-bottom: 1.4rem;
+  transition: background 0.2s;
+
+  &.completed { background: #000; }
+}
+
+// ── Step panel ────────────────────────────────────────────────────────────
+.step-panel {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+// ── Step navigation ───────────────────────────────────────────────────────
+.step-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+}
+
+.btn-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &--back {
+    background: #f3f4f6;
+    color: #374151;
+    &:hover { background: #e5e7eb; }
+  }
+
+  &--next {
+    background: #000;
+    color: #fff;
+    margin-left: auto;
+    &:hover { background: #222; }
+  }
+}
+
+// ── Review step ───────────────────────────────────────────────────────────
+.review-card { }
+
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem 1.5rem;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.review-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  &--full { grid-column: 1 / -1; }
+}
+
+.review-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.review-value {
+  font-size: 0.9375rem;
+  color: #111;
+
+  &--truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+}
+
+.review-warnings {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+.review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.review-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  color: #6b7280;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #f9fafb; border-color: #9ca3af; color: #374151; }
+}
+
+.btn-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: #e5e7eb; border-color: #9ca3af; }
+}
+
+// ── Preview panel ─────────────────────────────────────────────────────────
+.preview-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  background: #f9fafb;
+
+  h3 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+  }
+}
+
+.preview-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  color: #555;
+  cursor: pointer;
+  &:hover { background: #f3f4f6; }
+}
+
+.preview-body {
+  padding: 2rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.preview-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 0.75rem;
+  line-height: 1.3;
+}
+
+.preview-meta {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.preview-excerpt {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-left: 3px solid #d1d5db;
+  border-radius: 0 6px 6px 0;
+}
+
+.preview-content {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #374151;
+
+  p { margin-bottom: 1rem; }
+
+  // Quill content overrides
+  &.ql-container.ql-snow {
+    border: 0 !important;
+    font-family: inherit;
+  }
+
+  .ql-editor {
+    padding: 0;
+    overflow: visible;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #374151;
+
+    p { margin-bottom: 1rem; }
+    h2 { font-size: 1.25rem; font-weight: 700; margin: 1.5rem 0 0.5rem; }
+    h3 { font-size: 1.1rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
+    ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+    blockquote {
+      border-left: 3px solid #d1d5db;
+      padding-left: 1rem;
+      color: #6b7280;
+      font-style: italic;
+      margin: 1rem 0;
+    }
+  }
 }
 
 // Card
@@ -137,6 +445,25 @@
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
   }
+
+  &--4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.form-group--checkbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 0.125rem;
 }
 
 .form-label {
@@ -278,12 +605,14 @@ select.form-input {
 
   .image-preview {
     position: relative;
+    background: #f9fafb;
 
     img {
       width: 100%;
-      height: 180px;
-      object-fit: cover;
+      height: auto;
+      max-height: 300px;
       display: block;
+      object-fit: contain;
     }
 
     .remove-image {
@@ -309,6 +638,11 @@ select.form-input {
 }
 
 // Submit button
+.submit-btn--inline {
+  width: auto !important;
+  padding: 0.75rem 1.5rem;
+}
+
 .submit-btn {
   width: 100%;
   padding: 0.875rem;
@@ -356,105 +690,153 @@ select.form-input {
   to { transform: rotate(360deg); }
 }
 
-// Custom Rich Text Editor
-.editor-wrapper {
+// Quill editor wrapper
+.quill-wrapper {
   border: 1.5px solid #d1d5db;
   border-radius: 8px;
-  // NOTE: overflow must NOT be hidden — it would prevent position:sticky on the toolbar
-  overflow: visible;
+  overflow: hidden;
   transition: border-color 0.2s, box-shadow 0.2s;
+
+  // Fixed height so the toolbar stays visible while the content area scrolls
+  display: flex;
+  flex-direction: column;
+  height: 520px;
 
   &:focus-within {
     border-color: #000;
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
   }
 
-  &.editor-error {
+  &.quill-error {
     border-color: #dc2626;
   }
-}
 
-.editor-toolbar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2px;
-  padding: 0.5rem 0.75rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  // Sticky toolbar — stays visible while scrolling long articles
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  // Round only the top corners to match the wrapper border-radius
-  border-radius: 6px 6px 0 0;
-}
-
-.tb-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 28px;
-  height: 28px;
-  padding: 0 6px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.8125rem;
-  font-family: inherit;
-  color: #374151;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-
-  &:hover {
-    background: #e5e7eb;
-    color: #000;
+  // Force quill-editor host element to fill remaining height
+  quill-editor {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
   }
 
-  b, i, u {
-    font-size: 0.875rem;
+  ::ng-deep {
+    .ql-toolbar {
+      background: #f9fafb;
+      border: none !important;
+      border-bottom: 1px solid #e5e7eb !important;
+      padding: 6px 10px;
+
+      .ql-formats {
+        margin-right: 8px;
+      }
+
+      // Default icon colors — must be explicit or global styles wash them out
+      .ql-stroke {
+        fill: none !important;
+        stroke: #374151 !important;
+      }
+      .ql-fill {
+        fill: #374151 !important;
+        stroke: none !important;
+      }
+      .ql-stroke.ql-fill {
+        fill: #374151 !important;
+        stroke: #374151 !important;
+      }
+      .ql-thin.ql-stroke {
+        fill: none !important;
+        stroke: #374151 !important;
+        stroke-width: 1 !important;
+      }
+      .ql-even.ql-fill {
+        fill: #374151 !important;
+      }
+
+      button {
+        width: 34px;
+        height: 30px;
+        padding: 4px 6px;
+        border-radius: 4px;
+
+        // Fix SVG icon sizing — global styles may override Quill defaults
+        svg {
+          width: 22px !important;
+          height: 22px !important;
+          float: left;
+          max-width: none !important;
+          display: inline-block;
+        }
+
+        &:hover,
+        &.ql-active {
+          background: #e5e7eb;
+          color: #000;
+
+          .ql-stroke { stroke: #111 !important; }
+          .ql-fill { fill: #111 !important; }
+        }
+      }
+
+      .ql-picker {
+        color: #374151;
+
+        .ql-picker-label {
+          color: #374151 !important;
+        }
+
+        &:hover .ql-picker-label,
+        &.ql-expanded .ql-picker-label {
+          color: #000 !important;
+          .ql-stroke { stroke: #000 !important; }
+        }
+      }
+
+      .ql-picker-options {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .ql-container {
+      border: none !important;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      // Grow to fill remaining height after toolbar; clip overflow here
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ql-editor {
+      // Scroll inside the editor — toolbar stays pinned above
+      flex: 1;
+      overflow-y: auto;
+      line-height: 1.7;
+      color: #111;
+      padding: 1rem 1.25rem;
+
+      &.ql-blank::before {
+        color: #9ca3af;
+        font-style: normal;
+      }
+
+      p { margin-bottom: 0.75rem; }
+      h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+      h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+      h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+      ul, ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
+      li { margin-bottom: 0.25rem; }
+      blockquote {
+        border-left: 3px solid #d1d5db;
+        padding-left: 1rem;
+        color: #6b7280;
+        margin: 0.75rem 0;
+        font-style: italic;
+      }
+    }
   }
-}
-
-.tb-sep {
-  display: inline-block;
-  width: 1px;
-  height: 20px;
-  background: #d1d5db;
-  margin: 0 4px;
-}
-
-.editor-area {
-  min-height: 320px;
-  padding: 1rem;
-  font-family: inherit;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: #111;
-  outline: none;
-  overflow-y: auto;
-
-  // Placeholder via data attribute
-  &:empty::before {
-    content: attr(data-placeholder);
-    color: #9ca3af;
-    pointer-events: none;
-  }
-
-  p { margin-bottom: 0.75rem; }
-  h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-  h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-  h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-  ul, ol { padding-left: 1.5rem; margin-bottom: 0.75rem; }
-  li { margin-bottom: 0.25rem; }
-  blockquote {
-    border-left: 3px solid #d1d5db;
-    padding-left: 1rem;
-    color: #6b7280;
-    margin: 0.75rem 0;
-    font-style: italic;
-  }
-  strong { font-weight: 700; }
-  em { font-style: italic; }
-  u { text-decoration: underline; }
 }

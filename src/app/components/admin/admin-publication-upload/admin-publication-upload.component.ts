@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-publication-upload',
   templateUrl: './admin-publication-upload.component.html',
   styleUrls: ['./admin-publication-upload.component.scss']
@@ -22,6 +23,27 @@ export class AdminPublicationUploadComponent implements OnInit {
   editId: string | null = null;
   existingPdfUrl = '';
 
+  // Auto-calculated issue number (create mode)
+  nextIssueNumber: number | null = null;
+  isLoadingIssueNumber = false;
+
+  // Stepper
+  currentStep = 1;
+  readonly totalSteps = 3;
+  showPreview = false;
+
+  steps = [
+    { label: 'Details' },
+    { label: 'PDF Upload' },
+    { label: 'Review' }
+  ];
+
+  stepFields: { [key: number]: string[] } = {
+    1: ['title', 'month', 'year', 'publishDate'],
+    2: [],
+    3: []
+  };
+
   months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -37,6 +59,51 @@ export class AdminPublicationUploadComponent implements OnInit {
     private router: Router
   ) {}
 
+  // ── Stepper helpers ──────────────────────────────────────────────────────
+
+  isStepValid(step: number): boolean {
+    return (this.stepFields[step] || []).every(
+      f => this.publicationForm.get(f)?.valid
+    );
+  }
+
+  isStepCompleted(step: number): boolean {
+    return step < this.currentStep;
+  }
+
+  canGoToStep(step: number): boolean {
+    return step < this.currentStep || this.isStepCompleted(step - 1);
+  }
+
+  goToStep(step: number): void {
+    if (this.canGoToStep(step)) {
+      this.currentStep = step;
+      this.showPreview = false;
+      window.scrollTo(0, 0);
+    }
+  }
+
+  nextStep(): void {
+    (this.stepFields[this.currentStep] || []).forEach(f =>
+      this.publicationForm.get(f)?.markAsTouched()
+    );
+    if (this.isStepValid(this.currentStep)) {
+      this.currentStep = Math.min(this.currentStep + 1, this.totalSteps);
+      this.showPreview = false;
+      window.scrollTo(0, 0);
+    }
+  }
+
+  prevStep(): void {
+    this.currentStep = Math.max(this.currentStep - 1, 1);
+    this.showPreview = false;
+    window.scrollTo(0, 0);
+  }
+
+  togglePreview(): void {
+    this.showPreview = !this.showPreview;
+  }
+
   ngOnInit(): void {
     this.initForm();
     // Check for edit mode via route param
@@ -44,7 +111,31 @@ export class AdminPublicationUploadComponent implements OnInit {
     if (this.editId) {
       this.editMode = true;
       this.loadPublication(this.editId);
+    } else {
+      // Create mode: auto-calculate next issue number
+      this.loadNextIssueNumber();
     }
+  }
+
+  /** Fetch all publications and set issueNumber = max(issueNumber) + 1 */
+  loadNextIssueNumber(): void {
+    this.isLoadingIssueNumber = true;
+    this.adminService.getPublications().subscribe({
+      next: (res) => {
+        const publications = res.data || [];
+        const maxIssue = publications.reduce((max: number, p: any) => {
+          const n = parseInt(p.issueNumber) || 0;
+          return n > max ? n : max;
+        }, 0);
+        this.nextIssueNumber = maxIssue + 1;
+        this.publicationForm.patchValue({ issueNumber: this.nextIssueNumber });
+        this.isLoadingIssueNumber = false;
+      },
+      error: () => {
+        // Non-critical — leave field empty if fetch fails
+        this.isLoadingIssueNumber = false;
+      }
+    });
   }
 
   initForm(): void {
@@ -181,7 +272,7 @@ export class AdminPublicationUploadComponent implements OnInit {
         next: (response) => {
           this.successMessage = `Publication "${response.data?.title}" created successfully! PDF saved as: ${response.data?.pdfUrl}`;
           this.isLoading = false;
-          this.resetForm();
+          setTimeout(() => this.router.navigate(['/admin/dashboard/publications']), 1500);
         },
         error: (err) => {
           this.errorMessage = err.message || 'Failed to create publication.';

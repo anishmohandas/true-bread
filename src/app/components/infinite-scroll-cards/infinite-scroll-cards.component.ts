@@ -7,6 +7,7 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 @Component({
+  standalone: false,
   selector: 'app-infinite-scroll-cards',
   templateUrl: './infinite-scroll-cards.component.html',
   styleUrls: ['./infinite-scroll-cards.component.scss']

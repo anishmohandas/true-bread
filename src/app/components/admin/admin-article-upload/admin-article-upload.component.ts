@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-article-upload',
   templateUrl: './admin-article-upload.component.html',
   styleUrls: ['./admin-article-upload.component.scss']
@@ -17,13 +18,41 @@ export class AdminArticleUploadComponent implements OnInit {
   selectedImageFile: File | null = null;
   imagePreviewUrl: string | null = null;
 
-  // Reference to the contenteditable editor div
-  @ViewChild('editorContent') editorContent!: ElementRef<HTMLDivElement>;
-
   // Edit mode
   editMode = false;
   editId: string | null = null;
   existingImageUrl = '';
+
+  // Stepper
+  currentStep = 1;
+  readonly totalSteps = 4;
+
+  steps = [
+    { label: 'Basic Info' },
+    { label: 'Content' },
+    { label: 'Settings' },
+    { label: 'Review' }
+  ];
+
+  /** Fields that must be valid before leaving each step */
+  stepFields: { [key: number]: string[] } = {
+    1: ['title', 'author', 'category'],
+    2: ['content'],
+    3: ['publishDate'],
+    4: []
+  };
+
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      ['blockquote'],
+      [{ header: [1, 2, 3, false] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      ['link'],
+      ['clean']
+    ]
+  };
 
   categories = [
     'Faith & Spirituality',
@@ -45,6 +74,102 @@ export class AdminArticleUploadComponent implements OnInit {
     private router: Router
   ) {}
 
+  // ── Stepper helpers ──────────────────────────────────────────────────────
+
+  isStepValid(step: number): boolean {
+    return (this.stepFields[step] || []).every(
+      f => this.articleForm.get(f)?.valid
+    );
+  }
+
+  isStepCompleted(step: number): boolean {
+    return step < this.currentStep;
+  }
+
+  canGoToStep(step: number): boolean {
+    return step < this.currentStep || this.isStepCompleted(step - 1);
+  }
+
+  goToStep(step: number): void {
+    if (this.canGoToStep(step)) {
+      this.currentStep = step;
+      window.scrollTo(0, 0);
+    }
+  }
+
+  nextStep(): void {
+    (this.stepFields[this.currentStep] || []).forEach(f =>
+      this.articleForm.get(f)?.markAsTouched()
+    );
+    if (this.isStepValid(this.currentStep)) {
+      this.currentStep = Math.min(this.currentStep + 1, this.totalSteps);
+      window.scrollTo(0, 0);
+    }
+  }
+
+  prevStep(): void {
+    this.currentStep = Math.max(this.currentStep - 1, 1);
+    window.scrollTo(0, 0);
+  }
+
+  /** Open article preview in a new tab */
+  openPreview(): void {
+    if (this.editMode && this.editId) {
+      // Edit mode: open the live article page
+      window.open('/articles/' + this.editId, '_blank');
+      return;
+    }
+
+    // Create mode: store form data in sessionStorage and open preview route.
+    // NOTE: Never store base64 imagePreviewUrl — it can be several MB and
+    // will exceed the sessionStorage quota. Use the URL field value only.
+    const v = this.articleForm.value;
+    const previewData = {
+      title: v.title || '',
+      author: v.author || '',
+      category: v.category || '',
+      publishDate: v.publishDate || new Date().toISOString().split('T')[0],
+      readTime: v.readTime || 5,
+      content: v.content || '',
+      imageUrl: v.imageUrl || '',   // URL string only — no base64
+      altText: v.altText || '',
+      excerpt: v.excerpt || '',
+      language: v.language || 'en',
+      isFeatured: !!v.isFeatured
+    };
+
+    const storeAndOpen = (data: typeof previewData) => {
+      sessionStorage.setItem('admin_article_preview', JSON.stringify(data));
+      window.open('/admin/preview/article', '_blank');
+    };
+
+    try {
+      storeAndOpen(previewData);
+    } catch {
+      // Content too large — truncate to first 15 000 chars and retry
+      try {
+        storeAndOpen({ ...previewData, content: previewData.content.substring(0, 15000) });
+      } catch {
+        // Last resort — open without content body
+        storeAndOpen({ ...previewData, content: '' });
+      }
+    }
+  }
+
+  get previewContent(): string {
+    return this.articleForm.get('content')?.value || '';
+  }
+
+  /** Strip HTML tags and decode entities for the review summary */
+  get contentPlainText(): string {
+    const html = this.previewContent;
+    if (!html) return '';
+    // Use a temporary div to strip tags (browser DOM)
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+  }
+
   ngOnInit(): void {
     this.initForm();
     this.editId = this.route.snapshot.paramMap.get('id');
@@ -58,8 +183,6 @@ export class AdminArticleUploadComponent implements OnInit {
     this.articleForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       author: ['', [Validators.required, Validators.minLength(2)]],
-      jobTitle: [''],
-      worksAt: [''],
       category: ['', Validators.required],
       imageUrl: [''],
       altText: [''],
@@ -79,7 +202,12 @@ export class AdminArticleUploadComponent implements OnInit {
         const a = res.data;
         this.existingImageUrl = a.imageUrl || '';
 
-        // Convert plain text to HTML if needed (content stored as plain text in DB)
+        // Ensure the article's category is in the dropdown options
+        if (a.category && !this.categories.includes(a.category)) {
+          this.categories = [...this.categories, a.category];
+        }
+
+        // Convert plain text to HTML if needed
         const rawContent = a.content || '';
         const htmlContent = rawContent.trim().startsWith('<')
           ? rawContent
@@ -88,12 +216,9 @@ export class AdminArticleUploadComponent implements OnInit {
               .map((para: string) => `<p>${para.replace(/\n/g, '<br>')}</p>`)
               .join('');
 
-        // Patch all form fields
         this.articleForm.patchValue({
           title: a.title,
           author: a.author,
-          jobTitle: a.jobTitle || '',
-          worksAt: a.worksAt || '',
           category: a.category,
           imageUrl: a.imageUrl || '',
           altText: a.altText || '',
@@ -105,13 +230,6 @@ export class AdminArticleUploadComponent implements OnInit {
           language: a.language || 'en'
         });
 
-        // Set innerHTML directly on the contenteditable div — no timing issues
-        setTimeout(() => {
-          if (this.editorContent?.nativeElement) {
-            this.editorContent.nativeElement.innerHTML = htmlContent;
-          }
-        }, 0);
-
         if (a.imageUrl) {
           this.imagePreviewUrl = a.imageUrl;
         }
@@ -122,52 +240,6 @@ export class AdminArticleUploadComponent implements OnInit {
         this.isLoadingData = false;
       }
     });
-  }
-
-  // Called on (input) event from the contenteditable div
-  onEditorInput(event: Event): void {
-    const html = (event.target as HTMLElement).innerHTML || '';
-    this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-    this.articleForm.get('content')?.markAsDirty();
-  }
-
-  // Intercept Tab key to insert indentation instead of changing focus
-  onEditorKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Tab') {
-      event.preventDefault();
-      if (event.shiftKey) {
-        // Shift+Tab → outdent
-        document.execCommand('outdent', false);
-      } else {
-        // Tab → indent (works for lists); for plain paragraphs insert spaces
-        const handled = document.execCommand('indent', false);
-        if (!handled) {
-          // Fallback: insert 4 non-breaking spaces at cursor
-          document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;');
-        }
-      }
-      const html = this.editorContent.nativeElement.innerHTML || '';
-      this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-      this.articleForm.get('content')?.markAsDirty();
-    }
-  }
-
-  // Execute a formatting command on the selected text
-  execCommand(command: string, value?: string): void {
-    document.execCommand(command, false, value);
-    this.editorContent.nativeElement.focus();
-    const html = this.editorContent.nativeElement.innerHTML || '';
-    this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-    this.articleForm.get('content')?.markAsDirty();
-  }
-
-  // Insert a heading at cursor position
-  insertHeading(tag: string): void {
-    document.execCommand('formatBlock', false, tag);
-    this.editorContent.nativeElement.focus();
-    const html = this.editorContent.nativeElement.innerHTML || '';
-    this.articleForm.get('content')?.setValue(html, { emitEvent: false });
-    this.articleForm.get('content')?.markAsDirty();
   }
 
   onImageFileChange(event: Event): void {
@@ -230,7 +302,8 @@ export class AdminArticleUploadComponent implements OnInit {
         next: (response) => {
           this.successMessage = `Article "${response.data?.title}" created successfully!`;
           this.isLoading = false;
-          this.resetForm();
+          // Navigate away after a short delay so the success message is visible
+          setTimeout(() => this.router.navigate(['/admin/dashboard/articles']), 1500);
         },
         error: (err) => {
           this.errorMessage = err.message || 'Failed to create article.';
@@ -250,9 +323,6 @@ export class AdminArticleUploadComponent implements OnInit {
     this.selectedImageFile = null;
     this.imagePreviewUrl = null;
     this.existingImageUrl = '';
-    if (this.editorContent?.nativeElement) {
-      this.editorContent.nativeElement.innerHTML = '';
-    }
   }
 
   goBack(): void {

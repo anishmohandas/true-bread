@@ -1,6 +1,7 @@
 import { Component, ElementRef, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-logo',
   template: `
     <div class="logo" #logoElement>

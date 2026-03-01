@@ -83,6 +83,7 @@ class HoverBtn {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-latest-issue',
   templateUrl: './latest-issue.component.html',
   styleUrls: ['./latest-issue.component.scss']
