@@ -81,6 +81,16 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Rebuild sharp for the current Node.js version and Linux platform
+# (sharp is a native module that must be compiled per Node.js version)
+echo "Rebuilding sharp for linux-x64..."
+npm install --platform=linux --arch=x64 sharp
+
+if [ $? -ne 0 ]; then
+    echo "WARNING: Failed to rebuild sharp, attempting npm rebuild..."
+    npm rebuild sharp
+fi
+
 echo "Dependencies installed successfully"
 
 # Build application
