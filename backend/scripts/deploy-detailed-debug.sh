@@ -16,6 +16,31 @@ echo "Creating backup..."
 cp -r $APP_DIR $BACKUP_DIR/backup_$DATE
 echo "Backup created at: $BACKUP_DIR/backup_$DATE"
 
+# Ensure Node.js >= 20 is available (required by Angular 20 / Angular CLI)
+echo "Checking Node.js version..."
+NODE_VERSION=$(node -v 2>/dev/null)
+echo "Current Node.js version: $NODE_VERSION"
+
+export NVM_DIR="$HOME/.nvm"
+
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    echo "NVM found, loading..."
+    source "$NVM_DIR/nvm.sh"
+else
+    echo "NVM not found. Installing NVM..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    source "$NVM_DIR/nvm.sh"
+fi
+
+echo "Installing Node.js v20 LTS..."
+nvm install 20
+nvm use 20
+nvm alias default 20
+
+echo "Node.js version after switch: $(node -v)"
+echo "npm version: $(npm -v)"
+
 # Navigate to app directory
 echo "Navigating to app directory..."
 cd $APP_DIR
