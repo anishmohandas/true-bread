@@ -130,8 +130,7 @@ HEALTH_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/
 echo "Health check HTTP status code: $HEALTH_CHECK"
 
 if [ $HEALTH_CHECK -eq 200 ]; then
-    echo "Health check passed! Deployment successful."
-    exit 0
+    echo "Health check passed! Backend deployment successful."
 else
     echo "Health check failed with status code: $HEALTH_CHECK"
     
@@ -139,7 +138,7 @@ else
     echo "Getting detailed PM2 logs:"
     pm2 logs true-bread-backend --lines 20
     
-    echo "Deployment failed! Rolling back..."
+    echo "Backend deployment failed! Rolling back..."
     
     # Stop the application
     pm2 stop true-bread-backend
@@ -155,6 +154,104 @@ else
     cd $APP_DIR
     pm2 start true-bread-backend
     
-    echo "Rollback completed."
+    echo "Backend rollback completed."
+    exit 1
+fi
+
+# ============================================================
+# FRONTEND DEPLOYMENT
+# ============================================================
+FRONTEND_DIR="/var/www/truebread-frontend"
+echo ""
+echo "=== Starting Frontend Deployment ==="
+
+# Create frontend backup
+echo "Creating frontend backup..."
+cp -r $FRONTEND_DIR $BACKUP_DIR/frontend_backup_$DATE
+echo "Frontend backup created at: $BACKUP_DIR/frontend_backup_$DATE"
+
+# Clone repo for frontend build
+echo "Cloning repository for frontend build..."
+cd /tmp
+git clone https://github.com/anishmohandas/true-bread.git temp-frontend-update
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to clone repository for frontend"
+    exit 1
+fi
+
+cd temp-frontend-update
+
+# Install frontend dependencies
+echo "Installing frontend dependencies..."
+npm install
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to install frontend dependencies"
+    rm -rf /tmp/temp-frontend-update
+    exit 1
+fi
+
+echo "Frontend dependencies installed successfully"
+
+# Build frontend for production
+# Angular 20 (application builder) outputs to dist/true-bread/browser/
+echo "Building frontend for production..."
+npm run build --configuration production
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Failed to build frontend"
+    rm -rf /tmp/temp-frontend-update
+    
+    # Restore frontend from backup
+    echo "Restoring frontend from backup..."
+    sudo rm -rf $FRONTEND_DIR/*
+    sudo cp -r $BACKUP_DIR/frontend_backup_$DATE/* $FRONTEND_DIR/
+    sudo chown -R www-data:www-data $FRONTEND_DIR
+    sudo chmod -R 755 $FRONTEND_DIR/
+    echo "Frontend rollback completed."
+    exit 1
+fi
+
+echo "Frontend built successfully"
+
+# Deploy frontend files (copy from browser/ subdirectory)
+echo "Deploying frontend files..."
+sudo rm -rf $FRONTEND_DIR/*
+sudo cp -r dist/true-bread/browser/* $FRONTEND_DIR/
+
+# Set permissions
+echo "Setting frontend permissions..."
+sudo chown -R www-data:www-data $FRONTEND_DIR
+sudo chmod -R 755 $FRONTEND_DIR
+
+# Clean up
+echo "Cleaning up temporary frontend files..."
+cd /
+rm -rf /tmp/temp-frontend-update
+
+echo "Frontend deployment completed!"
+
+# Test frontend access
+echo "Testing frontend access..."
+FRONTEND_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/)
+echo "Frontend HTTP status code: $FRONTEND_CHECK"
+
+if [ $FRONTEND_CHECK -eq 200 ]; then
+    echo "✅ Frontend access test passed!"
+    echo ""
+    echo "=== Full Deployment Successful! ==="
+    exit 0
+else
+    echo "❌ Frontend access test failed with status code: $FRONTEND_CHECK"
+    
+    # Restore frontend from backup
+    echo "Restoring frontend from backup..."
+    sudo rm -rf $FRONTEND_DIR/*
+    sudo cp -r $BACKUP_DIR/frontend_backup_$DATE/* $FRONTEND_DIR/
+    sudo chown -R www-data:www-data $FRONTEND_DIR
+    sudo chmod -R 755 $FRONTEND_DIR/
+    
+    echo "Frontend rollback completed."
     exit 1
 fi

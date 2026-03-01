@@ -80,9 +80,10 @@ fi
 echo "Frontend built successfully"
 
 # Replace frontend files
+# Angular 20 (application builder) outputs to dist/true-bread/browser/
 echo "Deploying frontend files..."
 sudo rm -rf $FRONTEND_DIR/*
-sudo cp -r dist/true-bread/* $FRONTEND_DIR/
+sudo cp -r dist/true-bread/browser/* $FRONTEND_DIR/
 
 # Set permissions
 echo "Setting frontend permissions..."
