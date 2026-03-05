@@ -184,9 +184,7 @@ export class AdminArticleUploadComponent implements OnInit {
       title: ['', [Validators.required, Validators.minLength(3)]],
       author: ['', [Validators.required, Validators.minLength(2)]],
       category: ['', Validators.required],
-      imageUrl: [''],
-      altText: [''],
-      excerpt: ['', Validators.maxLength(500)],
+      excerpt: ['', Validators.maxLength(1000)],
       content: ['', [Validators.required, Validators.minLength(50)]],
       publishDate: [new Date().toISOString().split('T')[0], Validators.required],
       readTime: [5, [Validators.required, Validators.min(1), Validators.max(120)]],
@@ -220,8 +218,6 @@ export class AdminArticleUploadComponent implements OnInit {
           title: a.title,
           author: a.author,
           category: a.category,
-          imageUrl: a.imageUrl || '',
-          altText: a.altText || '',
           excerpt: a.excerpt || '',
           content: htmlContent,
           publishDate: a.publishDate ? a.publishDate.split('T')[0] : new Date().toISOString().split('T')[0],
@@ -257,13 +253,33 @@ export class AdminArticleUploadComponent implements OnInit {
   removeImage(): void {
     this.selectedImageFile = null;
     this.imagePreviewUrl = null;
-    this.articleForm.patchValue({ imageUrl: '' });
     const input = document.getElementById('imageFile') as HTMLInputElement;
     if (input) input.value = '';
   }
 
   onSubmit(): void {
+    console.log('[AdminArticleUpload] onSubmit fired', {
+      currentStep: this.currentStep,
+      invalid: this.articleForm.invalid,
+      isLoading: this.isLoading,
+      isLoadingData: this.isLoadingData
+    });
+
     if (this.articleForm.invalid) {
+      const invalidControls = Object.keys(this.articleForm.controls)
+        .filter((key) => this.articleForm.get(key)?.invalid)
+        .map((key) => ({
+          control: key,
+          errors: this.articleForm.get(key)?.errors,
+          value: this.articleForm.get(key)?.value
+        }));
+
+      console.warn('[AdminArticleUpload] form invalid', {
+        formErrors: this.articleForm.errors,
+        invalidControls,
+        formValue: this.articleForm.value
+      });
+
       this.articleForm.markAllAsTouched();
       return;
     }
@@ -275,9 +291,48 @@ export class AdminArticleUploadComponent implements OnInit {
     const formData = new FormData();
     const values = this.articleForm.value;
 
-    Object.keys(values).forEach(key => {
-      if (values[key] !== null && values[key] !== undefined) {
-        formData.append(key, values[key]);
+    const normalizeArticleHtml = (html: string): string => {
+      if (!html) return '';
+
+      // Preserve HTML structure, normalize text spacing artifacts from editor paste/import.
+      return html
+        .replace(/\t+/g, ' ')          // tabs -> space
+        .replace(/&nbsp;/g, ' ')       // non-breaking spaces -> normal space
+        .replace(/ {2,}/g, ' ')        // collapse repeated spaces
+        .replace(/>\s+</g, '><')       // avoid accidental inter-tag gaps
+        .trim();
+    };
+
+    // Auto-derive image metadata (UI fields removed)
+    const derivedAltText = (values.title && String(values.title).trim().length > 0)
+      ? `Illustration for ${String(values.title).trim()}`
+      : 'Article illustration';
+
+    // If a new image is uploaded, backend will generate the final imageUrl.
+    // If editing and no new upload, preserve existing image URL.
+    const derivedImageUrl = this.selectedImageFile
+      ? ''
+      : (this.existingImageUrl || '');
+
+    // Append only normalized values expected by backend
+    const normalizedValues: any = {
+      title: values.title,
+      author: values.author,
+      category: values.category,
+      excerpt: values.excerpt || '',
+      content: normalizeArticleHtml(values.content || ''),
+      publishDate: values.publishDate,
+      readTime: values.readTime,
+      isFeatured: values.isFeatured,
+      language: values.language || 'en',
+      imageUrl: derivedImageUrl,
+      altText: derivedAltText
+    };
+
+    Object.keys(normalizedValues).forEach(key => {
+      const v = normalizedValues[key];
+      if (v !== null && v !== undefined) {
+        formData.append(key, v);
       }
     });
 

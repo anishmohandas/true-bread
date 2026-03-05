@@ -157,18 +157,6 @@
 
       <div class="form-card">
         <h3 class="card-title">Article Image</h3>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Image URL</label>
-            <input type="text" class="form-input" formControlName="imageUrl"
-              placeholder="assets/images/articles/my-image.jpg" />
-            <p class="field-hint">Enter a URL or upload a file below.</p>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Alt Text</label>
-            <input type="text" class="form-input" formControlName="altText" placeholder="Image description" />
-          </div>
-        </div>
         <div class="form-group">
           <label class="form-label">Upload Image File</label>
           <div class="file-drop-zone" (click)="imageFileInput.click()">
@@ -249,7 +237,7 @@
         </div>
 
         <!-- Validation warnings -->
-        <div class="review-warnings" *ngIf="articleForm.invalid">
+        <div class="review-warnings" *ngIf="!isStepValid(1) || !isStepValid(2) || !isStepValid(3)">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
