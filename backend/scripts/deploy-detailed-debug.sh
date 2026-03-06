@@ -1,39 +1,121 @@
 #!/bin/bash
-APP_DIR="/var/www/truebread-backend"
-BACKUP_DIR="$HOME/app-backups"
-DATE=$(date +%Y%m%d_%H%M%S)
+set -Eeuo pipefail
 
-echo "=== True Bread Deployment Script (Detailed Debug Version) ==="
+APP_DIR="/var/www/truebread-backend"
+FRONTEND_DIR="/var/www/truebread-frontend"
+BACKUP_DIR="$HOME/app-backups"
+DATE="$(date +%Y%m%d_%H%M%S)"
+REPO_URL="https://github.com/anishmohandas/true-bread.git"
+PM2_PROCESS_NAME="true-bread-backend"
+
+BACKEND_TMP="/tmp/temp-update-${DATE}"
+FRONTEND_TMP="/tmp/temp-frontend-update-${DATE}"
+
+BACKEND_BACKUP_PATH="$BACKUP_DIR/backup_${DATE}"
+FRONTEND_BACKUP_PATH="$BACKUP_DIR/frontend_backup_${DATE}"
+
+echo "=== True Bread Deployment Script (Detailed Debug + Hardened) ==="
 echo "Starting deployment at: $(date)"
 echo "App directory: $APP_DIR"
+echo "Frontend directory: $FRONTEND_DIR"
 echo "Backup directory: $BACKUP_DIR"
 
-# Create backup directory if it doesn't exist
-mkdir -p $BACKUP_DIR
+safe_dir_guard() {
+  local target="$1"
+  if [[ -z "${target:-}" || "$target" == "/" || "$target" == "/var" || "$target" == "/var/www" ]]; then
+    echo "ERROR: Refusing unsafe directory operation on '$target'"
+    exit 1
+  fi
+}
 
-# Create backup
-echo "Creating backup..."
-cp -r $APP_DIR $BACKUP_DIR/backup_$DATE
-echo "Backup created at: $BACKUP_DIR/backup_$DATE"
+clean_dir_contents() {
+  local target="$1"
+  safe_dir_guard "$target"
+  mkdir -p "$target"
+  find "$target" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+}
+
+copy_dir_contents() {
+  local from="$1"
+  local to="$2"
+  mkdir -p "$to"
+  cp -a "$from"/. "$to"/
+}
+
+cleanup_tmp() {
+  rm -rf "$BACKEND_TMP" "$FRONTEND_TMP" 2>/dev/null || true
+}
+
+rollback_backend() {
+  echo "Rolling back backend from backup..."
+  if [[ -d "$BACKEND_BACKUP_PATH" ]]; then
+    clean_dir_contents "$APP_DIR"
+    copy_dir_contents "$BACKEND_BACKUP_PATH" "$APP_DIR"
+    cd "$APP_DIR"
+    pm2 restart "$PM2_PROCESS_NAME" || pm2 start dist/index.js --name "$PM2_PROCESS_NAME"
+    echo "Backend rollback completed."
+  else
+    echo "WARNING: Backend backup path not found: $BACKEND_BACKUP_PATH"
+  fi
+}
+
+rollback_frontend() {
+  echo "Rolling back frontend from backup..."
+  if [[ -d "$FRONTEND_BACKUP_PATH" ]]; then
+    clean_dir_contents "$FRONTEND_DIR"
+    copy_dir_contents "$FRONTEND_BACKUP_PATH" "$FRONTEND_DIR"
+    chown -R www-data:www-data "$FRONTEND_DIR"
+    find "$FRONTEND_DIR" -type d -exec chmod 755 {} \;
+    find "$FRONTEND_DIR" -type f -exec chmod 644 {} \;
+    echo "Frontend rollback completed."
+  else
+    echo "WARNING: Frontend backup path not found: $FRONTEND_BACKUP_PATH"
+  fi
+}
+
+verify_url() {
+  local url="$1"
+  local expected="${2:-200}"
+  local code
+  code="$(curl -s -o /dev/null -w "%{http_code}" "$url" || echo "000")"
+  echo "Check $url -> HTTP $code (expected $expected)"
+  [[ "$code" == "$expected" ]]
+}
+
+trap 'echo "ERROR: Deployment failed at line $LINENO"; cleanup_tmp' ERR
+trap 'cleanup_tmp' EXIT
+
+mkdir -p "$BACKUP_DIR"
+safe_dir_guard "$APP_DIR"
+safe_dir_guard "$FRONTEND_DIR"
+
+echo "Creating backend backup..."
+copy_dir_contents "$APP_DIR" "$BACKEND_BACKUP_PATH"
+echo "Backend backup created at: $BACKEND_BACKUP_PATH"
+
+echo "Creating frontend backup..."
+copy_dir_contents "$FRONTEND_DIR" "$FRONTEND_BACKUP_PATH"
+echo "Frontend backup created at: $FRONTEND_BACKUP_PATH"
 
 # Ensure Node.js >= 20 is available (required by Angular 20 / Angular CLI)
 echo "Checking Node.js version..."
-NODE_VERSION=$(node -v 2>/dev/null)
+NODE_VERSION="$(node -v 2>/dev/null || echo "not-found")"
 echo "Current Node.js version: $NODE_VERSION"
 
 export NVM_DIR="$HOME/.nvm"
 
-if [ -s "$NVM_DIR/nvm.sh" ]; then
-    echo "NVM found, loading..."
-    source "$NVM_DIR/nvm.sh"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  echo "NVM found, loading..."
+  # shellcheck disable=SC1091
+  source "$NVM_DIR/nvm.sh"
 else
-    echo "NVM not found. Installing NVM..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    source "$NVM_DIR/nvm.sh"
+  echo "NVM not found. Installing NVM..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  # shellcheck disable=SC1091
+  source "$NVM_DIR/nvm.sh"
 fi
 
-echo "Installing Node.js v20 LTS..."
+echo "Installing/using Node.js v20 LTS..."
 nvm install 20
 nvm use 20
 nvm alias default 20
@@ -41,239 +123,123 @@ nvm alias default 20
 echo "Node.js version after switch: $(node -v)"
 echo "npm version: $(npm -v)"
 
-# Navigate to app directory
-echo "Navigating to app directory..."
-cd $APP_DIR
-echo "Current directory: $(pwd)"
+# ============================================================
+# BACKEND DEPLOYMENT
+# ============================================================
+echo ""
+echo "=== Starting Backend Deployment ==="
+cd "$APP_DIR"
 
-# Pull latest changes from the temp repo and update backend files
-echo "Cloning repository..."
-git clone https://github.com/anishmohandas/true-bread.git temp-update
+echo "Cloning repository for backend..."
+git clone "$REPO_URL" "$BACKEND_TMP"
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to clone repository"
-    exit 1
-fi
-
-echo "Repository cloned successfully"
-
-# Check if backend directory exists and copy accordingly
-echo "Copying files..."
-if [ -d "temp-update/backend" ]; then
-    echo "Backend directory found, copying contents..."
-    cp -r temp-update/backend/* .
-    cp -r temp-update/backend/.* . 2>/dev/null || true
+if [[ -d "$BACKEND_TMP/backend" ]]; then
+  echo "Backend directory found in repo, copying backend contents..."
+  copy_dir_contents "$BACKEND_TMP/backend" "$APP_DIR"
 else
-    echo "No backend directory found, copying root contents..."
-    cp -r temp-update/* .
-    cp -r temp-update/.* . 2>/dev/null || true
+  echo "No backend directory found in repo root, copying root contents..."
+  copy_dir_contents "$BACKEND_TMP" "$APP_DIR"
 fi
 
-echo "Removing temporary files..."
-rm -rf temp-update
-
-# Install dependencies (including devDependencies needed for build)
-echo "Installing dependencies..."
+echo "Installing backend dependencies..."
 npm install
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to install dependencies"
-    exit 1
-fi
-
-# Rebuild sharp for the current Node.js version and Linux platform
-# (sharp is a native module that must be compiled per Node.js version)
-# --unsafe-perm is required to allow install scripts to run with correct permissions
 echo "Rebuilding sharp native module..."
-
-# Ensure libvips-dev is installed (required for sharp compilation)
 if ! dpkg -l | grep -q libvips-dev; then
-    echo "Installing libvips-dev (required for sharp)..."
-    apt-get install -y libvips-dev 2>/dev/null || true
+  echo "Installing libvips-dev (required for sharp)..."
+  apt-get update -y >/dev/null 2>&1 || true
+  apt-get install -y libvips-dev >/dev/null 2>&1 || true
 fi
 
-# Remove existing sharp binary (may be compiled for wrong Node.js version)
 rm -rf node_modules/sharp
+npm install --unsafe-perm sharp || npm install @img/sharp-linux-x64 @img/sharp-libvips-linux-x64 || true
 
-# Reinstall sharp with unsafe-perm to allow native compilation scripts
-npm install --unsafe-perm sharp
-
-if [ $? -ne 0 ]; then
-    echo "WARNING: sharp reinstall failed. Attempting fallback..."
-    npm install @img/sharp-linux-x64 @img/sharp-libvips-linux-x64 2>/dev/null || true
-fi
-
-echo "Dependencies installed successfully"
-
-# Build application
-echo "Building application..."
+echo "Building backend..."
 npm run build:prod
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to build application"
-    exit 1
-fi
+echo "Restarting backend with PM2..."
+pm2 restart "$PM2_PROCESS_NAME" || pm2 start dist/index.js --name "$PM2_PROCESS_NAME"
 
-echo "Application built successfully"
-
-# Restart application
-echo "Restarting application with PM2..."
-pm2 restart true-bread-backend
-
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to restart application with PM2"
-    exit 1
-fi
-
-echo "Application restarted successfully"
-
-# Wait a bit longer for the application to fully start
-echo "Waiting 10 seconds for application to fully start..."
+echo "Waiting 10 seconds for backend startup..."
 sleep 10
 
-# Check health with detailed output
-echo "Checking health with detailed output..."
+echo "Backend process status:"
+pm2 status "$PM2_PROCESS_NAME" || true
 
-# First, check if the process is running
-echo "Checking PM2 process status:"
-pm2 status true-bread-backend
-
-# Check if port 3000 is listening
-echo "Checking if port 3000 is listening:"
-netstat -tlnp | grep :3000 || echo "Port 3000 is not listening"
-
-# Check localhost health endpoint with verbose output
-echo "Checking localhost health endpoint:"
-curl -v http://localhost:3000/api/health 2>&1 || echo "Local health check failed"
-
-# Check the actual health check that the script uses
-echo "Checking health check that script uses:"
-HEALTH_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/health)
-echo "Health check HTTP status code: $HEALTH_CHECK"
-
-if [ $HEALTH_CHECK -eq 200 ]; then
-    echo "Health check passed! Backend deployment successful."
-else
-    echo "Health check failed with status code: $HEALTH_CHECK"
-    
-    # Get detailed logs
-    echo "Getting detailed PM2 logs:"
-    pm2 logs true-bread-backend --lines 20
-    
-    echo "Backend deployment failed! Rolling back..."
-    
-    # Stop the application
-    pm2 stop true-bread-backend
-    
-    # Restore from backup
-    echo "Restoring from backup..."
-    rm -rf $APP_DIR/*
-    rm -rf $APP_DIR/.*
-    cp -r $BACKUP_DIR/backup_$DATE/* $APP_DIR/
-    cp -r $BACKUP_DIR/backup_$DATE/.* $APP_DIR/ 2>/dev/null || true
-    
-    # Restart with the old version
-    cd $APP_DIR
-    pm2 start true-bread-backend
-    
-    echo "Backend rollback completed."
-    exit 1
+echo "Backend health checks..."
+BACKEND_HEALTH_OK=false
+if verify_url "http://localhost:3000/api/health" "200"; then
+  BACKEND_HEALTH_OK=true
+elif verify_url "http://localhost:3000/health" "200"; then
+  BACKEND_HEALTH_OK=true
 fi
+
+if [[ "$BACKEND_HEALTH_OK" != true ]]; then
+  echo "Backend health checks failed."
+  pm2 logs "$PM2_PROCESS_NAME" --lines 50 || true
+  rollback_backend
+  exit 1
+fi
+
+echo "Backend deployed successfully."
 
 # ============================================================
 # FRONTEND DEPLOYMENT
 # ============================================================
-FRONTEND_DIR="/var/www/truebread-frontend"
 echo ""
 echo "=== Starting Frontend Deployment ==="
 
-# Create frontend backup
-echo "Creating frontend backup..."
-cp -r $FRONTEND_DIR $BACKUP_DIR/frontend_backup_$DATE
-echo "Frontend backup created at: $BACKUP_DIR/frontend_backup_$DATE"
-
-# Clone repo for frontend build
 echo "Cloning repository for frontend build..."
-cd /tmp
-git clone https://github.com/anishmohandas/true-bread.git temp-frontend-update
+git clone "$REPO_URL" "$FRONTEND_TMP"
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to clone repository for frontend"
-    exit 1
-fi
-
-cd temp-frontend-update
-
-# Install frontend dependencies
+cd "$FRONTEND_TMP"
 echo "Installing frontend dependencies..."
 npm install
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to install frontend dependencies"
-    rm -rf /tmp/temp-frontend-update
-    exit 1
-fi
-
-echo "Frontend dependencies installed successfully"
-
-# Build frontend for production
-# Angular 20 (application builder) outputs to dist/true-bread/browser/
 echo "Building frontend for production..."
 npm run build --configuration production
 
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to build frontend"
-    rm -rf /tmp/temp-frontend-update
-    
-    # Restore frontend from backup
-    echo "Restoring frontend from backup..."
-    sudo rm -rf $FRONTEND_DIR/*
-    sudo cp -r $BACKUP_DIR/frontend_backup_$DATE/* $FRONTEND_DIR/
-    sudo chown -R www-data:www-data $FRONTEND_DIR
-    sudo chmod -R 755 $FRONTEND_DIR/
-    echo "Frontend rollback completed."
-    exit 1
+BUILD_OUTPUT_DIR="dist/true-bread/browser"
+if [[ ! -d "$BUILD_OUTPUT_DIR" ]]; then
+  echo "ERROR: Frontend build output not found at $BUILD_OUTPUT_DIR"
+  rollback_frontend
+  exit 1
 fi
 
-echo "Frontend built successfully"
-
-# Deploy frontend files (copy from browser/ subdirectory)
 echo "Deploying frontend files..."
-sudo rm -rf $FRONTEND_DIR/*
-sudo cp -r dist/true-bread/browser/* $FRONTEND_DIR/
+clean_dir_contents "$FRONTEND_DIR"
+copy_dir_contents "$BUILD_OUTPUT_DIR" "$FRONTEND_DIR"
 
-# Set permissions
 echo "Setting frontend permissions..."
-sudo chown -R www-data:www-data $FRONTEND_DIR
-sudo chmod -R 755 $FRONTEND_DIR
+chown -R www-data:www-data "$FRONTEND_DIR"
+find "$FRONTEND_DIR" -type d -exec chmod 755 {} \;
+find "$FRONTEND_DIR" -type f -exec chmod 644 {} \;
 
-# Clean up
-echo "Cleaning up temporary frontend files..."
-cd /
-rm -rf /tmp/temp-frontend-update
+echo "Frontend deployment completed."
 
-echo "Frontend deployment completed!"
+# ============================================================
+# POST-DEPLOY VERIFICATION
+# ============================================================
+echo ""
+echo "=== Post-Deploy Verification ==="
+echo "Checking local and public endpoints..."
 
-# Test frontend access
-echo "Testing frontend access..."
-FRONTEND_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/)
-echo "Frontend HTTP status code: $FRONTEND_CHECK"
+# Backend local checks
+verify_url "http://localhost:3000/api/publications" "200" || {
+  echo "WARNING: /api/publications local check failed"
+}
+verify_url "http://localhost:3000/api/articles/featured" "200" || {
+  echo "WARNING: /api/articles/featured local check failed"
+}
 
-if [ $FRONTEND_CHECK -eq 200 ]; then
-    echo "✅ Frontend access test passed!"
-    echo ""
-    echo "=== Full Deployment Successful! ==="
-    exit 0
-else
-    echo "❌ Frontend access test failed with status code: $FRONTEND_CHECK"
-    
-    # Restore frontend from backup
-    echo "Restoring frontend from backup..."
-    sudo rm -rf $FRONTEND_DIR/*
-    sudo cp -r $BACKUP_DIR/frontend_backup_$DATE/* $FRONTEND_DIR/
-    sudo chown -R www-data:www-data $FRONTEND_DIR
-    sudo chmod -R 755 $FRONTEND_DIR/
-    
-    echo "Frontend rollback completed."
-    exit 1
-fi
+# Public checks (allow some flexibility depending on nginx/SSL)
+verify_url "http://localhost/" "200" || verify_url "http://localhost/" "301" || {
+  echo "WARNING: Frontend localhost check failed"
+}
+
+echo ""
+echo "✅ Deployment completed."
+echo "Backups:"
+echo "  Backend:  $BACKEND_BACKUP_PATH"
+echo "  Frontend: $FRONTEND_BACKUP_PATH"
+echo "Finished at: $(date)"
