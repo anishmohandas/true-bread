@@ -27,22 +27,22 @@ export class IssueHighlightsComponent implements AfterViewInit, OnDestroy {
 
   categories: CategoryItem[] = [
     {
-      title: "Tear Down Without Building",
+      title: "Betrayal After Gain",
       description: "Honest reflections on the beauty and struggles of real life through a Christian lens. Quiet reflections from the rhythm of real life—where laughter, struggle, and stillness reveal the gentle fingerprints of God.",
       imageName: "EverydayGrace.jpg"
     },
     {
-      title: "Duty and Theological Understanding",
+      title: "Reflection - Caste Bias",
       description: "Where timeless truths meet everyday journeys—words that stir the heart, renew the mind, and illuminate the sacred in the ordinary.",
       imageName: "TruthInsight.jpg"
     },
     {
-      title: "Symbols of Crucifixion",
+      title: "Cross' Message Today",
       description: "Echoes of truth spoken boldly—messages that breathe life, challenge complacency, and call us deeper into the presence of God.",
       imageName: "LivingMessage.jpg"
     },
     {
-      title: "Resurrection and Return",
+      title: "Covenant Secures Tomorrow",
       description: "Stories of faith in action—where love crosses oceans, light finds the dark places, and ordinary people become vessels of the extraordinary.",
       imageName: "MissionFocus.jpg"
     },
