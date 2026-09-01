@@ -6,4 +6,3 @@ INSERT INTO publications (id, publication_month, publication_year, title, cover_
 INSERT INTO publication_highlights (id, publication_id, title) VALUES
 (59, 'august-2026', 'Faith Persistence: A Biblical Perspective'),
 (60, 'august-2026', 'Jantar Mantar to Golgotha'),
-(61, 'august-2026', 'Questions That Have No Answers');
