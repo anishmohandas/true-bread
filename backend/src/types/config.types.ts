@@ -24,4 +24,6 @@ export interface AppConfig {
     baseUrl: string;
     backendUrl: string;
     port: number;
+    /** Absolute path of the frontend's served `assets` folder, where admin uploads are saved */
+    frontendAssetsDir: string;
 }

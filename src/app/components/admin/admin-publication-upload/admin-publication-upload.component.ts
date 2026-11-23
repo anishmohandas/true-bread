@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
+import { localDateString } from '../../../shared/utils/local-date';
 
 @Component({
   standalone: false,
@@ -144,7 +145,7 @@ export class AdminPublicationUploadComponent implements OnInit {
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', Validators.maxLength(1000)],
       coverImage: [''],
-      publishDate: [new Date().toISOString().split('T')[0], Validators.required],
+      publishDate: [localDateString(), Validators.required],
       month: [currentMonth, Validators.required],
       year: [this.currentYear, Validators.required],
       issueNumber: [''],
@@ -171,7 +172,7 @@ export class AdminPublicationUploadComponent implements OnInit {
           title: p.title,
           description: p.description || '',
           coverImage: p.coverImage || '',
-          publishDate: p.publishDate ? p.publishDate.split('T')[0] : new Date().toISOString().split('T')[0],
+          publishDate: p.publishDate ? p.publishDate.split('T')[0] : localDateString(),
           month: p.month,
           year: p.year,
           issueNumber: p.issueNumber || '',
@@ -284,7 +285,7 @@ export class AdminPublicationUploadComponent implements OnInit {
 
   resetForm(): void {
     this.publicationForm.reset({
-      publishDate: new Date().toISOString().split('T')[0],
+      publishDate: localDateString(),
       month: this.months[new Date().getMonth()],
       year: this.currentYear
     });

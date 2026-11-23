@@ -171,7 +171,11 @@ export class AdminService {
   // ─── Error Handler ────────────────────────────────────────────────────────
 
   private handleError(error: any): Observable<never> {
-    const message = error?.error?.error || error?.message || 'An unexpected error occurred.';
+    // Admin routes reply { error: 'text' }; the global Express handler replies
+    // { error: { message: 'text' } }. Show whichever text the server sent.
+    const serverError = error?.error?.error;
+    const message = (typeof serverError === 'string' ? serverError : serverError?.message)
+      || error?.message || 'An unexpected error occurred.';
     return throwError(() => new Error(message));
   }
 }

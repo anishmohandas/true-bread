@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
+import { localDateString } from '../../../shared/utils/local-date';
 
 @Component({
   standalone: false,
@@ -128,7 +129,7 @@ export class AdminArticleUploadComponent implements OnInit {
       title: v.title || '',
       author: v.author || '',
       category: v.category || '',
-      publishDate: v.publishDate || new Date().toISOString().split('T')[0],
+      publishDate: v.publishDate || localDateString(),
       readTime: v.readTime || 5,
       content: v.content || '',
       imageUrl: v.imageUrl || '',   // URL string only — no base64
@@ -154,6 +155,12 @@ export class AdminArticleUploadComponent implements OnInit {
         storeAndOpen({ ...previewData, content: '' });
       }
     }
+  }
+
+  /** "Job title, Works at" for the review summary (empty if neither is set) */
+  get authorRole(): string {
+    const v = this.articleForm.value;
+    return [v.jobTitle, v.worksAt].map(s => (s || '').trim()).filter(s => s).join(', ');
   }
 
   get previewContent(): string {
@@ -183,10 +190,12 @@ export class AdminArticleUploadComponent implements OnInit {
     this.articleForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       author: ['', [Validators.required, Validators.minLength(2)]],
+      jobTitle: ['', Validators.maxLength(100)],
+      worksAt: ['', Validators.maxLength(100)],
       category: ['', Validators.required],
       excerpt: ['', Validators.maxLength(1000)],
       content: ['', [Validators.required, Validators.minLength(50)]],
-      publishDate: [new Date().toISOString().split('T')[0], Validators.required],
+      publishDate: [localDateString(), Validators.required],
       readTime: [5, [Validators.required, Validators.min(1), Validators.max(120)]],
       isFeatured: [false],
       language: ['en', Validators.required]
@@ -205,25 +214,25 @@ export class AdminArticleUploadComponent implements OnInit {
           this.categories = [...this.categories, a.category];
         }
 
-        // Convert plain text to HTML if needed
+        // Convert plain text (articles inserted by SQL script) to HTML if needed
         const rawContent = a.content || '';
         const htmlContent = rawContent.trim().startsWith('<')
           ? rawContent
-          : rawContent
-              .split('\n\n')
-              .map((para: string) => `<p>${para.replace(/\n/g, '<br>')}</p>`)
-              .join('');
+          : this.plainTextToHtml(rawContent, a.language === 'ml');
 
         this.articleForm.patchValue({
           title: a.title,
           author: a.author,
+          jobTitle: a.jobTitle || '',
+          worksAt: a.worksAt || '',
           category: a.category,
           excerpt: a.excerpt || '',
           content: htmlContent,
-          publishDate: a.publishDate ? a.publishDate.split('T')[0] : new Date().toISOString().split('T')[0],
+          publishDate: a.publishDate ? a.publishDate.split('T')[0] : localDateString(),
           readTime: a.readTime || 5,
           isFeatured: !!a.isFeatured,
-          language: a.language || 'en'
+          // Some older rows hold an invalid language value; anything but 'ml' is English
+          language: a.language === 'ml' ? 'ml' : 'en'
         });
 
         if (a.imageUrl) {
@@ -236,6 +245,44 @@ export class AdminArticleUploadComponent implements OnInit {
         this.isLoadingData = false;
       }
     });
+  }
+
+  /**
+   * Convert plain-text article content to HTML using the same rules as
+   * ArticleDetailComponent.getFormattedContent, so that saving from the editor
+   * keeps the formatting readers already see: every non-empty line is its own
+   * element, "1. " lines are list items, lines wrapped in straight quotes are
+   * blockquotes and short English lines ending in ":" are headings.
+   */
+  private plainTextToHtml(text: string, isMalayalam: boolean): string {
+    const html: string[] = [];
+    let inList = false;
+
+    for (const line of text.split('\n')) {
+      if (line.trim() === '') continue;
+
+      const isListItem = /^\d+\.\s/.test(line);
+      if (isListItem && !inList) {
+        html.push('<ol>');
+        inList = true;
+      } else if (!isListItem && inList) {
+        html.push('</ol>');
+        inList = false;
+      }
+
+      if (isListItem) {
+        html.push(`<li>${line.replace(/^\d+\.\s/, '')}</li>`);
+      } else if (line.startsWith('"') && line.endsWith('"')) {
+        html.push(`<blockquote>${line}</blockquote>`);
+      } else if (!isMalayalam && line.length < 100 && line.endsWith(':')) {
+        html.push(`<h3>${line}</h3>`);
+      } else {
+        html.push(`<p>${line}</p>`);
+      }
+    }
+
+    if (inList) html.push('</ol>');
+    return html.join('');
   }
 
   onImageFileChange(event: Event): void {
@@ -299,7 +346,9 @@ export class AdminArticleUploadComponent implements OnInit {
         .replace(/\t+/g, ' ')          // tabs -> space
         .replace(/&nbsp;/g, ' ')       // non-breaking spaces -> normal space
         .replace(/ {2,}/g, ' ')        // collapse repeated spaces
-        .replace(/>\s+</g, '><')       // avoid accidental inter-tag gaps
+        // Drop whitespace between block elements only. Whitespace between inline
+        // tags (e.g. "<strong>Jesus</strong> <em>said</em>") is a real word space.
+        .replace(/(<\/(?:p|h[1-6]|blockquote|li|ol|ul|pre|div)>)\s+(?=<)/gi, '$1')
         .trim();
     };
 
@@ -318,6 +367,8 @@ export class AdminArticleUploadComponent implements OnInit {
     const normalizedValues: any = {
       title: values.title,
       author: values.author,
+      jobTitle: (values.jobTitle || '').trim(),
+      worksAt: (values.worksAt || '').trim(),
       category: values.category,
       excerpt: values.excerpt || '',
       content: normalizeArticleHtml(values.content || ''),
@@ -370,7 +421,7 @@ export class AdminArticleUploadComponent implements OnInit {
 
   resetForm(): void {
     this.articleForm.reset({
-      publishDate: new Date().toISOString().split('T')[0],
+      publishDate: localDateString(),
       readTime: 5,
       isFeatured: false,
       language: 'en'

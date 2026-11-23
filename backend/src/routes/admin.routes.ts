@@ -4,11 +4,52 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'crypto';
 import sharp from 'sharp';
 import { pool } from '../db';
+import { config } from '../config';
 import { authenticateAdmin } from '../middleware/auth.middleware';
-import { v4 as uuidv4 } from 'uuid';
 // env loaded via dotenv in server.ts
+
+/** Today's date as YYYY-MM-DD in the server's local time zone (fallback only). */
+function localDateString(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** An Error that carries the HTTP status to send back. */
+function httpError(statusCode: number, message: string): Error & { statusCode: number } {
+  return Object.assign(new Error(message), { statusCode });
+}
+
+/**
+ * Run a multer middleware and turn its errors (wrong file type, file too large,
+ * duplicate issue) into the same { error } JSON shape as the rest of this router,
+ * instead of letting them fall through to the generic 500 handler.
+ */
+function handleUpload(middleware: express.RequestHandler): express.RequestHandler {
+  return (req, res, next) => {
+    middleware(req, res, (err?: any) => {
+      if (!err) return next();
+      const status = err.statusCode || (err instanceof multer.MulterError ? 400 : 500);
+      if (status === 500) console.error('Upload error:', err);
+      res.status(status).json({ error: status === 500 ? 'File upload failed.' : err.message });
+    });
+  };
+}
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+/** Issue id in the same form the SQL scripts use, e.g. "november-2026". Null if invalid. */
+function publicationId(month: unknown, year: unknown): string | null {
+  const m = MONTHS.find(name => name.toLowerCase() === String(month || '').toLowerCase());
+  const y = parseInt(String(year || ''), 10);
+  if (!m || !(y >= 2000 && y <= 2100)) return null;
+  return `${m.toLowerCase()}-${y}`;
+}
 
 const router = express.Router();
 
@@ -22,9 +63,11 @@ router.use((_req, res, next) => {
 
 // ─── Multer Configuration ────────────────────────────────────────────────────
 
-// Resolve paths to Angular assets (relative to this file: backend/src/routes/)
-const ARTICLE_IMAGES_DIR = path.join(__dirname, '../../../src/assets/images/articles');
-const PUBLICATIONS_FILES_DIR = path.join(__dirname, '../../../src/assets/files');
+// Uploads are saved into the frontend's served assets folder (FRONTEND_ASSETS_DIR),
+// so the stored "assets/..." URLs resolve on the live site straight away.
+const ARTICLE_IMAGES_DIR = path.join(config.frontendAssetsDir, 'images/articles');
+const PUBLICATIONS_FILES_DIR = path.join(config.frontendAssetsDir, 'files');
+console.log(`Admin uploads go to ${config.frontendAssetsDir}`);
 
 // Ensure directories exist
 [ARTICLE_IMAGES_DIR, PUBLICATIONS_FILES_DIR].forEach(dir => {
@@ -49,17 +92,30 @@ function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, '');        // trim leading/trailing hyphens
 }
 
+// articles.id is VARCHAR(50)
+const MAX_SLUG_LENGTH = 50;
+
+/** Shorten a slug to maxLength, cutting at a hyphen when possible so words stay whole. */
+function truncateSlug(slug: string, maxLength: number): string {
+  if (slug.length <= maxLength) return slug;
+  const cut = slug.slice(0, maxLength);
+  const lastHyphen = cut.lastIndexOf('-');
+  return (lastHyphen > 0 ? cut.slice(0, lastHyphen) : cut).replace(/-+$/, '');
+}
+
 /**
- * Ensure the slug is unique in the articles table.
+ * Ensure the slug is unique in the articles table and fits the id column.
  * If "my-slug" already exists, tries "my-slug-2", "my-slug-3", …
  */
 async function uniqueSlug(base: string): Promise<string> {
-  let candidate = base;
+  const root = truncateSlug(base, MAX_SLUG_LENGTH) || 'article';
+  let candidate = root;
   let suffix = 2;
   while (true) {
     const [rows] = await pool.query('SELECT id FROM articles WHERE id = ? LIMIT 1', [candidate]);
     if ((rows as any[]).length === 0) return candidate;
-    candidate = `${base}-${suffix++}`;
+    const tail = `-${suffix++}`;
+    candidate = truncateSlug(root, MAX_SLUG_LENGTH - tail.length) + tail;
   }
 }
 
@@ -70,21 +126,12 @@ const articleImageStorage = multer.memoryStorage();
  * Optimise an uploaded image buffer with sharp:
  *  - Resize to max 1200 px wide (no upscaling)
  *  - Convert to WebP at quality 82
- *  - Save to ARTICLE_IMAGES_DIR
+ *  - Save to ARTICLE_IMAGES_DIR as <article-slug>-<random>.webp, so an upload
+ *    can never overwrite another article's image (or a cached older version)
  * Returns the relative asset URL string.
  */
-async function optimizeAndSaveImage(
-  buffer: Buffer,
-  originalName: string
-): Promise<string> {
-  const ext = path.extname(originalName).toLowerCase();
-  const baseName = path.basename(originalName, ext)
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-+|-+$/g, '');
-
-  const outputFilename = `${baseName}.webp`;
+async function optimizeAndSaveImage(buffer: Buffer, articleId: string): Promise<string> {
+  const outputFilename = `${articleId}-${crypto.randomBytes(3).toString('hex')}.webp`;
   const outputPath = path.join(ARTICLE_IMAGES_DIR, outputFilename);
 
   await sharp(buffer)
@@ -93,6 +140,26 @@ async function optimizeAndSaveImage(
     .toFile(outputPath);
 
   return `assets/images/articles/${outputFilename}`;
+}
+
+/**
+ * If an issue other than `exceptId` already exists for this month and year,
+ * return a message saying so; otherwise null. Matches on the month/year columns
+ * rather than the id, because older admin-created issues have random ids.
+ */
+async function monthConflictMessage(month: string, year: string, exceptId?: string): Promise<string | null> {
+  const [rows] = await pool.query(
+    'SELECT id FROM publications WHERE LOWER(publication_month) = LOWER(?) AND publication_year = ?',
+    [month, parseInt(year, 10)]
+  );
+  const taken = (rows as any[]).some(r => r.id !== exceptId);
+  return taken ? `An issue for ${month} ${year} already exists. Edit that issue instead.` : null;
+}
+
+/** Remove an image this request saved, when the database write that needed it failed. */
+function removeSavedImage(imageUrl: string): void {
+  if (!imageUrl.startsWith('assets/images/articles/')) return;
+  fs.unlink(path.join(ARTICLE_IMAGES_DIR, path.basename(imageUrl)), () => {});
 }
 
 // Publication PDF upload storage
@@ -117,16 +184,27 @@ const uploadArticleImage = multer({
     const ext = allowed.test(path.extname(file.originalname).toLowerCase());
     const mime = allowed.test(file.mimetype);
     if (ext && mime) cb(null, true);
-    else cb(new Error('Only image files (jpg, png, webp) are allowed'));
+    else cb(httpError(400, 'Only image files (jpg, png, webp) are allowed.'));
   }
 });
 
 const uploadPublicationPdf = multer({
   storage: publicationPdfStorage,
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype === 'application/pdf') cb(null, true);
-    else cb(new Error('Only PDF files are allowed'));
+  // Runs before the PDF is written to disk. The PDF is named after its month and
+  // year, so refuse it if another issue already owns that month; otherwise the
+  // upload would silently overwrite that issue's PDF. (The form sends the month
+  // and year fields before the file, so req.body has them here.)
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype !== 'application/pdf') {
+      return cb(httpError(400, 'Only PDF files are allowed.'));
+    }
+    if (!publicationId(req.body.month, req.body.year)) {
+      return cb(httpError(400, 'A valid month and year are required.'));
+    }
+    monthConflictMessage(req.body.month, req.body.year, req.params.id)
+      .then(conflict => conflict ? cb(httpError(409, conflict)) : cb(null, true))
+      .catch(err => cb(err));
   }
 });
 
@@ -185,7 +263,8 @@ router.post('/login', async (req, res) => {
 router.get('/articles', authenticateAdmin, async (_req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT id, title, author, category, image_url as imageUrl, publish_date as publishDate,
+      `SELECT id, title, author, category, image_url as imageUrl,
+              DATE_FORMAT(publish_date, '%Y-%m-%d') as publishDate,
               read_time as readTime, is_featured as isFeatured, language
        FROM articles ORDER BY publish_date DESC`
     );
@@ -207,7 +286,8 @@ router.get('/publications', authenticateAdmin, async (_req, res) => {
   try {
     const [rows] = await pool.query(
       `SELECT id, title, description, cover_image as coverImage, pdf_url as pdfUrl,
-              publish_date as publishDate, publication_month as month, publication_year as year,
+              DATE_FORMAT(publish_date, '%Y-%m-%d') as publishDate,
+              publication_month as month, publication_year as year,
               issue_number as issueNumber
        FROM publications ORDER BY publish_date DESC`
     );
@@ -258,7 +338,8 @@ router.delete('/subscribers/:id', authenticateAdmin, async (req, res) => {
 // ─── Articles ─────────────────────────────────────────────────────────────────
 
 // POST create article (with optional image file upload)
-router.post('/articles', authenticateAdmin, uploadArticleImage.single('imageFile'), async (req, res) => {
+router.post('/articles', authenticateAdmin, handleUpload(uploadArticleImage.single('imageFile')), async (req, res) => {
+  let savedImageUrl = '';
   try {
     const {
       title, author, jobTitle, worksAt, category,
@@ -270,16 +351,18 @@ router.post('/articles', authenticateAdmin, uploadArticleImage.single('imageFile
       return res.status(400).json({ error: 'title, author, category, and content are required.' });
     }
 
+    const id = await uniqueSlug(generateSlug(title));
+
     // Determine image URL: uploaded file takes priority over URL string
     let finalImageUrl = imageUrl || '';
     if (req.file) {
-      finalImageUrl = await optimizeAndSaveImage(req.file.buffer, req.file.originalname);
+      savedImageUrl = await optimizeAndSaveImage(req.file.buffer, id);
+      finalImageUrl = savedImageUrl;
     }
 
-    const id = await uniqueSlug(generateSlug(title));
     const featured = isFeatured === 'true' || isFeatured === true ? 1 : 0;
-    const lang = language || 'en';
-    const date = publishDate || new Date().toISOString().split('T')[0];
+    const lang = language === 'ml' ? 'ml' : 'en';
+    const date = publishDate || localDateString();
     const readTimeVal = parseInt(readTime) || 5;
 
     await pool.query(
@@ -298,6 +381,7 @@ router.post('/articles', authenticateAdmin, uploadArticleImage.single('imageFile
       data: { id, title, imageUrl: finalImageUrl }
     });
   } catch (error: any) {
+    if (savedImageUrl) removeSavedImage(savedImageUrl);
     console.error('Error creating article:', error);
     res.status(500).json({ error: 'Failed to create article.', details: error.message });
   }
@@ -309,7 +393,8 @@ router.get('/articles/:id', authenticateAdmin, async (req, res) => {
     const [rows] = await pool.query(
       `SELECT id, title, author, job_title as jobTitle, works_at as worksAt, category,
               image_url as imageUrl, alt_text as altText, content, excerpt,
-              publish_date as publishDate, read_time as readTime, is_featured as isFeatured, language
+              DATE_FORMAT(publish_date, '%Y-%m-%d') as publishDate,
+              read_time as readTime, is_featured as isFeatured, language
        FROM articles WHERE id = ?`,
       [req.params.id]
     );
@@ -325,7 +410,8 @@ router.get('/articles/:id', authenticateAdmin, async (req, res) => {
 });
 
 // PUT update article
-router.put('/articles/:id', authenticateAdmin, uploadArticleImage.single('imageFile'), async (req, res) => {
+router.put('/articles/:id', authenticateAdmin, handleUpload(uploadArticleImage.single('imageFile')), async (req, res) => {
+  let savedImageUrl = '';
   try {
     const {
       title, author, jobTitle, worksAt, category,
@@ -340,12 +426,13 @@ router.put('/articles/:id', authenticateAdmin, uploadArticleImage.single('imageF
     // If a new image file was uploaded, use it; otherwise keep existing imageUrl
     let finalImageUrl = imageUrl || '';
     if (req.file) {
-      finalImageUrl = await optimizeAndSaveImage(req.file.buffer, req.file.originalname);
+      savedImageUrl = await optimizeAndSaveImage(req.file.buffer, req.params.id);
+      finalImageUrl = savedImageUrl;
     }
 
     const featured = isFeatured === 'true' || isFeatured === true ? 1 : 0;
-    const lang = language || 'en';
-    const date = publishDate || new Date().toISOString().split('T')[0];
+    const lang = language === 'ml' ? 'ml' : 'en';
+    const date = publishDate || localDateString();
     const readTimeVal = parseInt(readTime) || 5;
 
     const [result] = await pool.query(
@@ -360,6 +447,7 @@ router.put('/articles/:id', authenticateAdmin, uploadArticleImage.single('imageF
     );
 
     if ((result as any).affectedRows === 0) {
+      if (savedImageUrl) removeSavedImage(savedImageUrl);
       return res.status(404).json({ error: 'Article not found.' });
     }
 
@@ -369,6 +457,7 @@ router.put('/articles/:id', authenticateAdmin, uploadArticleImage.single('imageF
       data: { id: req.params.id, title, imageUrl: finalImageUrl }
     });
   } catch (error: any) {
+    if (savedImageUrl) removeSavedImage(savedImageUrl);
     console.error('Error updating article:', error);
     res.status(500).json({ error: 'Failed to update article.', details: error.message });
   }
@@ -391,25 +480,30 @@ router.delete('/articles/:id', authenticateAdmin, async (req, res) => {
 // ─── Publications ─────────────────────────────────────────────────────────────
 
 // POST create publication (with PDF file upload)
-router.post('/publications', authenticateAdmin, uploadPublicationPdf.single('pdfFile'), async (req, res) => {
+router.post('/publications', authenticateAdmin, handleUpload(uploadPublicationPdf.single('pdfFile')), async (req, res) => {
   try {
     const {
       title, description, coverImage,
       publishDate, month, year, issueNumber, highlights
     } = req.body;
 
-    if (!title || !month || !year) {
-      return res.status(400).json({ error: 'title, month, and year are required.' });
+    const id = publicationId(month, year);
+    if (!title || !id) {
+      return res.status(400).json({ error: 'title and a valid month and year are required.' });
     }
 
     if (!req.file) {
       return res.status(400).json({ error: 'PDF file is required.' });
     }
 
-    const id = uuidv4();
     const pdfUrl = `assets/files/${req.file.filename}`;
-    const date = publishDate || new Date().toISOString().split('T')[0];
-    const issueNum = parseInt(issueNumber) || null;
+    const date = publishDate || localDateString();
+    // issue_number is NOT NULL: default to the next number after the highest one
+    let issueNum = parseInt(issueNumber) || 0;
+    if (!issueNum) {
+      const [[row]] = await pool.query('SELECT COALESCE(MAX(issue_number), 0) + 1 AS next FROM publications') as any;
+      issueNum = row.next;
+    }
 
     // Insert publication
     await pool.query(
@@ -449,7 +543,8 @@ router.get('/publications/:id', authenticateAdmin, async (req, res) => {
   try {
     const [rows] = await pool.query(
       `SELECT id, title, description, cover_image as coverImage, pdf_url as pdfUrl,
-              publish_date as publishDate, publication_month as month, publication_year as year,
+              DATE_FORMAT(publish_date, '%Y-%m-%d') as publishDate,
+              publication_month as month, publication_year as year,
               issue_number as issueNumber
        FROM publications WHERE id = ?`,
       [req.params.id]
@@ -472,15 +567,22 @@ router.get('/publications/:id', authenticateAdmin, async (req, res) => {
 });
 
 // PUT update publication (PDF is optional on edit)
-router.put('/publications/:id', authenticateAdmin, uploadPublicationPdf.single('pdfFile'), async (req, res) => {
+router.put('/publications/:id', authenticateAdmin, handleUpload(uploadPublicationPdf.single('pdfFile')), async (req, res) => {
   try {
     const {
       title, description, coverImage,
       publishDate, month, year, issueNumber, highlights, existingPdfUrl
     } = req.body;
 
-    if (!title || !month || !year) {
-      return res.status(400).json({ error: 'title, month, and year are required.' });
+    if (!title || !publicationId(month, year)) {
+      return res.status(400).json({ error: 'title and a valid month and year are required.' });
+    }
+
+    // Moving an issue to a month another issue already has would create two
+    // issues for that month (the PDF upload path checks this before saving).
+    const conflict = await monthConflictMessage(month, year, req.params.id);
+    if (conflict) {
+      return res.status(409).json({ error: conflict });
     }
 
     // Use new PDF if uploaded, otherwise keep existing
@@ -489,8 +591,11 @@ router.put('/publications/:id', authenticateAdmin, uploadPublicationPdf.single('
       pdfUrl = `assets/files/${req.file.filename}`;
     }
 
-    const date = publishDate || new Date().toISOString().split('T')[0];
+    const date = publishDate || localDateString();
     const issueNum = parseInt(issueNumber) || null;
+    if (!issueNum) {
+      return res.status(400).json({ error: 'Issue number is required.' });
+    }
 
     const [result] = await pool.query(
       `UPDATE publications SET
@@ -532,15 +637,25 @@ router.put('/publications/:id', authenticateAdmin, uploadPublicationPdf.single('
 
 // DELETE a publication
 router.delete('/publications/:id', authenticateAdmin, async (req, res) => {
+  // publication_highlights has no foreign key, so delete an issue's highlights
+  // together with it (in one transaction) rather than leaving them orphaned.
+  const conn = await pool.getConnection();
   try {
-    const [result] = await pool.query('DELETE FROM publications WHERE id = ?', [req.params.id]);
+    await conn.beginTransaction();
+    const [result] = await conn.query('DELETE FROM publications WHERE id = ?', [req.params.id]);
     if ((result as any).affectedRows === 0) {
+      await conn.rollback();
       return res.status(404).json({ error: 'Publication not found.' });
     }
+    await conn.query('DELETE FROM publication_highlights WHERE publication_id = ?', [req.params.id]);
+    await conn.commit();
     res.json({ status: 'success', message: 'Publication deleted.' });
   } catch (error: any) {
+    await conn.rollback().catch(() => {});
     console.error('Error deleting publication:', error);
     res.status(500).json({ error: 'Failed to delete publication.' });
+  } finally {
+    conn.release();
   }
 });
 

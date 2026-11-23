@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import path from 'path';
 import { AppConfig } from '../types/config.types';
 
 dotenv.config();
@@ -23,5 +24,12 @@ export const config: AppConfig = {
     },
     baseUrl: process.env.BASE_URL || 'http://localhost:4200',
     backendUrl: process.env.BACKEND_URL || `http://localhost:${process.env.PORT || '3000'}`,
-    port: parseInt(process.env.PORT || '3000')
+    port: parseInt(process.env.PORT || '3000'),
+    // Admin uploads (article images, issue PDFs) must go where the website's
+    // assets are served from. In production that is the nginx web root, e.g.
+    // /var/www/truebread-frontend/assets. Locally it defaults to the Angular
+    // source assets folder (src/assets at the repo root).
+    frontendAssetsDir: process.env.FRONTEND_ASSETS_DIR
+        ? path.resolve(process.env.FRONTEND_ASSETS_DIR)
+        : path.resolve(__dirname, '../../../src/assets')
 };

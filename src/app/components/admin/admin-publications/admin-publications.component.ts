@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminService, AdminPublication } from '../../../services/admin.service';
+import { parseLocalDate } from '../../../shared/utils/local-date';
 
 @Component({
   standalone: false,
@@ -76,7 +77,7 @@ export class AdminPublicationsComponent implements OnInit {
 
   formatDate(date: string): string {
     if (!date) return '—';
-    return new Date(date).toLocaleDateString('en-US', {
+    return parseLocalDate(date).toLocaleDateString('en-US', {
       year: 'numeric', month: 'short', day: 'numeric'
     });
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService, Subscriber } from '../../../services/admin.service';
+import { localDateString } from '../../../shared/utils/local-date';
 
 @Component({
   standalone: false,
@@ -87,7 +88,7 @@ export class AdminSubscribersComponent implements OnInit {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `subscribers-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `subscribers-${localDateString()}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }

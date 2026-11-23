@@ -97,6 +97,17 @@
           </div>
         </div>
 
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Author's Job Title</label>
+            <input type="text" class="form-input" formControlName="jobTitle" placeholder="e.g. Pastor" maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author Works At</label>
+            <input type="text" class="form-input" formControlName="worksAt" placeholder="e.g. Church or organisation" maxlength="100" />
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="form-label">Excerpt</label>
           <textarea class="form-input form-textarea" formControlName="excerpt"
@@ -204,6 +215,10 @@
           <div class="review-item">
             <span class="review-label">Author</span>
             <span class="review-value">{{ f['author'].value || '—' }}</span>
+          </div>
+          <div class="review-item" *ngIf="authorRole">
+            <span class="review-label">Author Role</span>
+            <span class="review-value">{{ authorRole }}</span>
           </div>
           <div class="review-item">
             <span class="review-label">Category</span>
