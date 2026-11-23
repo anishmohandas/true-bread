@@ -67,6 +67,10 @@ else
   echo "uploaded image"   > "$OLD/assets/images/articles/uploaded-abc123.webp"
   echo "uploaded pdf"     > "$OLD/assets/files/TrueBread_Uploaded_2026.pdf"
   echo "old sep pdf"      > "$OLD/assets/files/TrueBread_Sep_2026.pdf"
+  # The live web root holds an earlier deploy. Make these files older than the
+  # new build, as in a real deploy: rsync skips files whose size and modified
+  # time both match, and the old/new test files above have equal sizes.
+  find "$OLD" -type f -exec touch -d '2 days ago' {} +
 
   # New build from git
   echo "new index"        > "$NEW/index.html"
