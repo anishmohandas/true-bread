@@ -60,6 +60,24 @@ pm2 save
 
 ## C. Frontend Deploy (Safe Sequence)
 
+**Recommended: run the deploy script.** It does everything below, plus a backup
+first and an automatic revert if the site fails its checks afterwards:
+
+```bash
+sudo bash /var/www/truebread-backend/scripts/deploy-frontend.sh
+```
+
+It builds `main` in `/tmp`, runs `check-upload-setup.sh` (stops if it fails;
+skip with `SKIP_UPLOAD_CHECK=1`), backs up the web root to
+`/var/www/truebread-frontend.backup`, publishes with the protected `rsync`,
+reloads nginx, and checks the home page, the main script, a page route and the
+API. If a check fails it restores the backup (admin uploads are kept).
+Exit codes: `0` deployed, `1` stopped before deploying (site unchanged),
+`2` deploy failed and was reverted, `3` revert also failed (act now; it prints
+the manual restore commands).
+
+Manual sequence (what the script does):
+
 ```bash
 FRONTEND_SRC=/tmp/tb-frontend-deploy
 FRONTEND_DST=/var/www/truebread-frontend
