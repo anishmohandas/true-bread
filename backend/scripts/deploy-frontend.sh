@@ -47,11 +47,12 @@ stop() { echo; echo "STOPPED: $*"; echo "The live site was not changed."; exit 1
 
 # Copy a build into the web root without emptying it. --delete removes files
 # that are not in the new build, but the P (protect) rules stop it deleting
-# anything in the two admin upload folders.
+# anything in the admin upload folders (article images, issue PDFs, issue covers).
 publish() { # $1 = source folder
   rsync -a --delete \
     --filter='P /assets/images/articles/**' \
     --filter='P /assets/files/**' \
+    --filter='P /assets/images/covers/**' \
     "$1/" "$WEBROOT/"
 }
 
@@ -175,6 +176,6 @@ echo
 echo "URGENT: the deploy failed and the site still fails its checks after the revert."
 echo "The previous version is in $BACKUP_DIR. Check nginx (nginx -t, /var/log/nginx/error.log)."
 echo "To restore by hand:"
-echo "  rsync -a --delete --filter='P /assets/images/articles/**' --filter='P /assets/files/**' $BACKUP_DIR/ $WEBROOT/"
+echo "  rsync -a --delete --filter='P /assets/images/articles/**' --filter='P /assets/files/**' --filter='P /assets/images/covers/**' $BACKUP_DIR/ $WEBROOT/"
 echo "  chown -R www-data:www-data $WEBROOT && nginx -t && systemctl reload nginx"
 exit 3

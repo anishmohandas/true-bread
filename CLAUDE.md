@@ -20,7 +20,7 @@ Backend (`backend/`):
 - `npm run pm2:restart` / `npm run pm2:logs`: manage the production process (`ecosystem.config.js`)
 - `npm run test:connection`: checks MySQL connectivity
 - Configuration comes from `backend/.env` (`DB_*`, `EMAIL_*`, `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `ALLOWED_ORIGINS`, `BASE_URL`, `FRONTEND_ASSETS_DIR`). See `backend/src/config/index.ts`.
-- Admin uploads (article images, issue PDFs) are written to `FRONTEND_ASSETS_DIR` (`images/articles/`, `files/`): the live frontend web root's `assets` folder in production (`/var/www/truebread-frontend/assets`), `src/assets` locally by default. Those uploaded files exist only on the server, so frontend deploys must not wipe them (see the runbook).
+- Admin uploads (article images, issue PDFs, issue covers) are written to `FRONTEND_ASSETS_DIR` (`images/articles/`, `files/`, `images/covers/`): the live frontend web root's `assets` folder in production (`/var/www/truebread-frontend/assets`), `src/assets` locally by default. Those uploaded files exist only on the server, so frontend deploys must not wipe them (see the runbook).
 
 Deployment is manual. `DEPLOYMENT_RUNBOOK.md` is the current, authoritative guide. The other `DEPLOYMENT_*.md` and `backend/*_DEPLOYMENT.md` files are older.
 

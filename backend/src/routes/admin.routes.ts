@@ -67,10 +67,11 @@ router.use((_req, res, next) => {
 // so the stored "assets/..." URLs resolve on the live site straight away.
 const ARTICLE_IMAGES_DIR = path.join(config.frontendAssetsDir, 'images/articles');
 const PUBLICATIONS_FILES_DIR = path.join(config.frontendAssetsDir, 'files');
+const COVER_IMAGES_DIR = path.join(config.frontendAssetsDir, 'images/covers');
 console.log(`Admin uploads go to ${config.frontendAssetsDir}`);
 
 // Ensure directories exist
-[ARTICLE_IMAGES_DIR, PUBLICATIONS_FILES_DIR].forEach(dir => {
+[ARTICLE_IMAGES_DIR, PUBLICATIONS_FILES_DIR, COVER_IMAGES_DIR].forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -162,12 +163,17 @@ function removeSavedImage(imageUrl: string): void {
   fs.unlink(path.join(ARTICLE_IMAGES_DIR, path.basename(imageUrl)), () => {});
 }
 
-// Publication PDF upload storage
+// Publication upload storage: the issue PDF (field "pdfFile") and an optional
+// cover image (field "coverFile").
 const publicationPdfStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, PUBLICATIONS_FILES_DIR);
+  destination: (_req, file, cb) => {
+    cb(null, file.fieldname === 'coverFile' ? COVER_IMAGES_DIR : PUBLICATIONS_FILES_DIR);
   },
-  filename: (req, _file, cb) => {
+  filename: (req, file, cb) => {
+    if (file.fieldname === 'coverFile') {
+      // Raw upload; saveCoverImage() converts it and removes this file
+      return cb(null, `.upload-${crypto.randomBytes(6).toString('hex')}${path.extname(file.originalname).toLowerCase()}`);
+    }
     // Format: TrueBread_Mar_2026.pdf
     const { month, year } = req.body;
     const monthStr = month ? month.charAt(0).toUpperCase() + month.slice(1, 3) : 'Jan';
@@ -175,6 +181,39 @@ const publicationPdfStorage = multer.diskStorage({
     cb(null, `TrueBread_${monthStr}_${yearStr}.pdf`);
   }
 });
+
+/**
+ * Turn an uploaded cover into a web-friendly JPEG (max 1600 px wide, quality 85)
+ * named like the covers added by SQL script, plus a random suffix so it never
+ * overwrites another cover or a cached older version: e.g. dec33_cover-1a2b3c.jpg.
+ * Removes the raw upload. Returns the relative asset URL.
+ */
+async function saveCoverImage(rawPath: string, month: string, year: string): Promise<string> {
+  const prefix = `${String(month).slice(0, 3).toLowerCase()}${String(year).slice(-2)}_cover`;
+  const outputFilename = `${prefix}-${crypto.randomBytes(3).toString('hex')}.jpg`;
+  try {
+    await sharp(rawPath)
+      .rotate() // respect camera orientation
+      .resize(1600, undefined, { withoutEnlargement: true, fit: 'inside' })
+      .jpeg({ quality: 85, mozjpeg: true })
+      .toFile(path.join(COVER_IMAGES_DIR, outputFilename));
+  } finally {
+    fs.unlink(rawPath, () => {});
+  }
+  return `assets/images/covers/${outputFilename}`;
+}
+
+/** Remove a cover this request saved, when the database write that needed it failed. */
+function removeSavedCover(coverUrl: string): void {
+  if (!coverUrl.startsWith('assets/images/covers/')) return;
+  fs.unlink(path.join(COVER_IMAGES_DIR, path.basename(coverUrl)), () => {});
+}
+
+/** The uploaded file for one field of a multi-field upload, if any. */
+function uploadedFile(req: express.Request, field: string): Express.Multer.File | undefined {
+  const files = req.files as { [field: string]: Express.Multer.File[] } | undefined;
+  return files?.[field]?.[0];
+}
 
 const uploadArticleImage = multer({
   storage: articleImageStorage,
@@ -190,13 +229,17 @@ const uploadArticleImage = multer({
 
 const uploadPublicationPdf = multer({
   storage: publicationPdfStorage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB (per file)
   // Runs before the PDF is written to disk. The PDF is named after its month and
   // year, so refuse it if another issue already owns that month; otherwise the
   // upload would silently overwrite that issue's PDF. (The form sends the month
   // and year fields before the file, so req.body has them here.)
   fileFilter: (req, file, cb) => {
-    if (file.mimetype !== 'application/pdf') {
+    if (file.fieldname === 'coverFile') {
+      const isImage = /^image\/(jpeg|png|webp)$/.test(file.mimetype) &&
+        /\.(jpe?g|png|webp)$/i.test(file.originalname);
+      if (!isImage) return cb(httpError(400, 'The cover must be an image (jpg, png or webp).'));
+    } else if (file.mimetype !== 'application/pdf') {
       return cb(httpError(400, 'Only PDF files are allowed.'));
     }
     if (!publicationId(req.body.month, req.body.year)) {
@@ -207,6 +250,12 @@ const uploadPublicationPdf = multer({
       .catch(err => cb(err));
   }
 });
+
+// The issue PDF plus an optional cover image
+const publicationUploadFields = uploadPublicationPdf.fields([
+  { name: 'pdfFile', maxCount: 1 },
+  { name: 'coverFile', maxCount: 1 }
+]);
 
 // ─── Admin Login ─────────────────────────────────────────────────────────────
 
@@ -480,7 +529,10 @@ router.delete('/articles/:id', authenticateAdmin, async (req, res) => {
 // ─── Publications ─────────────────────────────────────────────────────────────
 
 // POST create publication (with PDF file upload)
-router.post('/publications', authenticateAdmin, handleUpload(uploadPublicationPdf.single('pdfFile')), async (req, res) => {
+router.post('/publications', authenticateAdmin, handleUpload(publicationUploadFields), async (req, res) => {
+  const pdfFile = uploadedFile(req, 'pdfFile');
+  const coverRaw = uploadedFile(req, 'coverFile');
+  let savedCoverUrl = '';
   try {
     const {
       title, description, coverImage,
@@ -492,11 +544,17 @@ router.post('/publications', authenticateAdmin, handleUpload(uploadPublicationPd
       return res.status(400).json({ error: 'title and a valid month and year are required.' });
     }
 
-    if (!req.file) {
+    if (!pdfFile) {
       return res.status(400).json({ error: 'PDF file is required.' });
     }
 
-    const pdfUrl = `assets/files/${req.file.filename}`;
+    const pdfUrl = `assets/files/${pdfFile.filename}`;
+    // An uploaded cover takes priority over a typed path
+    let finalCoverUrl = coverImage || '';
+    if (coverRaw) {
+      savedCoverUrl = await saveCoverImage(coverRaw.path, month, year);
+      finalCoverUrl = savedCoverUrl;
+    }
     const date = publishDate || localDateString();
     // issue_number is NOT NULL: default to the next number after the highest one
     let issueNum = parseInt(issueNumber) || 0;
@@ -510,7 +568,7 @@ router.post('/publications', authenticateAdmin, handleUpload(uploadPublicationPd
       `INSERT INTO publications 
         (id, title, description, cover_image, pdf_url, publish_date, publication_month, publication_year, issue_number)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, title, description || '', coverImage || '', pdfUrl, date, month, parseInt(year), issueNum]
+      [id, title, description || '', finalCoverUrl, pdfUrl, date, month, parseInt(year), issueNum]
     );
 
     // Insert highlights if provided
@@ -530,11 +588,14 @@ router.post('/publications', authenticateAdmin, handleUpload(uploadPublicationPd
     res.status(201).json({
       status: 'success',
       message: 'Publication created successfully.',
-      data: { id, title, pdfUrl }
+      data: { id, title, pdfUrl, coverImage: finalCoverUrl }
     });
   } catch (error: any) {
+    if (savedCoverUrl) removeSavedCover(savedCoverUrl);
     console.error('Error creating publication:', error);
     res.status(500).json({ error: 'Failed to create publication.', details: error.message });
+  } finally {
+    if (coverRaw) fs.unlink(coverRaw.path, () => {}); // raw upload, if not already converted
   }
 });
 
@@ -567,7 +628,10 @@ router.get('/publications/:id', authenticateAdmin, async (req, res) => {
 });
 
 // PUT update publication (PDF is optional on edit)
-router.put('/publications/:id', authenticateAdmin, handleUpload(uploadPublicationPdf.single('pdfFile')), async (req, res) => {
+router.put('/publications/:id', authenticateAdmin, handleUpload(publicationUploadFields), async (req, res) => {
+  const pdfFile = uploadedFile(req, 'pdfFile');
+  const coverRaw = uploadedFile(req, 'coverFile');
+  let savedCoverUrl = '';
   try {
     const {
       title, description, coverImage,
@@ -587,8 +651,8 @@ router.put('/publications/:id', authenticateAdmin, handleUpload(uploadPublicatio
 
     // Use new PDF if uploaded, otherwise keep existing
     let pdfUrl = existingPdfUrl || '';
-    if (req.file) {
-      pdfUrl = `assets/files/${req.file.filename}`;
+    if (pdfFile) {
+      pdfUrl = `assets/files/${pdfFile.filename}`;
     }
 
     const date = publishDate || localDateString();
@@ -597,16 +661,24 @@ router.put('/publications/:id', authenticateAdmin, handleUpload(uploadPublicatio
       return res.status(400).json({ error: 'Issue number is required.' });
     }
 
+    // Use a new cover if uploaded, otherwise keep the existing path
+    let finalCoverUrl = coverImage || '';
+    if (coverRaw) {
+      savedCoverUrl = await saveCoverImage(coverRaw.path, month, year);
+      finalCoverUrl = savedCoverUrl;
+    }
+
     const [result] = await pool.query(
       `UPDATE publications SET
         title = ?, description = ?, cover_image = ?, pdf_url = ?,
         publish_date = ?, publication_month = ?, publication_year = ?, issue_number = ?
        WHERE id = ?`,
-      [title, description || '', coverImage || '', pdfUrl,
+      [title, description || '', finalCoverUrl, pdfUrl,
        date, month, parseInt(year), issueNum, req.params.id]
     );
 
     if ((result as any).affectedRows === 0) {
+      if (savedCoverUrl) removeSavedCover(savedCoverUrl);
       return res.status(404).json({ error: 'Publication not found.' });
     }
 
@@ -627,11 +699,14 @@ router.put('/publications/:id', authenticateAdmin, handleUpload(uploadPublicatio
     res.json({
       status: 'success',
       message: 'Publication updated successfully.',
-      data: { id: req.params.id, title, pdfUrl }
+      data: { id: req.params.id, title, pdfUrl, coverImage: finalCoverUrl }
     });
   } catch (error: any) {
+    if (savedCoverUrl) removeSavedCover(savedCoverUrl);
     console.error('Error updating publication:', error);
     res.status(500).json({ error: 'Failed to update publication.', details: error.message });
+  } finally {
+    if (coverRaw) fs.unlink(coverRaw.path, () => {}); // raw upload, if not already converted
   }
 });
 

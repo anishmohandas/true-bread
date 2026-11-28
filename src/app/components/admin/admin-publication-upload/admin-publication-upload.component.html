@@ -117,10 +117,43 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Cover Image URL</label>
-          <input type="text" class="form-input" formControlName="coverImage"
-            placeholder="assets/images/cover-march-2026.jpg" />
-          <p class="field-hint">URL to the cover image for this publication.</p>
+          <label class="form-label">Cover Image</label>
+          <div class="file-drop-zone" [class.has-file]="coverPreviewUrl" (click)="coverFileInput.click()">
+            <input #coverFileInput type="file" id="coverFile" accept="image/jpeg,image/png,image/webp"
+              (change)="onCoverFileChange($event)" style="display:none" />
+
+            <div *ngIf="!coverPreviewUrl" class="drop-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                stroke="#9ca3af" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
+              <p>Click to upload cover image</p>
+              <span>JPG, PNG, WEBP — max 10MB</span>
+            </div>
+
+            <div *ngIf="coverPreviewUrl" class="cover-selected">
+              <img [src]="coverPreviewUrl" alt="Cover preview" class="cover-thumb" />
+              <div class="pdf-info">
+                <p class="pdf-name">{{ selectedCoverFile ? selectedCoverFile.name : existingCoverName }}</p>
+                <p class="pdf-size" *ngIf="selectedCoverFile">
+                  {{ (selectedCoverFile.size / 1024 / 1024).toFixed(2) }} MB · new cover
+                </p>
+                <p class="pdf-size" *ngIf="!selectedCoverFile">Current cover · click to replace</p>
+              </div>
+              <button type="button" class="remove-btn" *ngIf="selectedCoverFile" title="Remove new cover"
+                (click)="$event.stopPropagation(); removeCover()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <span class="field-error" *ngIf="coverError">{{ coverError }}</span>
+          <p class="field-hint">Saved to <code>assets/images/covers/</code> as a JPEG (resized to at most 1600px wide).</p>
         </div>
 
         <div class="form-group">
@@ -149,7 +182,7 @@
           <div>
             <p class="filename-label">File will be saved as:</p>
             <code class="filename-value">{{ expectedPdfName }}</code>
-            <p class="filename-path">in <code>src/assets/files/</code></p>
+            <p class="filename-path">in <code>assets/files/</code></p>
           </div>
         </div>
 
@@ -229,10 +262,10 @@
         </div>
         <div class="preview-body">
           <div class="pub-preview-card">
-            <div class="pub-preview-cover" *ngIf="f['coverImage'].value">
-              <img [src]="f['coverImage'].value" [alt]="f['title'].value" />
+            <div class="pub-preview-cover" *ngIf="coverPreviewUrl">
+              <img [src]="coverPreviewUrl" [alt]="f['title'].value" />
             </div>
-            <div class="pub-preview-cover pub-preview-cover--placeholder" *ngIf="!f['coverImage'].value">
+            <div class="pub-preview-cover pub-preview-cover--placeholder" *ngIf="!coverPreviewUrl">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
                 stroke="#9ca3af" stroke-width="1.5">
                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
@@ -285,7 +318,7 @@
           </div>
           <div class="review-item">
             <span class="review-label">Cover Image</span>
-            <span class="review-value">{{ f['coverImage'].value || 'None' }}</span>
+            <span class="review-value">{{ selectedCoverFile ? selectedCoverFile.name + ' (new)' : (existingCoverName || 'None') }}</span>
           </div>
           <div class="review-item">
             <span class="review-label">PDF File</span>

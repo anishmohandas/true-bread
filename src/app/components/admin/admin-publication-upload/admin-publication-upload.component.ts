@@ -19,6 +19,12 @@ export class AdminPublicationUploadComponent implements OnInit {
   selectedPdfFile: File | null = null;
   pdfFileName = '';
 
+  // Cover image: a newly chosen file, its preview (data URL), or the existing cover's path
+  selectedCoverFile: File | null = null;
+  newCoverPreviewUrl: string | null = null;
+  coverError = '';
+  readonly maxCoverBytes = 10 * 1024 * 1024;
+
   // Edit mode
   editMode = false;
   editId: string | null = null;
@@ -218,6 +224,47 @@ export class AdminPublicationUploadComponent implements OnInit {
     }
   }
 
+  /** What the cover preview shows: the new file if one is chosen, else the saved cover */
+  get coverPreviewUrl(): string | null {
+    return this.newCoverPreviewUrl || this.publicationForm.get('coverImage')?.value || null;
+  }
+
+  /** File name of the saved cover (edit mode), for display */
+  get existingCoverName(): string {
+    const url: string = this.publicationForm.get('coverImage')?.value || '';
+    return url ? url.split('/').pop() || url : '';
+  }
+
+  onCoverFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.coverError = '';
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
+      this.coverError = 'The cover must be a JPG, PNG or WEBP image.';
+      input.value = '';
+      return;
+    }
+    if (file.size > this.maxCoverBytes) {
+      this.coverError = 'The cover image must be 10MB or smaller.';
+      input.value = '';
+      return;
+    }
+    this.selectedCoverFile = file;
+    const reader = new FileReader();
+    reader.onload = e => { this.newCoverPreviewUrl = e.target?.result as string; };
+    reader.readAsDataURL(file);
+  }
+
+  /** Drop the newly chosen cover; in edit mode the saved cover stays */
+  removeCover(): void {
+    this.selectedCoverFile = null;
+    this.newCoverPreviewUrl = null;
+    this.coverError = '';
+    const input = document.getElementById('coverFile') as HTMLInputElement;
+    if (input) input.value = '';
+  }
+
   removePdf(): void {
     this.selectedPdfFile = null;
     this.pdfFileName = '';
@@ -250,8 +297,12 @@ export class AdminPublicationUploadComponent implements OnInit {
       }
     });
 
+    // Files go after the text fields: the server names them from month/year
     if (this.selectedPdfFile) {
       formData.append('pdfFile', this.selectedPdfFile);
+    }
+    if (this.selectedCoverFile) {
+      formData.append('coverFile', this.selectedCoverFile);
     }
 
     if (this.editMode && this.editId) {
@@ -292,6 +343,7 @@ export class AdminPublicationUploadComponent implements OnInit {
     this.selectedPdfFile = null;
     this.pdfFileName = '';
     this.existingPdfUrl = '';
+    this.removeCover();
   }
 
   goBack(): void {

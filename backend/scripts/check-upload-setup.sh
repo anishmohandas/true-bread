@@ -23,7 +23,7 @@ BACKEND_DIR="${BACKEND_DIR:-/var/www/truebread-backend}"
 PM2_APP="${PM2_APP:-true-bread-backend}"
 BUILD_DIR="${BUILD_DIR:-/tmp/tb-frontend-deploy/dist/true-bread/browser}"
 SITE_URL="${SITE_URL:-https://thetruebread.com}"
-UPLOAD_DIRS=("assets/images/articles" "assets/files")
+UPLOAD_DIRS=("assets/images/articles" "assets/files" "assets/images/covers")
 
 PASS=0; FAIL=0; WARN=0
 pass() { echo "  [PASS] $*"; PASS=$((PASS + 1)); }
@@ -38,6 +38,7 @@ deploy_rsync() { # $1 = source build dir, $2 = web root, extra args after
   rsync -a --delete "$@" \
     --filter='P /assets/images/articles/**' \
     --filter='P /assets/files/**' \
+    --filter='P /assets/images/covers/**' \
     "$src/" "$dst/"
 }
 
@@ -115,7 +116,7 @@ else
   info "Comparing build $BUILD_DIR"
   DRY="$(deploy_rsync "$BUILD_DIR" "$WEBROOT" -n -i 2>&1)"
   DELETES="$(printf '%s\n' "$DRY" | grep '^\*deleting' | sed 's/^\*deleting *//')"
-  PROTECTED_DELETES="$(printf '%s\n' "$DELETES" | grep -E '^assets/(images/articles|files)/' || true)"
+  PROTECTED_DELETES="$(printf '%s\n' "$DELETES" | grep -E '^assets/(images/articles|images/covers|files)/' || true)"
   if [ -n "$PROTECTED_DELETES" ]; then
     fail "A real deploy WOULD delete files in the upload folders:"
     printf '%s\n' "$PROTECTED_DELETES" | sed 's/^/           /'
@@ -199,7 +200,7 @@ as_user() { # user, command...
 }
 
 TOKEN="upload-check-$(date +%s)-$RANDOM"
-for d in images/articles files; do
+for d in images/articles files images/covers; do
   DIR="$ASSETS_DIR/$d"
   echo
   info "Folder: $DIR"

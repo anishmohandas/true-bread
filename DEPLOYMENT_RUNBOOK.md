@@ -93,13 +93,14 @@ npm run build -- --configuration production
 
 # IMPORTANT: copy browser/* CONTENTS into web root.
 # Do NOT empty the web root first: files uploaded through the admin live only in
-# assets/images/articles/ and assets/files/ on this server (they are not in git).
-# rsync replaces the old build, but the P (protect) rules stop it deleting
-# anything in those two upload folders.
+# assets/images/articles/, assets/files/ and assets/images/covers/ on this server
+# (they are not in git). rsync replaces the old build, but the P (protect) rules
+# stop it deleting anything in those upload folders.
 mkdir -p $FRONTEND_DST
 rsync -a --delete \
   --filter='P /assets/images/articles/**' \
   --filter='P /assets/files/**' \
+  --filter='P /assets/images/covers/**' \
   dist/true-bread/browser/ $FRONTEND_DST/
 
 chown -R www-data:www-data $FRONTEND_DST
@@ -273,6 +274,7 @@ pm2 restart true-bread-backend --update-env
 rsync -a --delete \
   --filter='P /assets/images/articles/**' \
   --filter='P /assets/files/**' \
+  --filter='P /assets/images/covers/**' \
   /var/www/truebread-frontend.backup/ /var/www/truebread-frontend/
 chown -R www-data:www-data /var/www/truebread-frontend
 nginx -t && systemctl reload nginx
@@ -294,7 +296,7 @@ curl -sS https://thetruebread.com/api/health
 1. Do **not** use `master` unless explicitly confirmed; current default branch is `main`.
 2. If deploying `dist/true-bread/browser/*`, nginx root must be `/var/www/truebread-frontend`.
 3. Keep API proxy as `proxy_pass http://127.0.0.1:3000;` under `/api/`.
-4. Never empty the frontend webroot (`rm -rf /var/www/truebread-frontend/*`). Admin uploads live only in its `assets/images/articles/` and `assets/files/` folders; deploy with the protected `rsync` in section C instead.
+4. Never empty the frontend webroot (`rm -rf /var/www/truebread-frontend/*`). Admin uploads live only in its `assets/images/articles/`, `assets/files/` and `assets/images/covers/` folders; deploy with the protected `rsync` in section C instead.
    To check the upload setup (rsync keeps uploads, backend can write them, nginx serves them), run
    `sudo bash /var/www/truebread-backend/scripts/check-upload-setup.sh`. It is safe on the live server
    (sandbox in /tmp, dry run, and test files it deletes). For the dry-run part, run it after the frontend
