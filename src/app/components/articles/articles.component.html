@@ -9,15 +9,13 @@
   </div>
 
   <div *ngIf="!loading && !error">
-    <div class="flex gap-4 mb-8">
-      <button (click)="filterByCategory(null)" [class.bg-stone-800]="!selectedCategory"
-        [class.text-white]="!selectedCategory"
-        class="px-4 py-2 rounded-full border border-stone-800 hover:bg-stone-800 hover:text-white transition-colors">
+    <!-- Category filter: equal-size tags in a grid that wraps to as many columns as fit -->
+    <div class="category-filter">
+      <button type="button" (click)="filterByCategory(null)" [class.active]="!selectedCategory">
         All
       </button>
-      <button *ngFor="let category of categories" (click)="filterByCategory(category)"
-        [class.bg-stone-800]="selectedCategory === category" [class.text-white]="selectedCategory === category"
-        class="px-4 py-2 rounded-full border border-stone-800 hover:bg-stone-800 hover:text-white transition-colors">
+      <button type="button" *ngFor="let category of categories" (click)="filterByCategory(category)"
+        [class.active]="selectedCategory === category" [title]="category">
         {{category}}
       </button>
     </div>
